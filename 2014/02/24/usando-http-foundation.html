@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>PHP + Symfony Tips - </title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/">
+                
+                    <span class="blog-title">PHP + Symfony Tips</span>
+                 
+            </a>
+        </header>
+        
+        <span class="post-meta">
+        	<time datetime="2014-02-24">24 Feb 2014</time>
+        	
+        		on
+	        	
+	        
+       	</span>
+
+        <h1 class="post-title">Usando el componente HttpFoundation</h1>
+
+        <section class="post-content">
+            <p>El componente HttpFoundation de Symfony permite encapsular y manejar la información de una petición de manera orientada a objetos, y ofrece una capa robusta que nos abstrae de tareas que pueden resultar tediosas de hacer a mano.</p>
+
+<p>Basicamente el componente ofrece una serie de clases que permiten acceder a la información de la petición (Request) y clases que facilitan la creación de respuestas http a devolver (Response).</p>
+
+<h2>¿Porque usar este componente?</h2>
+
+<p>En mi opinión este componente facilita realizar tareas que de otra forma llegan a ser engorrosas y tediosas, ejemplo de ellos son:</p>
+
+<ul>
+<li>  Subida de archivos al servidor.</li>
+<li>  Manejo de cookies (no se maneja igual que la sesión por ejemplo, <a href="http://es.php.net/manual/es/function.setcookie.php">cookies</a>).</li>
+<li>  Gestión de Sessión (Sesión por defecto, en Base de datos, en archivos, etc...).</li>
+<li>  Saber si una petición es asincrona.</li>
+<li>  Verificar que un parametro venga o exista en alguna de las variables super globales.</li>
+<li>  Obtener información de la url, como el puerto, el queryString, pathinfo, host, etc...</li>
+<li>  Seteo de los headers para la respuesta (algo que muchas veces no hacemos).</li>
+<li>  Manejo de Códigos de estado para la respuesta.</li>
+<li>  Creación de headers para descarga de archivos.</li>
+<li>  Entre otras cosas que aun no he usado...</li>
+</ul>
+
+<h2>Instalando el componente</h2>
+
+<p>Para descargar el componente lo recomendable es hacerlo mediante composer:</p>
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>Creando el objeto Request</h2>
+
+<p>Crear la instancia del Request es tan sencillo como ejecutar el siguiente código:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//proyecto/index.php</span>
+
+<span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/vendor/autoload.php&#39;</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span> <span class="c1">//acá creamos el objeto request</span>
+</code></pre></div>
+
+<p>El método <strong>createFromGlobals()</strong> crea una instancia con la información de la petición a partir de las variables globales de php $<em>GET, $</em>POST, $<em>REQUEST, $</em>SERVER, $<em>FILES y $</em>COOKIE.</p>
+
+<p>Ahora podemos obtener la info del request desde los atributos del objeto:</p>
+
+<h5>El atributo query:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong> y contiene la información contenida en la variable global $_GET, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="c1">//devuelve el valor contenido en $_GET[&#39;nombre&#39;] si existe, si no devuelve null</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="c1">//si no se encuentra el indice nombre en $_GET el método devuelve &#39;Manuel&#39; por defecto.</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
+<span class="c1">//intentará devolver el valor de la siguiente manera: $_GET[&#39;usuario&#39;][&#39;nombre&#39;]</span>
+<span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+</code></pre></div>
+
+<h5>El atributo request:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong> y contiene la información contenida en la variable global $_POST, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="c1">//devuelve el valor contenido en $_POST[&#39;nombre&#39;] si existe, si no devuelve null</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="c1">//si no se encuentra el indice nombre en $_POST el método devuelve &#39;Manuel&#39; por defecto.</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
+<span class="c1">//intentará devolver el valor de la siguiente manera: $_POST[&#39;usuario&#39;][&#39;nombre&#39;]</span>
+<span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+</code></pre></div>
+
+<h2>Ventajas de usar el objeto Request</h2>
+
+<p>Un ejemplo de ello puede ser conocer si la petición es mediante ajax o no, en php seria algo como:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">&lt;</span><span class="p">?</span><span class="n">php</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">isset</span><span class="p">(</span><span class="vg">$_SERVER</span><span class="o">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="o">]</span><span class="p">)</span>
+    <span class="no">AND</span> <span class="n">strtolower</span><span class="p">(</span><span class="vg">$_SERVER</span><span class="o">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="o">]</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;xmlhttprequest&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="sr">//</span> <span class="no">AJAX</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Mientras que con el componente seria algo como:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">isXmlHttpRequest</span><span class="p">())</span> <span class="p">{</span>
+    <span class="c1">// AJAX</span>
+<span class="p">}</span>
+</code></pre></div>
+
+        </section>
+
+        
+
+<!--        <footer class="post-footer">
+        	 If we want to display author's name and bio 
+            
+                <section class="author">
+                	<header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                	<article>
+                		 Author Name 
+                    	<h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
+                    	 Author Bio 
+                    	<p> 
+                    		Here goes the author description. You might want to place some links too in here
+                    	</p>
+                    </article>
+                </section>                
+            
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el componente HttpFoundation&amp;url=//2014/02/24/usando-http-foundation.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=//2014/02/24/usando-http-foundation.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=//2014/02/24/usando-http-foundation.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+            
+        	
+        </footer>-->
+
+    </article>
+
+</main>
+
+
+<!--    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>-->
+
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+<!--    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   -->
+</body>
+</html>
