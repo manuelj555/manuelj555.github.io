@@ -354,11 +354,129 @@
 <span class="p">}</span>
 </code></pre></div>
 
+<p>El constructor de la clase espera tres parametros:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Constructor.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param string  $content The response content</span>
+<span class="sd"> * @param integer $status  The response status code</span>
+<span class="sd"> * @param array   $headers An array of response headers</span>
+<span class="sd"> *</span>
+<span class="sd"> * @throws \InvalidArgumentException When the HTTP status code is not valid</span>
+<span class="sd"> *</span>
+<span class="sd"> * @api</span>
+<span class="sd"> */</span>
+ <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Tambien podemos crear la instancia de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="c1">//asi podemos hacer algo como:</span>
+
+<span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Mi contenido&quot;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">setStatusCode</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</code></pre></div>
+
+<p>Es importante destacar que es el método <strong>send()</strong> el que realmente hace el envío de las cabeceras y el contenido.</p>
+
 <p>Además el componente ofrece otra serie de clases de respuesta para facilitar aun más las cosas.</p>
 
 <h4>Clase RedirectResponse</h4>
 
+<p>Esta clase crea una respuesta con el contenido y cabaceras correspondientes a un redirección http, acepta los siguientes parametros en su constructor:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Creates a redirect response so that it conforms to the rules </span>
+<span class="sd"> * defined for a redirect status code.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param string  $url     The URL to redirect to</span>
+<span class="sd"> * @param integer $status  The status code (302 by default)</span>
+<span class="sd"> * @param array   $headers The headers (Location is always set to the given url)</span>
+<span class="sd"> *</span>
+<span class="sd"> * @throws \InvalidArgumentException</span>
+<span class="sd"> *</span>
+<span class="sd"> * @see http://tools.ietf.org/html/rfc2616#section-10.3</span>
+<span class="sd"> *</span>
+<span class="sd"> * @api</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">302</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Ejemplo de uso:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\RedirectResponse</span><span class="p">;</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;/otro_archivo_de_mi_host.html&quot;</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="nx">RedirectResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</code></pre></div>
+
+<p>Esta clase nos ahorra las tarea de: </p>
+
+<ul>
+<li>  Crear el header <strong>Location</strong> que hace la redirección http.</li>
+<li>  Crear el header con el código de estado 302 (que podemos cambiar en el segundo argumento del constructor).</li>
+<li>  Crear el html con la etiqueta &lsaquo;meta http-equiv=&quot;refresh&quot; content=&quot;1;url=mi-url&quot; /&rsaquo;.</li>
+</ul>
+
 <h4>Clase JsonResponse</h4>
+
+<p>Esta clase crea una respuesta con el contenido y cabaceras para el formato json, acepta los siguientes parametros en su constructor:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Constructor.</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param mixed   $data    The response data</span>
+<span class="sd"> * @param integer $status  The response status code</span>
+<span class="sd"> * @param array   $headers An array of response headers</span>
+<span class="sd"> */</span>
+ <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Ejemplo de uso:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\JsonResponse</span><span class="p">;</span>
+
+<span class="nv">$datos</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;nombre&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pais&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Venezuela&#39;</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonResponse</span><span class="p">(</span><span class="nv">$datos</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="nx">JsonResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$datos</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</code></pre></div>
+
+<p>Esta clase nos ahorra las tarea de:</p>
+
+<ul>
+<li>  Crear el header <strong>Content-Type</strong> correspondiente.</li>
+<li>  Convertir a json el arreglo que se pasa como parametro.</li>
+</ul>
 
 <h4>Clase BinaryFileResponse</h4>
 
