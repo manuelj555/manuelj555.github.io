@@ -99,13 +99,13 @@
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
 <span class="c1">//devuelve el valor contenido en $_GET[&#39;nombre&#39;] si existe, si no devuelve null</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
 <span class="c1">//si no se encuentra el indice nombre en $_GET el método devuelve &#39;Manuel&#39; por defecto.</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
 <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
 <span class="c1">//intentará devolver el valor de la siguiente manera: $_GET[&#39;usuario&#39;][&#39;nombre&#39;]</span>
 <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
@@ -117,16 +117,71 @@
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
 <span class="c1">//devuelve el valor contenido en $_POST[&#39;nombre&#39;] si existe, si no devuelve null</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
 <span class="c1">//si no se encuentra el indice nombre en $_POST el método devuelve &#39;Manuel&#39; por defecto.</span>
 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
 <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
 <span class="c1">//intentará devolver el valor de la siguiente manera: $_POST[&#39;usuario&#39;][&#39;nombre&#39;]</span>
 <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+</code></pre></div>
+
+<h5>El atributo server:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ServerBag)</strong> y contiene la información contenida en la variable global $_SERVER, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">);</span> 
+<span class="c1">//devuelve el valor contenido en $_SERVER[&#39;QUERY_STRING&#39;] si existe, si no devuelve null</span>
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;SCRIPT_FILENAME&#39;</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;DOCUMENT_ROOT&#39;</span><span class="p">);</span> 
+</code></pre></div>
+
+<p>Igualmente se pueden establecer valores por defecto para cuando el indice no exista.</p>
+
+<h5>La propiedad attributes:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong>, y se utiliza para establecer información referente a la petición en las aplicaciones, por ejemeplo, el framework symfony almacena allí la info concerniente a la ruta que se está ejecutando (el controlador y la acción a llamar, los parametros enviados en la ruta, etc).</p>
+
+<p>Este objeto es muy util para almacenar información dependiendo de los requerimientos de la app.</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> 
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+</code></pre></div>
+
+<h5>El atributo files:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\FileBag)</strong>, y contiene un arreglo de objetos de tipo <strong>(\Symfony\Component\HttpFoundation\File\UploadedFile)</strong>. listos para ser usados.</p>
+
+<p>Este contenedor es muy util a la hora de leer archivos subidos al servidor, porque los objetos que contiene ofrecen una serie de métodos que nos permitirán manejar los archivos facilmente.</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;foto&#39;</span><span class="p">);</span> 
+<span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
+<span class="c1">//guardar el archivo es tan sencillo como llamar al metodo move()</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$file</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getExtension</span><span class="p">();</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getMimeType</span><span class="p">();</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getFilename</span><span class="p">();</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getSize</span><span class="p">();</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getBasename</span><span class="p">();</span>
+    
+    <span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
+
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getError</span><span class="p">();</span> <span class="c1">//devuelve el número del error</span>
+<span class="p">}</span>
 </code></pre></div>
 
 <h2>Ventajas de usar el objeto Request</h2>
