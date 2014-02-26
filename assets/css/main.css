@@ -41,3 +41,6 @@ img.profile {
 .post-content p{
     text-align: justify;
 }
+
+.post-footer .share{}
+.post-footer .disqus{margin-top: 70px}
