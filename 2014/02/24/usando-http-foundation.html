@@ -11,13 +11,13 @@
     <meta name="MobileOptimized" content="320" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost/manuelj555.github.io/kasper-master/_site/assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost/manuelj555.github.io/kasper-master/_site/assets/css/screen.css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
     <!-- This is for syntax highlight -->
-    <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/manuelj555.github.io/kasper-master/_site/assets/css/syntax.css">
     <!-- Customisation  -->
-    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost/manuelj555.github.io/kasper-master/_site/assets/css/main.css" />
 
 </head>
 <body class="home-template">
@@ -54,7 +54,7 @@
 
 <ul>
 <li>  Subida de archivos al servidor.</li>
-<li>  Manejo de cookies (no se maneja igual que la sesión por ejemplo, <a href="http://es.php.net/manual/es/function.setcookie.php">cookies</a>).</li>
+<li>  Manejo de cookies.</li>
 <li>  Gestión de Sessión (Sesión por defecto, en Base de datos, en archivos, etc...).</li>
 <li>  Saber si una petición es asincrona.</li>
 <li>  Verificar que un parametro venga o exista en alguna de las variables super globales.</li>
@@ -105,10 +105,12 @@
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
 <span class="c1">//si no se encuentra el indice nombre en $_GET el método devuelve &#39;Manuel&#39; por defecto.</span>
 
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
 <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
 <span class="c1">//intentará devolver el valor de la siguiente manera: $_GET[&#39;usuario&#39;][&#39;nombre&#39;]</span>
 <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
 <h5>El atributo request:</h5>
@@ -123,10 +125,12 @@
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
 <span class="c1">//si no se encuentra el indice nombre en $_POST el método devuelve &#39;Manuel&#39; por defecto.</span>
 
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario.nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
 <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
 <span class="c1">//intentará devolver el valor de la siguiente manera: $_POST[&#39;usuario&#39;][&#39;nombre&#39;]</span>
 <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
 <h5>El atributo server:</h5>
@@ -140,6 +144,8 @@
 
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;SCRIPT_FILENAME&#39;</span><span class="p">);</span> 
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;DOCUMENT_ROOT&#39;</span><span class="p">);</span> 
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
 <p>Igualmente se pueden establecer valores por defecto para cuando el indice no exista.</p>
@@ -156,6 +162,8 @@
 <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> 
 
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
 <h5>El atributo files:</h5>
@@ -182,9 +190,97 @@
 <span class="p">}</span><span class="k">else</span><span class="p">{</span>
     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getError</span><span class="p">();</span> <span class="c1">//devuelve el número del error</span>
 <span class="p">}</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
+<h5>El atributo cookies:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong>, y contiene la información contenida en la variable global $_COOKIE, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;parametro&#39;</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
+</code></pre></div>
+
+<h5>El atributo headers:</h5>
+
+<p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\HeaderBag)</strong>, y contiene la información referente a cabeceras http de la petición.</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
+</code></pre></div>
+
+<p>Los indices contenidos en la colección estan normalizados y el minuscula.</p>
+
+<h2>El método Request::get()</h2>
+
+<p>Este método es un atajo para obtener un parametro que puede estar en algunas de las propiedades  query, attributes o request, y mantiene ese mismo orden de procedencia en la busqueda.</p>
+
+<p>Es muy util cuando por ejemplo se usa el routing de symfony y guardamos los parametros de la url en la propiedad atributes del objeto $request, o lo enviamos por get, este método igual encontrará dicho valor.</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Supongamos que estamos creando un web sin sistema de ruta pero usando el componente HttpFoundation, y estamos paginando una consulta:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="c1">// URL: http://example.com/paises/?page=3</span>
+
+<span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en $_GET y devolverá un 3</span>
+<span class="c1">//Paginado ...</span>
+<span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span>
+</code></pre></div>
+
+<p>Si luego en ese proyecto implementamos un sistema de routing, como por ejemplo el de symfony y guardamos los parametros de la url en attributes:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="l-Scalar-Plain">paises</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/paises/{page}</span>
+    <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">...</span>
+</code></pre></div>
+
+<p>Ahora el parametro no se envia por GET, sino que forma parte de la url, pero el routing de symfony, guarda el valor de ese parametro en <strong>$request-&gt;attributes</strong>, entonces nuestro cógido sigue funcionando sin tocar nada:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="c1">// URL: http://example.com/paises/3</span>
+
+<span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en attributes de request y devolverá un 3</span>
+<span class="c1">//Paginado ...</span>
+<span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span>
+</code></pre></div>
+
+<p>Este es un buen ejemplo de lo util que puede ser el método get() y el uso práctico de la propiedad attributes.</p>
+
+<h3>Metodos utiles de ParameterBag</h3>
+
+<p>Algunos métodos de interes:</p>
+
+<ul>
+<li>  <strong>get($path, $default = null, $deep = false)</strong>: devuelve un valor contenido en el índice pasado.</li>
+<li>  <strong>has($key)</strong>: devuelve true si existe el indice en la colección.</li>
+<li>  <strong>remove($key)</strong>: elimina un valor contenido en el índice especificado.</li>
+<li>  <strong>getAlnum($key, $default = &#39;&#39;, $deep = false)</strong>: devuelve el valor filtrado alfanumericamente.</li>
+<li>  <strong>getAlpha($key, $default = &#39;&#39;, $deep = false)</strong>: devuelve el valor filtrado alfabeticamente.</li>
+<li>  <strong>getDigits($key, $default = &#39;&#39;, $deep = false)</strong>: devuelve solo los digitos.</li>
+<li>  <strong>getInt($key, $default = &#39;&#39;, $deep = false)</strong>: devuelve el valor convertido en int.</li>
+</ul>
+
 <h2>Ventajas de usar el objeto Request</h2>
+
+<p>El objeto request ofrece una serie de métodos que nos facilitarán la vida al programar.</p>
 
 <p>Un ejemplo de ello puede ser conocer si la petición es mediante ajax o no, en php seria algo como:</p>
 
@@ -204,6 +300,67 @@
     <span class="c1">// AJAX</span>
 <span class="p">}</span>
 </code></pre></div>
+
+<p>Existen otros métodos en la clase como:</p>
+
+<ul>
+<li>  getLanguages().</li>
+<li>  getCharsets().</li>
+<li>  getBasePath().</li>
+</ul>
+
+<p>Entre otros métodos, que nada más hecharles una mirada interna, se puede apreciar que nos ahorran un monton de trabajo para obtener esos datos.</p>
+
+<h1>La clase Response</h1>
+
+<p>Esta clase permite manejar de forma simple el envio del contenido y las cabeceras que serán devueltas al servidor.</p>
+
+<p>Ejemplo de uso:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span> <span class="c1">//crea el objeto con las cabeceras</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span> <span class="c1">//envia las cabeceras y el contenido</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;No existe la Página :-(&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span> <span class="c1">//establecemos el codigo de estado de la respuesta</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="c1">//enviando una respuesta en formato json</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/json&#39;</span><span class="p">));</span> 
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="c1">// otra forma de hacerlo</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span> 
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isOk</span><span class="p">()){</span>
+    <span class="c1">//respuesta exitosa</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirection</span><span class="p">()){</span>
+    <span class="c1">//se está redireccionando</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirect</span><span class="p">(</span><span class="s1">&#39;/pais&#39;</span><span class="p">)){</span>
+    <span class="c1">//se está redireccionando a /pais</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isServerError</span><span class="p">()){</span>
+    <span class="c1">//error del servidor :-/</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Además el componente ofrece otra serie de clases de respuesta para facilitar aun más las cosas.</p>
+
+<h3>Clase RedirectResponse</h3>
+
+<h3>Clase JsonResponse</h3>
+
+<h3>Clase BinaryFileResponse</h3>
+
+<h3>Clase StreamedResponse</h3>
 
         </section>
 
@@ -227,15 +384,15 @@
 
             <section class="share">
                 <h4>Share this post</h4>
-                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el componente HttpFoundation&amp;url=/2014/02/24/usando-http-foundation.html"
+                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el componente HttpFoundation&amp;url=http://localhost/manuelj555.github.io/kasper-master/_site/2014/02/24/usando-http-foundation.html"
                     onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
                     <span class="hidden">Twitter</span>
                 </a>
-                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2014/02/24/usando-http-foundation.html"
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost/manuelj555.github.io/kasper-master/_site/2014/02/24/usando-http-foundation.html"
                     onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
                     <span class="hidden">Facebook</span>
                 </a>
-                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2014/02/24/usando-http-foundation.html"
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost/manuelj555.github.io/kasper-master/_site/2014/02/24/usando-http-foundation.html"
                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
                     <span class="hidden">Google+</span>
                 </a>
@@ -259,9 +416,9 @@
     </footer>-->
 
     
-    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
-    <script type="text/javascript" src="/assets/js/index.js"></script>
+    <script type="text/javascript" src="http://localhost/manuelj555.github.io/kasper-master/_site/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="http://localhost/manuelj555.github.io/kasper-master/_site/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://localhost/manuelj555.github.io/kasper-master/_site/assets/js/index.js"></script>
 
     <!-- Google Analytics Tracking code -->
 <!--    <script type="text/javascript">
