@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    <title>PHP + Symfony Tips - </title>
+    <title>PHP + Symfony Tips - Usando el componente HttpFoundation</title>
     <meta name="description" content="" />
 
     <meta name="HandheldFriendly" content="True" />
@@ -176,7 +176,7 @@
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
-<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;foto&#39;</span><span class="p">);</span> 
+<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foto&#39;</span><span class="p">);</span> 
 <span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
 <span class="c1">//guardar el archivo es tan sencillo como llamar al metodo move()</span>
 
@@ -219,13 +219,13 @@
 <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
 </code></pre></div>
 
-<p>Los indices contenidos en la colección estan normalizados y el minuscula.</p>
+<p>Los indices contenidos en la colección estan normalizados y en minuscula.</p>
 
 <h2>El método Request::get()</h2>
 
 <p>Este método es un atajo para obtener un parametro que puede estar en algunas de las propiedades  query, attributes o request, y mantiene ese mismo orden de procedencia en la busqueda.</p>
 
-<p>Es muy util cuando por ejemplo se usa el routing de symfony y guardamos los parametros de la url en la propiedad atributes del objeto $request, o lo enviamos por get, este método igual encontrará dicho valor.</p>
+<p>Es muy útil cuando por ejemplo se usa el routing de symfony y guardamos los parametros de la url en la propiedad atributes del objeto $request, o lo enviamos por get, este método igual encontrará dicho valor.</p>
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
@@ -234,7 +234,7 @@
 <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">);</span>
 </code></pre></div>
 
-<p>Supongamos que estamos creando un web sin sistema de ruta pero usando el componente HttpFoundation, y estamos paginando una consulta:</p>
+<p>Supongamos que estamos creando una web sin sistema de ruta pero usando el componente HttpFoundation, y estamos paginando una consulta:</p>
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
@@ -286,11 +286,11 @@
 
 <p>Un ejemplo de ello puede ser conocer si la petición es mediante ajax o no, en php seria algo como:</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="o">&lt;</span><span class="p">?</span><span class="n">php</span>
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="n">isset</span><span class="p">(</span><span class="vg">$_SERVER</span><span class="o">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="o">]</span><span class="p">)</span>
-    <span class="no">AND</span> <span class="n">strtolower</span><span class="p">(</span><span class="vg">$_SERVER</span><span class="o">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="o">]</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;xmlhttprequest&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="sr">//</span> <span class="no">AJAX</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span>
+    <span class="k">AND</span> <span class="nx">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span> <span class="o">===</span> <span class="s1">&#39;xmlhttprequest&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// AJAX</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -311,7 +311,7 @@
 <li>  getBasePath().</li>
 </ul>
 
-<p>Entre otros métodos, que nada más hecharles una mirada interna, se puede apreciar que nos ahorran un monton de trabajo para obtener esos datos.</p>
+<p>Entre otros métodos, que nada más hecharles una mirada interna, se puede apreciar que nos ahorran un montón de trabajo para obtener esos datos.</p>
 
 <h1>La clase Response</h1>
 
@@ -394,7 +394,7 @@
 
 <h4>Clase RedirectResponse</h4>
 
-<p>Esta clase crea una respuesta con el contenido y cabaceras correspondientes a un redirección http, acepta los siguientes parametros en su constructor:</p>
+<p>Esta clase crea una respuesta con el contenido y cabeceras correspondientes a un redirección http, acepta los siguientes parametros en su constructor:</p>
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
@@ -440,7 +440,7 @@
 
 <h4>Clase JsonResponse</h4>
 
-<p>Esta clase crea una respuesta con el contenido y cabaceras para el formato json, acepta los siguientes parametros en su constructor:</p>
+<p>Esta clase crea una respuesta con el contenido y cabeceras para el formato json, acepta los siguientes parametros en su constructor:</p>
 
 <div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
 
