@@ -302,6 +302,20 @@
 
 <p>Tambien podemos apreciar en el método <strong>getRouterService</strong> que el arreglo del tercer argumento tiene data estática, y no se buscará ningun parametro externo en su creación, esto da un gran rendimiento.</p>
 
+<h2>Inyectando en contenedor en un servicio</h2>
+
+<p>Tambien es posible pasarle a un servicio el contenedor, de la siguiente manera:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">mi_servicio</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Mi_Clase_Cualquiera</span>
+        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">service_container</span>
+          <span class="c1"># - otros argumentos</span>
+</code></pre></div>
+
+<p>El container por defecto se agrega como servicio con el id <strong>service_container</strong>, por lo que podemos inyectarlo y usarlo como cualquier otro servicio.</p>
+
 <p>Bueno espero que este post haya sido de ayuda para implementar el componente en aplicaciones php, o al menos ayude a comprender un poco el funcionamiento interno del mismo.</p>
 
         </section>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>PHP + Symfony Tips - El componente DependencyInjection (Agregando el EventDispatcher)</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/">
+                
+                <span class="blog-title">PHP + Symfony Tips</span>
+                 
+            </a>
+        </header>
+
+        <span class="post-meta">
+            <time datetime="2014-03-13">13 Mar 2014</time>
+            
+            on
+            
+            
+       	</span>
+
+        <h1 class="post-title">El componente DependencyInjection (Agregando el EventDispatcher)</h1>
+
+        <section class="post-content">
+            <p>Esta es una continuación de los posts sobre el uso del <a href="/2014/02/27/inyeccion-de-dependencias.html">Componente DependencyInjection 1</a>, <a href="/2014/03/02/inyeccion-de-dependencias-extensiones.html">Componente DependencyInjection 2</a>, y tratará sobre la integración del componente <a href="/2014/03/09/despachando-eventos.html">EventDispatcher</a>y de su integración con el contenedor, por lo que es importante haber leido los post anteriores.</p>
+
+<h2>Instalación</h2>
+
+<p>Debido a que lo que se pretende en esta secuencia de post es ir añadiendo componentes de symfony a un proyecto, y ya para estos ejemplos hemos venido usando una serie de componentes (HttpFoundation, Routing, Debug, DependencyInjection, EventDispatcher, Config, Yaml), lo mejor será instalar todos los componentes de una vez, y así, al ir necesitando agregar nuevas funcionalidades con estos componentes no hay que estarlos agregando al composer.</p>
+
+<p>Entonces en el composer.json colocamos lo siguiente:</p>
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;symfony/symfony&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;autoload&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;psr-0&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;app/src/&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Con esa linea del require incorporamos todos los componentes de symfony.</p>
+
+<p>Ahora solo hace falta ejecutar el comando:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">php composer install
+</code></pre></div>
+<h4>Organizando-el-código</h4>
+
+<p>La organización del código se mantiene igual a la del <a href="/2014/02/27/inyeccion-de-dependencias.html">post anterior</a> en la sección <strong>Organizando el código</strong>.</p>
+
+<h2>Creando el servicio despachador de eventos</h2>
+
+<p>Ahora registraremos nuestro servicio en el archivo <strong>app/config/services.yml</strong>:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
+<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">event_dispatcher</span><span class="p-Indicator">:</span>
+        <span class="c1">#class: Symfony\Component\EventDispatcher\EventDispatcher</span>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher</span>
+        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">service_container</span> <span class="c1">#inyectamos el container</span>
+</code></pre></div>
+
+<p>He colocado dos claves <strong>class</strong> la primera (que está comentada) es la clase que comunmente usariamos, sin embargo, aprovecharemos la segunda para poder registrar servicios como escuchas de eventos. <a href="http://gitnacho.github.io/symfony-docs-es/components/event_dispatcher/container_aware_dispatcher.html">Más info acá</a>.</p>
+
+<p>Esto ultimo lo lograremos agregando un <strong>CompilerPass</strong> que se encuentra en el componente <strong><a href="https://github.com/symfony/symfony/blob/master/src/Symfony/Component/HttpKernel/DependencyInjection/RegisterListenersPass.php">HttpKerne</a></strong> </p>
+
+<p><strong>NOTA:</strong> Debo aclarar que pronto se tendrá disponible dicho compiler desde el propio componente <a href="https://github.com/symfony/symfony/blob/master/src/Symfony/Component/EventDispatcher/DependencyInjection/RegisterListenersPass.php">EventDispatcher</a>, es más ya está disponible, sin embargo no está el commit en una rama estable del composer, por lo que a día de hoy (07-03-2014) mientras se realiza este post, se debe usar el del HttpKernel.</p>
+
+<p>Para agregar el compiler debemos hacerlo en el archivo <strong>container_configuration.php</strong>:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Application\Extension\ApplicationExtension</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\Config\Resource\FileResource</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\HttpKernel\DependencyInjection\RegisterListenersPass</span><span class="p">;</span>
+
+<span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">addResource</span><span class="p">(</span><span class="k">new</span> <span class="nx">FileResource</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">));</span>
+
+<span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">ApplicationExtension</span><span class="p">(</span><span class="nx">APP_PATH</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">RegisterListenersPass</span><span class="p">(),</span> <span class="c1">//acá agregamos el compiler para el event_dispatcher</span>
+    <span class="p">),</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p>Ya tenemos agregado nuestro CompilerPass, este se encargará de registrar los servicios que estén escuchando eventos en el event_dispatcher.</p>
+
+<p>Es importante resaltar que si nuestro servicio despachador de eventos tiene un nombre diferente de <strong>event_dispatcher</strong>, debemos indicar al Compiler el nombre del servicio pasandalo como un string en el primer argumento del constructor:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">new</span> <span class="nx">RegisterListenersPass</span><span class="p">(</span><span class="s1">&#39;mi_event_dispatcher&#39;</span><span class="p">);</span> <span class="c1">//si nuestro servicio se llamara mi_event_dispatcher</span>
+</code></pre></div>
+
+<p>Ahora ya podemos registrar servicios como escuchas de eventos.</p>
+
+<h2>Registrando escuchas:</h2>
+
+<p>Acá hay info de como se registran los escuchas de eventos en symfony:</p>
+
+<ul>
+<li><a href="http://gitnacho.github.io/symfony-docs-es/cookbook/service_container/event_listener.html">Cómo crear un escucha de evento</a>.</li>
+</ul>
+
+<p>De igual forma lo haremos acá en este ejemplo.</p>
+
+<h4>Creando el Escucha</h4>
+
+<p>Lo primero que haremos será crear una clase cualquiera que escuche un evento particular:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">Application\Listener</span><span class="p">;</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * @author Manuel Aguirre &lt;programador.manuel@gmail.com&gt;</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">EjemploListener</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">imprimirHola</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">&quot;Hola desde &lt;b&gt;%s&lt;/b&gt;!!!%s&quot;</span><span class="p">,</span> <span class="nx">__METHOD__</span><span class="p">,</span> <span class="nx">PHP_EOL</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Ahora la declararemos como un servicio en el contenedor, y le diremos que escuche el evento <strong>saludo</strong>:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
+<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">event_dispatcher</span><span class="p-Indicator">:</span>
+        <span class="c1">#class: Symfony\Component\EventDispatcher\EventDispatcher</span>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher</span>
+        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">service_container</span> <span class="c1">#inyectamos el container</span>
+
+    <span class="c1"># Añadimos nuestro escucha</span>
+
+    <span class="l-Scalar-Plain">ejemplo_listener</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Application\Listener\EjemploListener</span>
+        <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="p-Indicator">{</span> <span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">saludo</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">imprimirHola</span> <span class="p-Indicator">}</span>
+            
+</code></pre></div>
+
+<p>El tructo está en agregar un tag llamado <strong>kernel.event_listener</strong> (Esto se puede cambiar en el CompilerPass), donde definimos el evento que escuchamos, gracias al indice <strong>event</strong>, y definimos además el método que será invocado por el listener, en nuestro caso <strong>imprimirHola</strong>.</p>
+
+<h6>Que logramos con el tag kener.eventListener</h6>
+
+<p>Si miramos el container cacheado veremos:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//app/cache/container.php</span>
+<span class="o">...</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getEventDispatcherService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;event_dispatcher&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+
+    <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">addListenerService</span><span class="p">(</span><span class="s1">&#39;saludo&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">&#39;ejemplo_listener&#39;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s1">&#39;imprimirHola&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$instance</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Hemos logrado que cuando se cachee el container, el event_dispatcher agrege nuestro escucha para el evento <strong>saludo</strong>, todo esto gracias al uso de los <strong>tags</strong> y el <strong>RegisterListenersPass</strong>.</p>
+
+<h2>Disparando el Evento</h2>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="nv">$dispatcher</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;event_dispatcher&#39;</span><span class="p">);</span>
+
+<span class="nv">$dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;saludo&#39;</span><span class="p">);</span>
+</code></pre></div>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            
+            <section class="author">
+                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <article>
+                    <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
+                    <p> 
+                        Desarrollador Web, (PHP, HTML, css, javascript).<br/>
+                        Intento usar Symfony2 y/o sus componentes en mis proyectos.<br/>
+                        Apasionado por el aprendizaje y loco por la Programación :-)
+                    </p>
+                </article>
+            </section>                
+            
+
+            <section class="share">
+                <h4>Comparte</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=El componente DependencyInjection (Agregando el EventDispatcher)&amp;url=http://manuelj555.github.io/2014/03/13/inyeccion-de-dependencias-despachador-eventos-rutas.html"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');
+                           return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://manuelj555.github.io/2014/03/13/inyeccion-de-dependencias-despachador-eventos-rutas.html"
+                   onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');
+                           return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://manuelj555.github.io/2014/03/13/inyeccion-de-dependencias-despachador-eventos-rutas.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');
+                           return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+            
+            <section class="disqus">
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'phpsymfonytipsmanuelj555'; // required: replace example with your forum shortname
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function() {
+                        var dsq = document.createElement('script');
+                        dsq.type = 'text/javascript';
+                        dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+<!--    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>-->
+
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+<!--    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   -->
+</body>
+</html>
