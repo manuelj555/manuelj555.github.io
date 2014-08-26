@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>PHP + Symfony Tips - Usando el Event Dispatcher de Symfony con un Ejemplo Práctico</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="/">
+                
+                <span class="blog-title">PHP + Symfony Tips</span>
+                 
+            </a>
+        </header>
+
+        <span class="post-meta">
+            <time datetime="2014-08-26">26 Aug 2014</time>
+            
+            on
+            
+            
+       	</span>
+
+        <h1 class="post-title">Usando el Event Dispatcher de Symfony con un Ejemplo Práctico</h1>
+
+        <section class="post-content">
+            <p>Continuando con el post sobre el uso de un <a href="/2014/06/15/extension-mediante-eventos.html">Despachador de Eventos</a>, crearemos un ejemplo que permita mostrar como podemos usarlo cuando desarrollamos con Symfony.</p>
+
+<p>La idea es aprobar a ciertos usuarios en una aplicación luego de que estos se han registrado, además, al realizar la aprobación se quiere que le llegue un correo a dicho usuario informandole que su cuenta ha sido habilitada.</p>
+
+<h2>La clase User</h2>
+
+<p>Comenzaremos con una clase que será nuestro modelo o entidad, el código de la misma es el siguiente:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$email</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$status</span><span class="p">;</span>
+
+    <span class="c1">// ...getters y setters</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>La clase UserEvents</h2>
+
+<p>Esta clase simplemente contendrá constantes que nos ayudarán a documentar los eventos y nos permitirán usar dichas constantes en vez de strings al despachar eventos, lo que ayuda a minimizar los errores al tipear.</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle</span><span class="p">;</span>
+
+<span class="k">final</span> <span class="k">class</span> <span class="nc">UserEvents</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Este evento se ejecuta antes de cambiar el estatus del usuario a aprobado</span>
+<span class="sd">     * Los listener de este evento deben esperar una instancia de:</span>
+<span class="sd">     * </span>
+<span class="sd">     * Symfony\Component\EventDispatcher\GenericEvent</span>
+<span class="sd">     * </span>
+<span class="sd">     * Si alguno de los listener cancela la propagación del </span>
+<span class="sd">     * evento ($event-&gt;stopPropagation()), la aprobación</span>
+<span class="sd">     * no se realiza, ni se llama al evento post_approve.</span>
+<span class="sd">     */</span>
+    <span class="k">const</span> <span class="no">PRE_APPROVE</span> <span class="o">=</span> <span class="s1">&#39;my_bundle.user.pre_approve&#39;</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Este evento se ejecuta despues de cambiar el estatus del usuario a aprobado</span>
+<span class="sd">     * Los listener de este evento deben esperar una instancia de:</span>
+<span class="sd">     * </span>
+<span class="sd">     * Symfony\Component\EventDispatcher\GenericEvent</span>
+<span class="sd">     * </span>
+<span class="sd">     * Si en el evento pre_aprove, se cancela la propagación de </span>
+<span class="sd">     * dicho evento ($event-&gt;stopPropagation()),</span>
+<span class="sd">     * el evento post_approve no es disparado.</span>
+<span class="sd">     */</span>
+    <span class="k">const</span> <span class="no">POST_APPROVE</span> <span class="o">=</span> <span class="s1">&#39;my_bundle.user.post_approve&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2>La clase UserManager</h2>
+
+<p>Es una buena práctica crear un manager para nuestros modelos, y así no tener la lógica de los mismos directo en los controladores (recordemos: controladores flacos, modelos gordos).</p>
+
+<p>Para efectos de este ejemplo, nuestro manager solo tendrá un método relevante para el manejo de los usuarios, el mismo tendrá por nombre <strong>approve</strong> y esperará una instancia de <strong>MyBundle\Entity\User</strong> que será el usuario que aprobaremos:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Model</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">MyBundle\UserEvents</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityManager</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventDispatcherInterface</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserManager</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$em</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$dispatcher</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">EntityManager</span> <span class="nv">$em</span><span class="p">,</span> <span class="nx">EventDispatcherInterface</span> <span class="nv">$dispatcher</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span> <span class="o">=</span> <span class="nv">$em</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span> <span class="o">=</span> <span class="nv">$dispatcher</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">approve</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">PRE_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isPropagationStopped</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">false</span><span class="p">;</span> <span class="c1">//cancelamos la aprobación</span>
+        <span class="p">}</span>
+
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">STATUS_APPROVED</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+
+        <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">POST_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Como se puede ver, el código del método <strong>approve</strong> es bastante simple, dispara dos eventos y en medio de los mismos ejecuta el cambio de estatus y lo persiste en la BD. </p>
+
+<p>Los eventos que ejecutamos son <strong>my_bundle.user.pre_approve</strong> y <strong>my_bundle.user.post_approve</strong>, y le pasamos una instancia de <strong><a href="http://symfony.com/doc/current/components/event_dispatcher/generic_event.html">Symfony\Component\EventDispatcher\GenericEvent</a></strong>. Pudimos haber creado una clase Event propia, pero como solo pasaremos el objeto $user, no hace falta, para casos donde queramos pasar más objetos, o tener mejor control de los eventos, podemos crearnos nuestras clases Event personalizadas.</p>
+
+<h2>Registrando el UserManager en el Container</h2>
+
+<p>Nuestro UserManager necesita que se le pasen dos objetos para realizar sus tareas de aprobación, estos son el entity manager de doctrine y el event dispatcher de symfony, para hacer esto, registraremos nuestra clase como un servicio en el contenedor y le inyectamos los servicios/objetos que necesita:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Model\UserManager</span>
+        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">doctrine.orm.default_entity_manager</span>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">event_dispatcher</span>
+</code></pre></div>
+
+<p>Con esto ya tenemos registrado nuestro manager como servicio, y podemos acceder a el por medio del id <strong>my_bundle.user_manager</strong>.</p>
+
+<h2>El controlador</h2>
+
+<p>Ahora creamos nuestra acción en algún controlador, para que se realize el proceso de aprobación:</p>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Controller</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * @ParamConverter(&quot;user&quot;, class=&quot;MyBundle:user&quot;) usamos anotaciones :)</span>
+<span class="sd">     *</span>
+<span class="sd">     * @link http://symfony.com/doc/master/bundles/SensioFrameworkExtraBundle/annotations/converters.html</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">approveAction</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;my_bundle.user_manager&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">approve</span><span class="p">(</span><span class="nv">$user</span><span class="p">)){</span>
+            <span class="c1">// enviamos un flash por ejemplo</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Nuestro controlador ha quedado muy simple, ya que la mayor parté del código (lógica de negocio) se encuentra en el user_manager.</p>
+
+<h2>Y el correo?</h2>
+
+<p>Notarán que el método <strong>approve</strong> de la clase <strong>UserManager</strong> no realiza el envío de correo al aprobar al usuario, esto es porque esta tarea se la dejaremos a un listener que crearemos a continuación.</p>
+
+<h2>El Listener para el Correo</h2>
+
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendApprovedEmailListener</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$mailer</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$mailer</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span> <span class="o">=</span> <span class="nv">$mailer</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Este método será el encargado de enviar el correo electrónico luego de</span>
+<span class="sd">     * que el usuario haya sido aprobado.</span>
+<span class="sd">     *</span>
+<span class="sd">     * Para más info sobre GenericEvent ver:</span>
+<span class="sd">     * @link http://symfony.com/doc/current/components/event_dispatcher/generic_event.html</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">onPostApprove</span><span class="p">(</span><span class="nx">GenericEvent</span> <span class="nv">$event</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getSubject</span><span class="p">();</span> <span class="c1">//nos devuelve el objeto User</span>
+
+        <span class="nv">$message</span> <span class="o">=</span> <span class="nx">\Swift_Message</span><span class="o">::</span><span class="na">newInstance</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">setSubject</span><span class="p">(</span><span class="s1">&#39;Cuenta Aprobada!&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">setFrom</span><span class="p">(</span><span class="nv">$from</span><span class="p">)</span> <span class="c1">//lo sacamos de algún lado (container, bd, ...)</span>
+            <span class="o">-&gt;</span><span class="na">setTo</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">())</span>
+            <span class="o">-&gt;</span><span class="na">setBody</span><span class="p">(</span><span class="nv">$body</span><span class="p">);</span> <span class="c1">//lo sacamos de algún lado (bd, twig, ...)</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Ya tenemos nuestro listener creado, ahora debemos registrarlo en el contenedor y agregarle las etiquetas que lo identifiquen como un escucha de eventos:</p>
+
+<div class="highlight"><pre><code class="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
+   <span class="l-Scalar-Plain">....</span>
+
+  <span class="l-Scalar-Plain">my_bundle.listener.user.send_approved_email</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Listener\SendApprovedEmailListener</span>
+    <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">mailer</span>
+    <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
+      <span class="p-Indicator">-</span> <span class="p-Indicator">{</span><span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">my_bundle.user.post_approve</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">onPostApprove</span><span class="p-Indicator">}</span>
+</code></pre></div>
+
+<p>Listo!!!. Gracias a la etiqueta <strong>kernel.event_listener</strong> de symfony, nuestra clase está escuchando el evento <strong>my_bundle.user.post_approve</strong>, y cuando el mismo sea disparado en el UserManager al aprobar, el método <strong>onPostApprove</strong> del listener será invocado y se enviará el correo. Todo esto sin haber tenido que modificar el código de aprobación de usuarios.</p>
+
+<p>Espero que este ejemplo sirva para que de ahora en adelante aprovechemos mejor las ventajas que brinda usar el despachador de eventos de symfony, ya que así tendremos la posibilidad de crear códigos muy simples y extensibles de manera elegante y sencilla.</p>
+
+<p>Más adelante crearemos un listener que verifique el estatus del usuario antes de aprobarlo, ya que por ejemplo, si un usuario fué previamente aprobado, o rechazado, no debería poderse aprobar.</p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            
+            <section class="author">
+                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <article>
+                    <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
+                    <p> 
+                        Desarrollador Web, (PHP, HTML, css, javascript).<br/>
+                        Intento usar Symfony2 y/o sus componentes en mis proyectos.<br/>
+                        Apasionado por el aprendizaje y loco por la Programación :-)
+                    </p>
+                </article>
+            </section>                
+            
+
+            <section class="share">
+                <h4>Comparte</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el Event Dispatcher de Symfony con un Ejemplo Práctico&amp;url=http://manuelj555.github.io/2014/08/26/extension-mediante-eventos-cambio-status.html"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');
+                           return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://manuelj555.github.io/2014/08/26/extension-mediante-eventos-cambio-status.html"
+                   onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');
+                           return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://manuelj555.github.io/2014/08/26/extension-mediante-eventos-cambio-status.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');
+                           return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+            
+            <section class="disqus">
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'phpsymfonytipsmanuelj555'; // required: replace example with your forum shortname
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function() {
+                        var dsq = document.createElement('script');
+                        dsq.type = 'text/javascript';
+                        dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+<!--    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
+        </div>
+    </footer>-->
+
+    
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+<!--    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>   -->
+</body>
+</html>
