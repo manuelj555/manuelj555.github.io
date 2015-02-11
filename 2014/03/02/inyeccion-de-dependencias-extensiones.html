@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="/">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -68,17 +68,16 @@
 
 <p>Para hacer un uso práctico de las extensiones, crearemos el archivo <strong>app/container_configuration.php</strong> en el cual registraremos las extensiones y los Compilers de nuestra app:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span><span class="c1">//acá vamos a ir añadiendo las instancias de las extensiones</span>
     <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span> <span class="c1">//y acá las instancias de los Compiler Passes</span>
-<span class="p">);</span>
-</code></pre></div>
+<span class="p">);</span></code></pre></div>
 
 <p>Ahora vamos a modificar el archivo <strong>app/bootstrap.php</strong> para que quede de la siguiente manera:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
@@ -117,14 +116,13 @@
 <span class="p">}</span>
 
 <span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
-<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span>
-</code></pre></div>
+<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></div>
 
 <p>Como se puede ver se agregaron dos <strong>foreach</strong> que registran las extensiones y compilers al container, además, se han quitado los seteos de los parametros <strong>app_path</strong> y <strong>debug</strong>, pues estos serán establecidos mediante extensiones.</p>
 
 <p>Procedemos ahora a crear nuestra primera extensión, pero antes vamos a añadir un directorio al autoloader para que busque nuestras clases allí, en el composer.json añadimos:</p>
 
-<div class="highlight"><pre><code class="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
         <span class="nt">&quot;symfony/dependency-injection&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
@@ -136,17 +134,16 @@
             <span class="nt">&quot;&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;app/src/&quot;</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Luego ejecutamos el comando:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php composer dump-autoload
+<div class="highlight"><pre><code class="language-text" data-lang="text">php composer dump-autoload
 </code></pre></div>
 <h2>Creando la Extensión</h2>
 
 <p>Ahora creamos la primera extensión en <strong>app/src/Application/Extension/ApplicationExtension.php</strong>:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Extension/ApplicationExtension.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Extension/ApplicationExtension.php</span>
 
 <span class="k">namespace</span> <span class="nx">Application\Extension</span><span class="p">;</span>
 
@@ -175,12 +172,11 @@
         <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isDebug</span><span class="p">);</span>
     <span class="p">}</span>
 
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Y agregamos la extension al <strong>container_configuration.php</strong>:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Application\Extension\ApplicationExtension</span><span class="p">;</span>
 
@@ -189,8 +185,7 @@
         <span class="k">new</span> <span class="nx">ApplicationExtension</span><span class="p">(</span><span class="nx">APP_PATH</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">),</span>
     <span class="p">),</span>
     <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span>
-<span class="p">);</span>
-</code></pre></div>
+<span class="p">);</span></code></pre></div>
 
 <p>Ya hemos registrado nuestra primera extensión al container, sin embargo nuestra extensión no será cargada, esto es debido a que por defecto el componente utiliza un CompilerPass (<a href="https://github.com/symfony/DependencyInjection/blob/master/Compiler/MergeExtensionConfigurationPass.php#L40">MergeExtensionConfigurationPass</a>) que solo carga las extensiones que poseen configuración definida en los archivos de configuración (YML, PHP, XML, ...), y en nuestro caso no hemos definido ninguna configuración.</p>
 
@@ -200,7 +195,7 @@
 
 <p>Extenderemos de la clase <strong>MergeExtensionConfigurationPass</strong> y sobreescribiremos el método <strong>process</strong>, luego le diremos al contenedor que el compiler que cargará las extensiones será el nuestro. El código del compiler es el siguiente:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Compiler/MergeExtensionsPass.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Compiler/MergeExtensionsPass.php</span>
 
 <span class="k">namespace</span> <span class="nx">Application\Compiler</span><span class="p">;</span>
 
@@ -226,12 +221,11 @@
         <span class="k">parent</span><span class="o">::</span><span class="na">process</span><span class="p">(</span><span class="nv">$container</span><span class="p">);</span>
     <span class="p">}</span>
 
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Este compiler podemos agregarlo al archivo container_configuration.php, pero para hacer mejor las cosas, lo estableceremos directamente en el contenedor de la siguiente manera:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getCompiler</span><span class="p">()</span>
             <span class="o">-&gt;</span><span class="na">getPassConfig</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setMergePass</span><span class="p">(</span><span class="k">new</span> <span class="nx">MergeExtensionsPass</span><span class="p">());</span>
@@ -240,12 +234,11 @@
 <span class="c1">// contiene los compilers que por defecto usa el container, estos podemos</span>
 <span class="c1">// cambiarlos llamando a algunos métodos como el que hemos usado en este</span>
 <span class="c1">// caso particular (setMergePass)</span>
-<span class="c1">// Con esto hacemos que el compiler use nuestra clase para cargar las extensiones.</span>
-</code></pre></div>
+<span class="c1">// Con esto hacemos que el compiler use nuestra clase para cargar las extensiones.</span></code></pre></div>
 
 <p>Dicha linea de código la debemos agregar al archivo <strong>app/bootsrap.php</strong>, quedando su código de la siguiente manera:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Application\Compiler\MergeExtensionsPass</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
@@ -288,8 +281,7 @@
 <span class="p">}</span>
 
 <span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
-<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span>
-</code></pre></div>
+<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></div>
 
 <p>Con esto ya podemos registrar nuestras propias extensiones al contenedor, Más adelante veremos como hacer un uso más avanzado de las extensiones y compilers, usando el componente EventDispatcher y el Routing de Symfony.</p>
 
@@ -300,7 +292,7 @@
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -360,9 +352,9 @@
 
 
 <!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <a class="subscribe icon-feed" href="http://manuelj555.github.io/rss.xml"><span class="tooltip">Subscribe!</span></a>
         <div class="inner">
-             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="copyright">All content copyright <a href="http://manuelj555.github.io/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
              <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
         </div>
     </footer>-->

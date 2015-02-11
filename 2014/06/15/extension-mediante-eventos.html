@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="/">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -54,20 +54,19 @@
 
 <p>Veamos un ejemplo de código, tenemos una rutina que aprueba una compra:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
 
 <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
 
-<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
-</code></pre></div>
+<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span></code></pre></div>
 
 <p>Nuestro código se encarga simplemente de actualizar un campo de un registro en la bd, esa es todo su objetivo, y lo hace muy bien.</p>
 
 <p>Pero supongamos que luego nos piden enviar un correo al usuario que hizo la compra, al momento de ser esta aprobada. Generalmente hacemos algo como lo siguente:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
 
@@ -76,12 +75,11 @@
 <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
 <span class="c1">//codigo añadido</span>
 <span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
-<span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span>
-</code></pre></div>
+<span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span></code></pre></div>
 
 <p>Ahora nos piden, que solo un usuario administrador pueda aprobar la compra:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">if</span><span class="p">(</span> <span class="nv">$usarioActual</span><span class="o">-&gt;</span><span class="na">getPerfil</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;PERFIL_ADMIN&#39;</span> <span class="p">){</span>
 
@@ -93,8 +91,7 @@
     <span class="c1">//codigo añadido</span>
     <span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
     <span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Como se puede ver, cada vez que nos piden agregar cierta funcionalidad ó validaciones, debemos tocar el código original del proceso de aprobación de compras, lo cual lo hace cada vez más complicado e inmantenible. Y estos son agregados faciles de implementar, nos pueden pedir cosas más complejas como verificar que se cumplan ciertas condiciones en la comprar para aprobarla, o que solo se aprueben en ciertos horarios, todo esto produce muchos cambios en nuestro código.</p>
 
@@ -102,7 +99,7 @@
 
 <p>Vamos a implementar ahora el patron Observador, haciendo uso del componente <a href="/2014/03/09/despachando-eventos.html">EventDispatcher</a> de symfony. La idea es disparar algunos eventos en el proceso de aprobación de compras, para que luego, si debemos realizar tareas adicionales, las mismas sean ejecutadas en listeners de nuestros eventos.</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
 
@@ -116,8 +113,7 @@
 
     <span class="nv">$event</span> <span class="o">=</span> <span class="nx">ApprovedCompraEvent</span><span class="p">(</span><span class="nv">$compra</span><span class="p">,</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">());</span>
     <span class="nv">$eventDispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;compra.aprobacion&#39;</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Como ven hemos añadido dos eventos al proceso de aprobación:</p>
 
@@ -128,7 +124,7 @@
 
 <h2>Validando el Perfil</h2>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
 <span class="k">class</span> <span class="nc">ValidarPerfil</span>
 <span class="p">{</span>
@@ -141,14 +137,13 @@
             <span class="c1">//como ven, hemos añadido una validacion del perfil sin modificar el código de aprobación</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Ahora, gracias al listener, cuando el proceso de aprobación dispare el evento <strong>compra.pre_aprobacion</strong>, se ejecutará el listener, y si el perfil no es <strong>PERFIL_ADMIN</strong>, se llamará a un metodo de la clase event para avisar que hemos cancelado la aprobación.</p>
 
 <h2>Enviando Emails</h2>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
 <span class="k">class</span> <span class="nc">EnvioEmailAprobacion</span>
 <span class="p">{</span>
@@ -158,8 +153,7 @@
 
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">());</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Como se puede ver, gracias a un despachador de eventos, y usando el patrón Observador, podemos extender las funcionalidades de nuestros procesos de manera óptima.</p>
 
@@ -172,7 +166,7 @@
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -232,9 +226,9 @@
 
 
 <!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <a class="subscribe icon-feed" href="http://manuelj555.github.io/rss.xml"><span class="tooltip">Subscribe!</span></a>
         <div class="inner">
-             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="copyright">All content copyright <a href="http://manuelj555.github.io/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
              <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
         </div>
     </footer>-->

@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="/">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -60,7 +60,7 @@
 
 <p>Tenemos el siguiente archivo twig (<strong>views/macros/buttons.html.twig</strong>):</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="c">{# Los &quot;-&quot; guiones que se ven entre las definicones de etiquetas {%- y -%} son para quitar espacios en blanco y minimizar el código generado #}</span><span class="x"></span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="c">{# Los &quot;-&quot; guiones que se ven entre las definicones de etiquetas {%- y -%} son para quitar espacios en blanco y minimizar el código generado #}</span><span class="x"></span>
 
 <span class="c">{# Macros para botones de formulario #}</span><span class="x"></span>
 <span class="cp">{%</span>- <span class="k">macro</span> <span class="nv">button</span><span class="o">(</span><span class="nv">text</span><span class="o">,</span> <span class="nv">type</span><span class="o">,</span> <span class="nv">icon</span> <span class="o">=</span> <span class="nv">null</span><span class="o">)</span> -<span class="cp">%}</span><span class="x"></span>
@@ -126,12 +126,11 @@
 <span class="cp">{%</span>- <span class="k">macro</span> <span class="nv">save</span><span class="o">(</span><span class="nv">text</span><span class="o">)</span> -<span class="cp">%}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">import</span> <span class="p">_</span><span class="nv">self</span> <span class="k">as</span> <span class="nv">btn</span> <span class="cp">%}</span><span class="x"></span>
 <span class="cp">{{</span> <span class="nv">btn.submit</span><span class="o">(</span><span class="nv">text</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;Guardar&#39;</span><span class="o">))</span> <span class="cp">}}</span><span class="x"></span>
-<span class="cp">{%</span>- <span class="k">endmacro</span> -<span class="cp">%}</span><span class="x"></span>
-</code></pre></div>
+<span class="cp">{%</span>- <span class="k">endmacro</span> -<span class="cp">%}</span><span class="x"></span></code></pre></div>
 
 <p>Ahora los utilizamos en nuestras otras vistas:</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="cp">{%</span> <span class="k">import</span> <span class="s1">&#39;macros/buttons.html.twig&#39;</span> <span class="k">as</span> <span class="nv">btn</span> <span class="cp">%}</span><span class="x"></span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="cp">{%</span> <span class="k">import</span> <span class="s1">&#39;macros/buttons.html.twig&#39;</span> <span class="k">as</span> <span class="nv">btn</span> <span class="cp">%}</span><span class="x"></span>
 
 <span class="cp">{{</span> <span class="nv">btn.link</span><span class="o">(</span><span class="s1">&#39;/url&#39;</span><span class="o">,</span> <span class="s1">&#39;Home&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
 
@@ -140,8 +139,7 @@
 
 <span class="cp">{{</span> <span class="nv">btn.button</span><span class="o">(</span><span class="s1">&#39;Texto del boton&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
 
-<span class="cp">{{</span> <span class="nv">btn.primaryLink</span><span class="o">(</span><span class="s1">&#39;/url&#39;</span><span class="o">,</span> <span class="s1">&#39;Agregar Producto&#39;</span><span class="o">,</span> <span class="s1">&#39;tags&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-</code></pre></div>
+<span class="cp">{{</span> <span class="nv">btn.primaryLink</span><span class="o">(</span><span class="s1">&#39;/url&#39;</span><span class="o">,</span> <span class="s1">&#39;Agregar Producto&#39;</span><span class="o">,</span> <span class="s1">&#39;tags&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span></code></pre></div>
 
 <p>La ventaja de usar las macros en ves de escribir el código directamente en cada vista, es que codificamos menos, y si el día de mañana queremos cambiar por ejemplo el color del botón de submit, solo lo modificamos una vez en nuestra macro, y todas las demás vistas tendran el cambio sin hacer nada.</p>
 
@@ -155,7 +153,7 @@
 
 <p>Acá el código que en principio he implementado (<strong>views/panel.html.twig</strong>):</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="x">&lt;div class=&quot;panel panel-</span><span class="cp">{{</span> <span class="nv">type</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;default&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="x">&lt;div class=&quot;panel panel-</span><span class="cp">{{</span> <span class="nv">type</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;default&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span>
 
 <span class="x">    &lt;div class=&quot;panel-heading&quot;&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">header</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x">&lt;/div&gt;</span>
 
@@ -163,12 +161,11 @@
 
 <span class="x">    &lt;div class=&quot;panel-footer&quot;&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">footer</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x">&lt;/div&gt;</span>
 
-<span class="x">&lt;/div&gt;</span>
-</code></pre></div>
+<span class="x">&lt;/div&gt;</span></code></pre></div>
 
 <p>Ahora en cualquier vista twig podemos embeber el template que contiene el panel, y llenar los bloques con información:</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;base.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;base.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
 
 <span class="cp">{%</span> <span class="k">block</span> <span class="nv">page_title</span> <span class="cp">%}</span><span class="x">Page title</span><span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
 
@@ -203,14 +200,13 @@
 
 <span class="x">    </span><span class="cp">{%</span> <span class="k">endembed</span> <span class="cp">%}</span><span class="x"></span>
 
-<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
-</code></pre></div>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span></code></pre></div>
 
 <p>Como ven, esta etiqueta nos da un gran potencial a la hora de escribir código repetitivo, sin embargo este template en particular aun tiene un problema, y es que si no definimos algún bloque (ya sea porque no lo necesitamos), igual se genera el div sin contenido y se verá en el diseño gracias a que contiene un padding.</p>
 
 <p>Para solventar esto, el panel que he implementado es uno donde todos los bloques (header, body y footer) son opcionales:</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="c">{# views/panel.html.twig #}</span><span class="x"></span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="c">{# views/panel.html.twig #}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">set</span> <span class="p">_</span><span class="nv">header</span>  <span class="o">=</span>  <span class="nb">block</span><span class="o">(</span><span class="s1">&#39;header&#39;</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">set</span> <span class="p">_</span><span class="nv">body</span>    <span class="o">=</span>  <span class="nb">block</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">)</span>   <span class="cp">%}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">set</span> <span class="p">_</span><span class="nv">footer</span>  <span class="o">=</span>  <span class="nb">block</span><span class="o">(</span><span class="s1">&#39;footer&#39;</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
@@ -229,8 +225,7 @@
 
 <span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="p">_</span><span class="nv">footer</span> <span class="k">is</span> <span class="k">not</span> <span class="nf">empty</span> <span class="cp">%}</span><span class="x">&lt;div class=&quot;panel-footer&quot;&gt;</span><span class="cp">{{</span> <span class="err">_</span><span class="nv">footer</span><span class="o">|</span><span class="nf">raw</span> <span class="cp">}}</span><span class="x">&lt;/div&gt;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
 
-<span class="x">&lt;/div&gt;</span>
-</code></pre></div>
+<span class="x">&lt;/div&gt;</span></code></pre></div>
 
 <p>La ventaja de usar embed, es que si por alguna razón debemos cambiar o ajustar el código html para el panel, añadiendo divs, clases, etc, con hacerlo en la vista <strong>panel.html.twig</strong> el cambio se verá reflejado en todas las vistas que hayan embebido el panel.
 <br>
@@ -243,7 +238,7 @@ Esta es una pequeña muestra de lo que podemos hacer para mejorar el rendimiento
 <p>Cuando eres tú el encargado de crear la instancia de twig, y definir los directorios de las vistas, es recomendable usar los <a href="http://twig.sensiolabs.org/doc/api.html#loaders">Namespaces del Loader</a>, ya que esto ayuda a mantener organizados los archivos de las vistas.</p>
 
 <p>Una posible organización puede ser:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">views
+<div class="highlight"><pre><code class="language-text" data-lang="text">views
   |
   |------_shared
   |         |
@@ -264,19 +259,18 @@ Esta es una pequeña muestra de lo que podemos hacer para mejorar el rendimiento
 </code></pre></div>
 <p>Para lograrlo, nuestro loader deberá estar más o menos así:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Twig_Loader_Filesystem</span><span class="p">();</span>
 
 <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">addPath</span><span class="p">(</span><span class="s1">&#39;/path_to_views&#39;</span><span class="p">);</span>
 <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">addPath</span><span class="p">(</span><span class="s1">&#39;/path_to_views/_shared/templates&#39;</span><span class="p">,</span> <span class="s1">&#39;templates&#39;</span><span class="p">);</span>
 <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">addPath</span><span class="p">(</span><span class="s1">&#39;path_to_views/_views/_shared/partials&#39;</span><span class="p">,</span> <span class="s1">&#39;partials&#39;</span><span class="p">);</span>
-<span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">addPath</span><span class="p">(</span><span class="s1">&#39;path_to_views/_views/_shared/macros&#39;</span><span class="p">,</span> <span class="s1">&#39;macros&#39;</span><span class="p">);</span>
-</code></pre></div>
+<span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">addPath</span><span class="p">(</span><span class="s1">&#39;path_to_views/_views/_shared/macros&#39;</span><span class="p">,</span> <span class="s1">&#39;macros&#39;</span><span class="p">);</span></code></pre></div>
 
 <p>Con esto conseguimos tener varios directorios a los que hacer referencia a la hora de incluir o extender templates, por ejemplo:</p>
 
-<div class="highlight"><pre><code class="jinja"><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;@templates/base.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<div class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;@templates/base.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
 
 <span class="cp">{%</span> <span class="k">import</span> <span class="s1">&#39;@macros/buttons.twig&#39;</span> <span class="k">as</span> <span class="nv">btn</span> <span class="cp">%}</span><span class="x"></span>
 
@@ -289,8 +283,7 @@ Esta es una pequeña muestra de lo que podemos hacer para mejorar el rendimiento
 <span class="x">        </span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">body</span> <span class="cp">%}</span><span class="x">Contenido del Panel</span><span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">    </span><span class="cp">{%</span> <span class="k">endembed</span> <span class="cp">%}</span><span class="x"></span>
 
-<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
-</code></pre></div>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span></code></pre></div>
 
 <p>Esto nos da la ventaja de tener los templates más organizados y nos da la flexibilidad de que si luego cambiamos el directorio de los templates, partials o macros, mientras mantengan el mismo namespace no se dañaran nuestras vistas.</p>
 
@@ -301,7 +294,7 @@ Esta es una pequeña muestra de lo que podemos hacer para mejorar el rendimiento
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -361,9 +354,9 @@ Esta es una pequeña muestra de lo que podemos hacer para mejorar el rendimiento
 
 
 <!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <a class="subscribe icon-feed" href="http://manuelj555.github.io/rss.xml"><span class="tooltip">Subscribe!</span></a>
         <div class="inner">
-             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="copyright">All content copyright <a href="http://manuelj555.github.io/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
              <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
         </div>
     </footer>-->

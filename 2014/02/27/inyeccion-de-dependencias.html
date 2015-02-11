@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="/">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -61,7 +61,7 @@
 
 <p>Acá hay un ejemplo de como debemos tener el composer.json:</p>
 
-<div class="highlight"><pre><code class="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
         <span class="nt">&quot;symfony/dependency-injection&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
@@ -69,18 +69,17 @@
         <span class="nt">&quot;symfony/config&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
         <span class="nt">&quot;symfony/routing&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>El routing lo usaremos para probar la definción de servicios.</p>
 
 <p>Ahora solo hace falta ejecutar el comando:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php composer install
+<div class="highlight"><pre><code class="language-text" data-lang="text">php composer install
 </code></pre></div>
 <h4>Organizando el código</h4>
 
 <p>Vamos ahora a crear una serie de carpetas para organizar los archivos, se me ocurrió algo como:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">proyecto
+<div class="highlight"><pre><code class="language-text" data-lang="text">proyecto
     |---app
     |    |---cache
     |    |---config
@@ -116,7 +115,7 @@
 
 <p>Esta clase es la que contiene las definiciones, y los parametros, permite modificarlos y crear las instancias para ser usadas posteriormente en la aplicación:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="c1">// Recordemos haber cargado el autoload de composer antes de usar los componentes.</span>
 
@@ -129,8 +128,7 @@
 
 <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span> <span class="c1">//prepara todas las definiciones para su uso</span>
 
-<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span> <span class="c1">//devolvemos/creamos la instancia</span>
-</code></pre></div>
+<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span> <span class="c1">//devolvemos/creamos la instancia</span></code></pre></div>
 
 <p>Más info por acá:</p>
 
@@ -143,7 +141,7 @@
 
 <p>Para hacer más simple el uso del componente vamos a crear y configurar los servicios en archivos <strong>yml</strong>, ya que desde mi punto de vista es más simple que con php, para ello haremos uso del componente <strong>Config</strong> y <strong>Yaml</strong> que instalamos previamente con composer:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
@@ -158,22 +156,20 @@
 
 <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
 
-<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span>
-</code></pre></div>
+<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span></code></pre></div>
 
 <p>Nuestro archivo services.yml</p>
 
-<div class="highlight"><pre><code class="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
 <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">app_name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Prueba del Inyector de Dependencias</span>
 
 <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">request_context</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\RequestContext</span>
-</code></pre></div>
+        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\RequestContext</span></code></pre></div>
 
 <p><strong>Es importante crear al menos un parametro en el archivo,o en el contenedor directamente antes de guardar en caché, ya que de lo contrario al cachear, el contenedor da un error del tipo</strong>:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">FatalErrorException: Error: Call to a member function get() on a non-object in D:\wamp\www\pruebas\di\vendor\symfony\dependency-injection\Symfony\Component\DependencyInjection\Container.php line 147
+<div class="highlight"><pre><code class="language-text" data-lang="text">FatalErrorException: Error: Call to a member function get() on a non-object in D:\wamp\www\pruebas\di\vendor\symfony\dependency-injection\Symfony\Component\DependencyInjection\Container.php line 147
 </code></pre></div>
 <p>Con esto ya tenemos definido nuestro servicio en yaml.</p>
 
@@ -181,7 +177,7 @@
 
 <h2>Cacheando las Definiciones</h2>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
 
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
@@ -216,8 +212,7 @@
 <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span>
 <span class="c1">// ...</span>
 <span class="c1">//ya podemos usar los servicios :-)</span>
-<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span>
-</code></pre></div>
+<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span></code></pre></div>
 
 <p>Con esto logramos que todos los servicios y parametros se cacheen en una clase contenedora, la gran ventaja de esta clase cacheada es que crea código php equivalente a lo que definimos en el yml, veamos un ejemplo de lo que expongo:</p>
 
@@ -225,7 +220,7 @@
 
 <p>Creamos la siguiente definición para el servicio router:</p>
 
-<div class="highlight"><pre><code class="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1">#    proyecto/app/config/services.yml</span>
 <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">router.file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">routing.yml</span>
     <span class="l-Scalar-Plain">router.config</span><span class="p-Indicator">:</span>
@@ -255,12 +250,11 @@
             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">route.loader.yml</span>
             <span class="p-Indicator">-</span> <span class="err">%</span><span class="l-Scalar-Plain">router.file%</span>
             <span class="p-Indicator">-</span> <span class="err">%</span><span class="l-Scalar-Plain">router.config%</span>
-            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">request_context</span>
-</code></pre></div>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">request_context</span></code></pre></div>
 
 <p>Al ejecutar la app, se crea el archivo <strong>app/cache/container.php</strong>, y si miramos algunos de sus métodos, encontraremos lo siguiente:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/cache/container.php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/cache/container.php</span>
 <span class="c1">//...</span>
 <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">methodMap</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">&#39;request_context&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;getRequestContextService&#39;</span><span class="p">,</span>
@@ -295,8 +289,7 @@
 <span class="k">protected</span> <span class="k">function</span> <span class="nf">getRouterService</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;router&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\Router</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route.loader.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;routing.yml&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;cache_dir&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;D:\\wamp\\www\\pruebas\\di\\app/config/&#39;</span><span class="p">,</span> <span class="s1">&#39;debug&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Como podemos ver es impresionante como el componente cachea las definiciones, por ejemplo el método <strong>getRequestContextService</strong> que aparte de crear la instancia de la clase crea en código php los llamados a los métodos <strong>setBaseUrl</strong> y <strong>setHost</strong> definidos en el yml para que se vea como funciona la cache.</p>
 
@@ -306,13 +299,12 @@
 
 <p>Tambien es posible pasarle a un servicio el contenedor, de la siguiente manera:</p>
 
-<div class="highlight"><pre><code class="yaml"><span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">mi_servicio</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Mi_Clase_Cualquiera</span>
         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">service_container</span>
-          <span class="c1"># - otros argumentos</span>
-</code></pre></div>
+          <span class="c1"># - otros argumentos</span></code></pre></div>
 
 <p>El container por defecto se agrega como servicio con el id <strong>service_container</strong>, por lo que podemos inyectarlo y usarlo como cualquier otro servicio.</p>
 
@@ -325,7 +317,7 @@
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -385,9 +377,9 @@
 
 
 <!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <a class="subscribe icon-feed" href="http://manuelj555.github.io/rss.xml"><span class="tooltip">Subscribe!</span></a>
         <div class="inner">
-             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="copyright">All content copyright <a href="http://manuelj555.github.io/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
              <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
         </div>
     </footer>-->

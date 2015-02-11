@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="/">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -52,7 +52,7 @@
 
 <p>Comenzaremos con una clase que será nuestro modelo o entidad, el código de la misma es el siguiente:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
 
@@ -63,14 +63,13 @@
     <span class="k">protected</span> <span class="nv">$status</span><span class="p">;</span>
 
     <span class="c1">// ...getters y setters</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <h2>La clase UserEvents</h2>
 
 <p>Esta clase simplemente contendrá constantes que nos ayudarán a documentar los eventos y nos permitirán usar dichas constantes en vez de strings al despachar eventos, lo que ayuda a minimizar los errores al tipear.</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">namespace</span> <span class="nx">MyBundle</span><span class="p">;</span>
 
@@ -99,8 +98,7 @@
 <span class="sd">     * el evento post_approve no es disparado.</span>
 <span class="sd">     */</span>
     <span class="k">const</span> <span class="no">POST_APPROVE</span> <span class="o">=</span> <span class="s1">&#39;my_bundle.user.post_approve&#39;</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <h2>La clase UserManager</h2>
 
@@ -108,7 +106,7 @@
 
 <p>Para efectos de este ejemplo, nuestro manager solo tendrá un método relevante para el manejo de los usuarios, el mismo tendrá por nombre <strong>approve</strong> y esperará una instancia de <strong>MyBundle\Entity\User</strong> que será el usuario que aprobaremos:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">namespace</span> <span class="nx">MyBundle\Model</span><span class="p">;</span>
 
@@ -148,8 +146,7 @@
 
         <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Como se puede ver, el código del método <strong>approve</strong> es bastante simple, dispara dos eventos y en medio de los mismos ejecuta el cambio de estatus y lo persiste en la BD. </p>
 
@@ -159,14 +156,13 @@
 
 <p>Nuestro UserManager necesita que se le pasen dos objetos para realizar sus tareas de aprobación, estos son el entity manager de doctrine y el event dispatcher de symfony, para hacer esto, registraremos nuestra clase como un servicio en el contenedor y le inyectamos los servicios/objetos que necesita:</p>
 
-<div class="highlight"><pre><code class="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
 <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Model\UserManager</span>
         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">doctrine.orm.default_entity_manager</span>
-            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">event_dispatcher</span>
-</code></pre></div>
+            <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">event_dispatcher</span></code></pre></div>
 
 <p>Con esto ya tenemos registrado nuestro manager como servicio, y podemos acceder a el por medio del id <strong>my_bundle.user_manager</strong>.</p>
 
@@ -174,7 +170,7 @@
 
 <p>Ahora creamos nuestra acción en algún controlador, para que se realize el proceso de aprobación:</p>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">namespace</span> <span class="nx">MyBundle\Controller</span><span class="p">;</span>
 
@@ -197,8 +193,7 @@
 
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Nuestro controlador ha quedado muy simple, ya que la mayor parté del código (lógica de negocio) se encuentra en el user_manager.</p>
 
@@ -208,7 +203,7 @@
 
 <h2>El Listener para el Correo</h2>
 
-<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
 
@@ -242,12 +237,11 @@
 
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$message</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+<span class="p">}</span></code></pre></div>
 
 <p>Ya tenemos nuestro listener creado, ahora debemos registrarlo en el contenedor y agregarle las etiquetas que lo identifiquen como un escucha de eventos:</p>
 
-<div class="highlight"><pre><code class="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
 <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
    <span class="l-Scalar-Plain">....</span>
@@ -257,8 +251,7 @@
     <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
         <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">mailer</span>
     <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
-      <span class="p-Indicator">-</span> <span class="p-Indicator">{</span><span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">my_bundle.user.post_approve</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">onPostApprove</span><span class="p-Indicator">}</span>
-</code></pre></div>
+      <span class="p-Indicator">-</span> <span class="p-Indicator">{</span><span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">my_bundle.user.post_approve</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">onPostApprove</span><span class="p-Indicator">}</span></code></pre></div>
 
 <p>Listo!!!. Gracias a la etiqueta <strong>kernel.event_listener</strong> de symfony, nuestra clase está escuchando el evento <strong>my_bundle.user.post_approve</strong>, y cuando el mismo sea disparado en el UserManager al aprobar, el método <strong>onPostApprove</strong> del listener será invocado y se enviará el correo. Todo esto sin haber tenido que modificar el código de aprobación de usuarios.</p>
 
@@ -275,7 +268,7 @@
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -335,9 +328,9 @@
 
 
 <!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="/rss.xml"><span class="tooltip">Subscribe!</span></a>
+        <a class="subscribe icon-feed" href="http://manuelj555.github.io/rss.xml"><span class="tooltip">Subscribe!</span></a>
         <div class="inner">
-             <section class="copyright">All content copyright <a href="/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
+             <section class="copyright">All content copyright <a href="http://manuelj555.github.io/">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
              <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
         </div>
     </footer>-->
