@@ -345,7 +345,7 @@
         <span class="c1">// vacio inicialmente, y solo se llene de items, cuando se ejecute el </span>
         <span class="c1">// ajax que obtiene los estados del pais seleccionado por el usuario.</span>
 
-        <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">()</span> <span class="o">?</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">()</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span>
+        <span class="nv">$country</span> <span class="o">=</span> <span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">())</span> <span class="o">?</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">()</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span> <span class="c1">// Importante los parentesis al usar &quot;and&quot;.</span>
         
         <span class="c1">// Es importante siempre verificar que el valor devuelto por $event-&gt;getData()</span>
         <span class="c1">// (que en este caso es $user) no sea null, porque no es obligatorio que al crear</span>
