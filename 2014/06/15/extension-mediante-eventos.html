@@ -54,44 +54,44 @@
 
 <p>Veamos un ejemplo de código, tenemos una rutina que aprueba una compra:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
-
-<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
-
-<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
+<span class="lineno">6</span> 
+<span class="lineno">7</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span></code></pre></figure>
 
 <p>Nuestro código se encarga simplemente de actualizar un campo de un registro en la bd, esa es todo su objetivo, y lo hace muy bien.</p>
 
 <p>Pero supongamos que luego nos piden enviar un correo al usuario que hizo la compra, al momento de ser esta aprobada. Generalmente hacemos algo como lo siguente:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
-
-<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
-
-<span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
-<span class="c1">//codigo añadido</span>
-<span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
-<span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
+<span class="lineno"> 8</span> <span class="c1">//codigo añadido</span>
+<span class="lineno"> 9</span> <span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
+<span class="lineno">10</span> <span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span></code></pre></figure>
 
 <p>Ahora nos piden, que solo un usuario administrador pueda aprobar la compra:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">if</span><span class="p">(</span> <span class="nv">$usarioActual</span><span class="o">-&gt;</span><span class="na">getPerfil</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;PERFIL_ADMIN&#39;</span> <span class="p">){</span>
-
-    <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
-
-    <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
-
-    <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
-    <span class="c1">//codigo añadido</span>
-    <span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
-    <span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">if</span><span class="p">(</span> <span class="nv">$usarioActual</span><span class="o">-&gt;</span><span class="na">getPerfil</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;PERFIL_ADMIN&#39;</span> <span class="p">){</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span>     <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>     <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>     <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
+<span class="lineno">10</span>     <span class="c1">//codigo añadido</span>
+<span class="lineno">11</span>     <span class="nv">$toUser</span> <span class="o">=</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">();</span>
+<span class="lineno">12</span>     <span class="nv">$mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$toUser</span><span class="p">);</span>
+<span class="lineno">13</span> <span class="p">}</span></code></pre></figure>
 
 <p>Como se puede ver, cada vez que nos piden agregar cierta funcionalidad ó validaciones, debemos tocar el código original del proceso de aprobación de compras, lo cual lo hace cada vez más complicado e inmantenible. Y estos son agregados faciles de implementar, nos pueden pedir cosas más complejas como verificar que se cumplan ciertas condiciones en la comprar para aprobarla, o que solo se aprueben en ciertos horarios, todo esto produce muchos cambios en nuestro código.</p>
 
@@ -99,21 +99,21 @@
 
 <p>Vamos a implementar ahora el patron Observador, haciendo uso del componente <a href="/2014/03/09/despachando-eventos.html">EventDispatcher</a> de symfony. La idea es disparar algunos eventos en el proceso de aprobación de compras, para que luego, si debemos realizar tareas adicionales, las mismas sean ejecutadas en listeners de nuestros eventos.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
-
-<span class="nv">$event</span> <span class="o">=</span> <span class="nx">PreApproveCompraEvent</span><span class="p">(</span><span class="nv">$compra</span><span class="p">);</span>
-
-<span class="nv">$eventDispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;compra.pre_aprobacion&#39;</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-
-<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">aprobacionCancelada</span><span class="p">()){</span>
-    <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado    </span>
-    <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
-
-    <span class="nv">$event</span> <span class="o">=</span> <span class="nx">ApprovedCompraEvent</span><span class="p">(</span><span class="nv">$compra</span><span class="p">,</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">());</span>
-    <span class="nv">$eventDispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;compra.aprobacion&#39;</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="nv">$compra</span> <span class="o">=</span> <span class="nv">$model</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span> <span class="c1">//buscamos un registro en la bd por su id</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$event</span> <span class="o">=</span> <span class="nx">PreApproveCompraEvent</span><span class="p">(</span><span class="nv">$compra</span><span class="p">);</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="nv">$eventDispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;compra.pre_aprobacion&#39;</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">aprobacionCancelada</span><span class="p">()){</span>
+<span class="lineno">10</span>     <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">Compra</span><span class="o">:</span><span class="nx">STATUS_APPROVED</span><span class="p">);</span> <span class="c1">//actualizamos el status a aprovado    </span>
+<span class="lineno">11</span>     <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span> <span class="c1">//actualizamos la compra</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span>     <span class="nv">$event</span> <span class="o">=</span> <span class="nx">ApprovedCompraEvent</span><span class="p">(</span><span class="nv">$compra</span><span class="p">,</span> <span class="nv">$compra</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">());</span>
+<span class="lineno">14</span>     <span class="nv">$eventDispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;compra.aprobacion&#39;</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+<span class="lineno">15</span> <span class="p">}</span></code></pre></figure>
 
 <p>Como ven hemos añadido dos eventos al proceso de aprobación:</p>
 
@@ -124,36 +124,36 @@
 
 <h2>Validando el Perfil</h2>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
-<span class="k">class</span> <span class="nc">ValidarPerfil</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$sessionUser</span><span class="p">;</span> <span class="c1">//de alguna forma obtenemos el usuario conectado</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreAprobacion</span><span class="p">(</span><span class="nx">PreApproveCompraEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sessionUser</span><span class="o">-&gt;</span><span class="na">getPerfil</span><span class="p">()</span> <span class="o">!==</span> <span class="s1">&#39;PERFIL_ADMIN&#39;</span><span class="p">){</span>
-            <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">cancelarAprobacion</span><span class="p">();</span>
-            <span class="c1">//como ven, hemos añadido una validacion del perfil sin modificar el código de aprobación</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
+<span class="lineno"> 3</span> <span class="k">class</span> <span class="nc">ValidarPerfil</span>
+<span class="lineno"> 4</span> <span class="p">{</span>
+<span class="lineno"> 5</span>     <span class="k">protected</span> <span class="nv">$sessionUser</span><span class="p">;</span> <span class="c1">//de alguna forma obtenemos el usuario conectado</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreAprobacion</span><span class="p">(</span><span class="nx">PreApproveCompraEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno"> 8</span>     <span class="p">{</span>
+<span class="lineno"> 9</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sessionUser</span><span class="o">-&gt;</span><span class="na">getPerfil</span><span class="p">()</span> <span class="o">!==</span> <span class="s1">&#39;PERFIL_ADMIN&#39;</span><span class="p">){</span>
+<span class="lineno">10</span>             <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">cancelarAprobacion</span><span class="p">();</span>
+<span class="lineno">11</span>             <span class="c1">//como ven, hemos añadido una validacion del perfil sin modificar el código de aprobación</span>
+<span class="lineno">12</span>         <span class="p">}</span>
+<span class="lineno">13</span>     <span class="p">}</span>
+<span class="lineno">14</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora, gracias al listener, cuando el proceso de aprobación dispare el evento <strong>compra.pre_aprobacion</strong>, se ejecutará el listener, y si el perfil no es <strong>PERFIL_ADMIN</strong>, se llamará a un metodo de la clase event para avisar que hemos cancelado la aprobación.</p>
 
 <h2>Enviando Emails</h2>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
-<span class="k">class</span> <span class="nc">EnvioEmailAprobacion</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreAprobacion</span><span class="p">(</span><span class="nx">ApprovedCompraEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">();</span>
-
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">());</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1">//esta clase se debe registrar como listener en algún lado, ver la doc de symfony para lograrlo</span>
+<span class="lineno"> 3</span> <span class="k">class</span> <span class="nc">EnvioEmailAprobacion</span>
+<span class="lineno"> 4</span> <span class="p">{</span>
+<span class="lineno"> 5</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreAprobacion</span><span class="p">(</span><span class="nx">ApprovedCompraEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno"> 6</span>     <span class="p">{</span>
+<span class="lineno"> 7</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">();</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="s2">&quot;Compra Aprobada&quot;</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">());</span>
+<span class="lineno">10</span>     <span class="p">}</span>
+<span class="lineno">11</span> <span class="p">}</span></code></pre></figure>
 
 <p>Como se puede ver, gracias a un despachador de eventos, y usando el patrón Observador, podemos extender las funcionalidades de nuestros procesos de manera óptima.</p>
 

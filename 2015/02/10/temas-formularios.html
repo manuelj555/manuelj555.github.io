@@ -52,48 +52,48 @@
 
 <p>Un ejemplo muy común de lo expuesto es un formulario como el siguiente:</p>
 
-<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="cp">{{</span> <span class="nv">form_start</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;div class=&quot;form_errors&quot;&gt;</span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;/div&gt;</span>
-<span class="x">    &lt;div class=&quot;form_content&quot;&gt;</span>
-<span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.firstName.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;/div&gt;</span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.lastName.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;/div&gt;</span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.email.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.email</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.email</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.email</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;/div&gt;</span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.phone.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;/div&gt;</span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.country.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.country</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.country</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.country</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-select&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
-<span class="x">            &lt;/div&gt;</span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">    &lt;/div&gt;</span>
-<span class="cp">{{</span> <span class="nv">form_end</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="lineno"> 1</span> <span class="cp">{{</span> <span class="nv">form_start</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno"> 2</span> <span class="x">    &lt;div class=&quot;form_errors&quot;&gt;</span>
+<span class="lineno"> 3</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno"> 4</span> <span class="x">    &lt;/div&gt;</span>
+<span class="lineno"> 5</span> <span class="x">    &lt;div class=&quot;form_content&quot;&gt;</span>
+<span class="lineno"> 6</span> <span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.firstName.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno"> 7</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno"> 8</span> <span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno"> 9</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">10</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">11</span> <span class="x">            &lt;/div&gt;</span>
+<span class="lineno">12</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">13</span> <span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.lastName.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno">14</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">15</span> <span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno">16</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">17</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">18</span> <span class="x">            &lt;/div&gt;</span>
+<span class="lineno">19</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">20</span> <span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.email.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno">21</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.email</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">22</span> <span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno">23</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.email</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">24</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.email</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">25</span> <span class="x">            &lt;/div&gt;</span>
+<span class="lineno">26</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">27</span> <span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.phone.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno">28</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">29</span> <span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno">30</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">31</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-element&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">32</span> <span class="x">            &lt;/div&gt;</span>
+<span class="lineno">33</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">34</span> <span class="x">        &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">form.country.vars.valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno">35</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form.country</span><span class="o">,</span> <span class="o">{</span> <span class="nv">label_attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-lbl&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">36</span> <span class="x">            &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno">37</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form.country</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">38</span> <span class="x">                </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form.country</span><span class="o">,</span> <span class="o">{</span> <span class="nv">attr</span><span class="o">:</span> <span class="o">{</span> <span class="nv">class</span><span class="o">:</span> <span class="s1">&#39;f-select&#39;</span> <span class="cp">}}</span><span class="x">) }}</span>
+<span class="lineno">39</span> <span class="x">            &lt;/div&gt;</span>
+<span class="lineno">40</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">41</span> <span class="x">    &lt;/div&gt;</span>
+<span class="lineno">42</span> <span class="cp">{{</span> <span class="nv">form_end</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span></code></pre></figure>
 
 <p>Como se puede apreciar, cada elemento del formulario es renderizado dentro de una estructura html, donde se imprimen, el label, los errores y el elemento de manera separada y pasandole las clases necesarias para que tomen el diseño correspondiente, y así lograr el aspecto visual requerido.</p>
 
@@ -111,57 +111,57 @@
 
 <p>Este archivo contiene una serie de bloques twig, donde el interior de cada uno es código html que será renderizado para cada elementos de formulario, inputs, labels, textareas, selects, checboxes, errores, entre otros.</p>
 
-<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="c">{# app/Resources/views/Form/fields.html.twig #}</span><span class="x"></span>
-<span class="c">{# Extendemos del layout por defecto para reutilizar widgets usando parent() #}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;form_div_layout.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
-
-
-<span class="c">{# Bloque que renderiza cualquier elemento de tipo &lt;input ... #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_widget_simple</span> -<span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">type</span> <span class="k">is</span> <span class="k">not</span> <span class="nf">defined</span> <span class="k">or</span> <span class="s1">&#39;file&#39;</span> <span class="p">!</span><span class="o">=</span> <span class="nv">type</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">        </span><span class="c">{# Seteamos la clase f-elemento por defecto al &lt;input, y al mismo tiempo permitimos que se añadan clases adicionales #}</span><span class="x"></span>
-<span class="x">        </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-element&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
-<span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">form_widget_simple</span> <span class="cp">%}</span><span class="x"></span>
-
-
-<span class="c">{# Bloque que renderiza los textareas #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">block</span> <span class="nv">textarea_widget</span> -<span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-element&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
-<span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">textarea_widget</span> <span class="cp">%}</span><span class="x"></span>
-
-
-<span class="c">{# Bloque que renderiza los selects #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">block</span> <span class="nv">choice_widget_collapsed</span> -<span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-select&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
-<span class="cp">{%</span>- <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
-
-
-<span class="c">{# Bloque que renderiza los labels #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_label</span> -<span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">label_attr</span> <span class="o">=</span> <span class="nv">label_attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">label_attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-lbl&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
-<span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">form_label</span> <span class="cp">%}</span><span class="x"></span>
-
-
-<span class="c">{# Bloque que renderiza un campo de formulario completo, label, widget y errores #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_row</span> -<span class="cp">%}</span><span class="x"></span>
-<span class="x">    &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        &lt;div class=&quot;f-item&quot;&gt;</span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">            </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        &lt;/div&gt;</span>
-<span class="x">    &lt;/div&gt;</span>
-<span class="cp">{%</span>- <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="lineno"> 1</span> <span class="c">{# app/Resources/views/Form/fields.html.twig #}</span><span class="x"></span>
+<span class="lineno"> 2</span> <span class="c">{# Extendemos del layout por defecto para reutilizar widgets usando parent() #}</span><span class="x"></span>
+<span class="lineno"> 3</span> <span class="cp">{%</span> <span class="k">extends</span> <span class="s1">&#39;form_div_layout.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="c">{# Bloque que renderiza cualquier elemento de tipo &lt;input ... #}</span><span class="x"></span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_widget_simple</span> -<span class="cp">%}</span><span class="x"></span>
+<span class="lineno"> 9</span> <span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">type</span> <span class="k">is</span> <span class="k">not</span> <span class="nf">defined</span> <span class="k">or</span> <span class="s1">&#39;file&#39;</span> <span class="p">!</span><span class="o">=</span> <span class="nv">type</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">10</span> <span class="x">        </span><span class="c">{# Seteamos la clase f-elemento por defecto al &lt;input, y al mismo tiempo permitimos que se añadan clases adicionales #}</span><span class="x"></span>
+<span class="lineno">11</span> <span class="x">        </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-element&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">12</span> <span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">13</span> <span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
+<span class="lineno">14</span> <span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">form_widget_simple</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span> 
+<span class="lineno">17</span> <span class="c">{# Bloque que renderiza los textareas #}</span><span class="x"></span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span> <span class="cp">{%</span> <span class="k">block</span> <span class="nv">textarea_widget</span> -<span class="cp">%}</span><span class="x"></span>
+<span class="lineno">20</span> <span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-element&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">21</span> <span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
+<span class="lineno">22</span> <span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">textarea_widget</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span> 
+<span class="lineno">25</span> <span class="c">{# Bloque que renderiza los selects #}</span><span class="x"></span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span> <span class="cp">{%</span> <span class="k">block</span> <span class="nv">choice_widget_collapsed</span> -<span class="cp">%}</span><span class="x"></span>
+<span class="lineno">28</span> <span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">attr</span> <span class="o">=</span> <span class="nv">attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-select&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">29</span> <span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
+<span class="lineno">30</span> <span class="cp">{%</span>- <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">31</span> 
+<span class="lineno">32</span> 
+<span class="lineno">33</span> <span class="c">{# Bloque que renderiza los labels #}</span><span class="x"></span>
+<span class="lineno">34</span> 
+<span class="lineno">35</span> <span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_label</span> -<span class="cp">%}</span><span class="x"></span>
+<span class="lineno">36</span> <span class="x">    </span><span class="cp">{%</span> <span class="k">set</span> <span class="nv">label_attr</span> <span class="o">=</span> <span class="nv">label_attr</span><span class="o">|</span><span class="nf">merge</span><span class="o">({</span><span class="nv">class</span><span class="o">:</span> <span class="o">(</span><span class="nv">label_attr.class</span><span class="o">|</span><span class="nf">default</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">~</span> <span class="s1">&#39; f-lbl&#39;</span><span class="o">)|</span><span class="nf">trim</span><span class="o">})</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">37</span> <span class="x">    </span><span class="cp">{{</span><span class="o">-</span> <span class="nv">parent</span><span class="o">()</span> -<span class="cp">}}</span><span class="x"></span>
+<span class="lineno">38</span> <span class="cp">{%</span>- <span class="k">endblock</span> <span class="nv">form_label</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">39</span> 
+<span class="lineno">40</span> 
+<span class="lineno">41</span> <span class="c">{# Bloque que renderiza un campo de formulario completo, label, widget y errores #}</span><span class="x"></span>
+<span class="lineno">42</span> 
+<span class="lineno">43</span> <span class="cp">{%</span> <span class="k">block</span> <span class="nv">form_row</span> -<span class="cp">%}</span><span class="x"></span>
+<span class="lineno">44</span> <span class="x">    &lt;div class=&quot;form-group</span><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">valid</span> <span class="cp">%}</span><span class="x"> with-errors</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&quot;&gt;</span>
+<span class="lineno">45</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_label</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">46</span> <span class="x">        &lt;div class=&quot;f-item&quot;&gt;</span>
+<span class="lineno">47</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">48</span> <span class="x">            </span><span class="cp">{{</span> <span class="nv">form_widget</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">49</span> <span class="x">        &lt;/div&gt;</span>
+<span class="lineno">50</span> <span class="x">    &lt;/div&gt;</span>
+<span class="lineno">51</span> <span class="cp">{%</span>- <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span></code></pre></figure>
 
 <p>Así hemos creado una serie de bloques que nos van a permitir reutilizar diseños en todos nuestros formularios.</p>
 
@@ -185,13 +185,13 @@
 
 <h6>Temas Globales</h6>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># app/config/config.yml</span>
-<span class="l-Scalar-Plain">twig</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">debug</span><span class="p-Indicator">:</span>            <span class="s">&quot;%kernel.debug%&quot;</span>
-    <span class="l-Scalar-Plain">strict_variables</span><span class="p-Indicator">:</span> <span class="s">&quot;%kernel.debug%&quot;</span>
-    <span class="l-Scalar-Plain">form</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">resources</span><span class="p-Indicator">:</span>
-            <span class="p-Indicator">-</span> <span class="s">&quot;Form/fields.html.twig&quot;</span> <span class="c1"># Acá estamos añadiendo nuestro tema de forma global.</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="c1"># app/config/config.yml</span>
+<span class="lineno">2</span> <span class="l-Scalar-Plain">twig</span><span class="p-Indicator">:</span>
+<span class="lineno">3</span>     <span class="l-Scalar-Plain">debug</span><span class="p-Indicator">:</span>            <span class="s">&quot;%kernel.debug%&quot;</span>
+<span class="lineno">4</span>     <span class="l-Scalar-Plain">strict_variables</span><span class="p-Indicator">:</span> <span class="s">&quot;%kernel.debug%&quot;</span>
+<span class="lineno">5</span>     <span class="l-Scalar-Plain">form</span><span class="p-Indicator">:</span>
+<span class="lineno">6</span>         <span class="l-Scalar-Plain">resources</span><span class="p-Indicator">:</span>
+<span class="lineno">7</span>             <span class="p-Indicator">-</span> <span class="s">&quot;Form/fields.html.twig&quot;</span> <span class="c1"># Acá estamos añadiendo nuestro tema de forma global.</span></code></pre></figure>
 
 <p>Haciendo esto, todos los formularios de la aplicación ahora serán renderizados utilizando los bloques de tema definidos en el twig.</p>
 
@@ -199,11 +199,11 @@
 
 <p>Cuando solo queremos aplicar cierto tema a un formulario especifico, lo hacemos de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="c">{# app/Resources/views/my_form.html.twig #}</span><span class="x"></span>
-
-<span class="cp">{%</span> <span class="k">form_theme</span> <span class="nv">form</span> <span class="s1">&#39;Form/fields.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
-
-<span class="x">...</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="lineno">1</span> <span class="c">{# app/Resources/views/my_form.html.twig #}</span><span class="x"></span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="cp">{%</span> <span class="k">form_theme</span> <span class="nv">form</span> <span class="s1">&#39;Form/fields.html.twig&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="x">...</span></code></pre></figure>
 
 <p>Existe una prioridad a la hora de determinar cual tema utilizar para el renderizado, la prioridad comienza con los temas definidos en el mismo archivo twig con el tag form_theme, si el tema de cierto campo no existe allí, se busca en los archivos definidos en el config.yml, y por último se busca en form_div_layout.html.twig del componente de formularios.</p>
 
@@ -211,20 +211,20 @@
 
 <p>Ahora que hemos establecido los temas para los formularios, podemos simplificar el código de las vistas que imprimen los forms:</p>
 
-<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="c">{# {% form_theme form &#39;Form/fields.html.twig&#39; %} descomentar si el tema no es usado de forma global #}</span><span class="x"></span>
-
-<span class="cp">{{</span> <span class="nv">form_start</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;div class=&quot;form_errors&quot;&gt;</span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;/div&gt;</span>
-<span class="x">    &lt;div class=&quot;form_content&quot;&gt;</span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.email</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.country</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
-<span class="x">    &lt;/div&gt;</span>
-<span class="cp">{{</span> <span class="nv">form_end</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-jinja" data-lang="jinja"><span class="lineno"> 1</span> <span class="c">{# {% form_theme form &#39;Form/fields.html.twig&#39; %} descomentar si el tema no es usado de forma global #}</span><span class="x"></span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="cp">{{</span> <span class="nv">form_start</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno"> 4</span> <span class="x">    &lt;div class=&quot;form_errors&quot;&gt;</span>
+<span class="lineno"> 5</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_errors</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno"> 6</span> <span class="x">    &lt;/div&gt;</span>
+<span class="lineno"> 7</span> <span class="x">    &lt;div class=&quot;form_content&quot;&gt;</span>
+<span class="lineno"> 8</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.firstName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno"> 9</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.lastName</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">10</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.email</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">11</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.phone</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">12</span> <span class="x">        </span><span class="cp">{{</span> <span class="nv">form_row</span><span class="o">(</span><span class="nv">form.country</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="lineno">13</span> <span class="x">    &lt;/div&gt;</span>
+<span class="lineno">14</span> <span class="cp">{{</span> <span class="nv">form_end</span><span class="o">(</span><span class="nv">form</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span></code></pre></figure>
 
 <p>Como ven, se ha simplificado de manera extraordinaria el código necesario para renderizar el formulario, todo gracias al uso de los temas de formularios!.</p>
 

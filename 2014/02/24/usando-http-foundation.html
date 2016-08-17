@@ -71,11 +71,11 @@
 
 <p>Para descargar el componente lo recomendable es hacerlo mediante composer, archivo composer.json:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno">1</span> <span class="p">{</span>
+<span class="lineno">2</span>     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="lineno">3</span>         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
+<span class="lineno">4</span>     <span class="p">}</span>
+<span class="lineno">5</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora solo hace falta ejecutar el comando:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">php composer install
@@ -84,13 +84,13 @@
 
 <p>Crear la instancia del Request es tan sencillo como ejecutar el siguiente código:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//proyecto/index.php</span>
-
-<span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/vendor/autoload.php&#39;</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
-
-<span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span> <span class="c1">//acá creamos el objeto request</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span> <span class="c1">//proyecto/index.php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/vendor/autoload.php&#39;</span><span class="p">;</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+<span class="lineno">6</span> 
+<span class="lineno">7</span> <span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span> <span class="c1">//acá creamos el objeto request</span></code></pre></figure>
 
 <p>El método <strong>createFromGlobals()</strong> crea una instancia con la información de la petición a partir de las variables globales de php $<em>GET, $</em>POST, $<em>REQUEST, $</em>SERVER, $<em>FILES y $</em>COOKIE.</p>
 
@@ -100,53 +100,53 @@
 
 <p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong> y contiene la información contenida en la variable global $_GET, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
-<span class="c1">//devuelve el valor contenido en $_GET[&#39;nombre&#39;] si existe, si no devuelve null</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
-<span class="c1">//si no se encuentra el indice nombre en $_GET el método devuelve &#39;Manuel&#39; por defecto.</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
-<span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
-<span class="c1">//intentará devolver el valor de la siguiente manera: $_GET[&#39;usuario&#39;][&#39;nombre&#39;]</span>
-<span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="lineno"> 4</span> <span class="c1">//devuelve el valor contenido en $_GET[&#39;nombre&#39;] si existe, si no devuelve null</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="lineno"> 7</span> <span class="c1">//si no se encuentra el indice nombre en $_GET el método devuelve &#39;Manuel&#39; por defecto.</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="lineno">10</span> <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
+<span class="lineno">11</span> <span class="c1">//intentará devolver el valor de la siguiente manera: $_GET[&#39;usuario&#39;][&#39;nombre&#39;]</span>
+<span class="lineno">12</span> <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">query</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <h5>El atributo request:</h5>
 
 <p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong> y contiene la información contenida en la variable global $_POST, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
-<span class="c1">//devuelve el valor contenido en $_POST[&#39;nombre&#39;] si existe, si no devuelve null</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
-<span class="c1">//si no se encuentra el indice nombre en $_POST el método devuelve &#39;Manuel&#39; por defecto.</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
-<span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
-<span class="c1">//intentará devolver el valor de la siguiente manera: $_POST[&#39;usuario&#39;][&#39;nombre&#39;]</span>
-<span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span> 
+<span class="lineno"> 4</span> <span class="c1">//devuelve el valor contenido en $_POST[&#39;nombre&#39;] si existe, si no devuelve null</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">);</span> 
+<span class="lineno"> 7</span> <span class="c1">//si no se encuentra el indice nombre en $_POST el método devuelve &#39;Manuel&#39; por defecto.</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;usuario[nombre]&#39;</span><span class="p">,</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> 
+<span class="lineno">10</span> <span class="c1">//acá hay algo interesante, si el indice usuario contiene un array, el componente</span>
+<span class="lineno">11</span> <span class="c1">//intentará devolver el valor de la siguiente manera: $_POST[&#39;usuario&#39;][&#39;nombre&#39;]</span>
+<span class="lineno">12</span> <span class="c1">//recordar que para que funcione, se debe pasar true en el tercer argumento.</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <h5>El atributo server:</h5>
 
 <p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ServerBag)</strong> y contiene la información contenida en la variable global $_SERVER, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">);</span> 
-<span class="c1">//devuelve el valor contenido en $_SERVER[&#39;QUERY_STRING&#39;] si existe, si no devuelve null</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;SCRIPT_FILENAME&#39;</span><span class="p">);</span> 
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;DOCUMENT_ROOT&#39;</span><span class="p">);</span> 
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;QUERY_STRING&#39;</span><span class="p">);</span> 
+<span class="lineno">4</span> <span class="c1">//devuelve el valor contenido en $_SERVER[&#39;QUERY_STRING&#39;] si existe, si no devuelve null</span>
+<span class="lineno">5</span> 
+<span class="lineno">6</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;SCRIPT_FILENAME&#39;</span><span class="p">);</span> 
+<span class="lineno">7</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;DOCUMENT_ROOT&#39;</span><span class="p">);</span> 
+<span class="lineno">8</span> 
+<span class="lineno">9</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">server</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <p>Igualmente se pueden establecer valores por defecto para cuando el indice no exista.</p>
 
@@ -156,14 +156,14 @@
 
 <p>Este objeto es muy util para almacenar información dependiendo de los requerimientos de la app.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
-<span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> 
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+<span class="lineno">4</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> 
+<span class="lineno">5</span> 
+<span class="lineno">6</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> 
+<span class="lineno">7</span> 
+<span class="lineno">8</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">attributes</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <h5>El atributo files:</h5>
 
@@ -171,47 +171,47 @@
 
 <p>Este contenedor es muy util a la hora de leer archivos subidos al servidor, porque los objetos que contiene ofrecen una serie de métodos que nos permitirán manejar los archivos facilmente.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foto&#39;</span><span class="p">);</span> 
-<span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
-<span class="c1">//guardar el archivo es tan sencillo como llamar al metodo move()</span>
-
-<span class="k">if</span><span class="p">(</span><span class="nv">$file</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getExtension</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getMimeType</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getFilename</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getSize</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getBasename</span><span class="p">();</span>
-    
-    <span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
-
-<span class="p">}</span><span class="k">else</span><span class="p">{</span>
-    <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getError</span><span class="p">();</span> <span class="c1">//devuelve el número del error</span>
-<span class="p">}</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="nv">$file</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;foto&#39;</span><span class="p">);</span> 
+<span class="lineno"> 4</span> <span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
+<span class="lineno"> 5</span> <span class="c1">//guardar el archivo es tan sencillo como llamar al metodo move()</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="k">if</span><span class="p">(</span><span class="nv">$file</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
+<span class="lineno"> 8</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getExtension</span><span class="p">();</span>
+<span class="lineno"> 9</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getMimeType</span><span class="p">();</span>
+<span class="lineno">10</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getFilename</span><span class="p">();</span>
+<span class="lineno">11</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getSize</span><span class="p">();</span>
+<span class="lineno">12</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getBasename</span><span class="p">();</span>
+<span class="lineno">13</span>     
+<span class="lineno">14</span>     <span class="nv">$movedFile</span> <span class="o">=</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">move</span><span class="p">(</span><span class="s1">&#39;diretorio&#39;</span><span class="cm">/*, &#39;nombre.jpg&#39; */</span><span class="p">);</span> 
+<span class="lineno">15</span> 
+<span class="lineno">16</span> <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="lineno">17</span>     <span class="k">echo</span> <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">getError</span><span class="p">();</span> <span class="c1">//devuelve el número del error</span>
+<span class="lineno">18</span> <span class="p">}</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">files</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <h5>El atributo cookies:</h5>
 
 <p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\ParameterBag)</strong>, y contiene la información contenida en la variable global $_COOKIE, para usarlo desde el objeto request lo hacemos de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;parametro&#39;</span><span class="p">);</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;parametro&#39;</span><span class="p">);</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <h5>El atributo headers:</h5>
 
 <p>Este atributo es una instancia de <strong>(\Symfony\Component\HttpFoundation\HeaderBag)</strong>, y contiene la información referente a cabeceras http de la petición.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">);</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">);</span>
+<span class="lineno">4</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">);</span>
+<span class="lineno">5</span> 
+<span class="lineno">6</span> <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span></code></pre></figure>
 
 <p>Los indices contenidos en la colección estan normalizados y en minuscula.</p>
 
@@ -221,38 +221,38 @@
 
 <p>Es muy útil cuando por ejemplo se usa el routing de symfony y guardamos los parametros de la url en la propiedad atributes del objeto $request, o lo enviamos por get, este método igual encontrará dicho valor.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">);</span>
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-<span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">);</span>
+<span class="lineno">4</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="lineno">5</span> <span class="k">echo</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">);</span></code></pre></figure>
 
 <p>Supongamos que estamos creando una web sin sistema de ruta pero usando el componente HttpFoundation, y estamos paginando una consulta:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="c1">// URL: http://example.com/paises/?page=3</span>
-
-<span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en $_GET y devolverá un 3</span>
-<span class="c1">//Paginado ...</span>
-<span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="c1">// URL: http://example.com/paises/?page=3</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en $_GET y devolverá un 3</span>
+<span class="lineno">6</span> <span class="c1">//Paginado ...</span>
+<span class="lineno">7</span> <span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span></code></pre></figure>
 
 <p>Si luego en ese proyecto implementamos un sistema de routing, como por ejemplo el de symfony y guardamos los parametros de la url en attributes:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">paises</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/paises/{page}</span>
-    <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">...</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="l-Scalar-Plain">paises</span><span class="p-Indicator">:</span>
+<span class="lineno">2</span>     <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/paises/{page}</span>
+<span class="lineno">3</span>     <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
+<span class="lineno">4</span>         <span class="l-Scalar-Plain">...</span></code></pre></figure>
 
 <p>Ahora el parametro no se envia por GET, sino que forma parte de la url, pero el routing de symfony, guarda el valor de ese parametro en <strong>$request-&gt;attributes</strong>, entonces nuestro cógido sigue funcionando sin tocar nada:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="c1">// URL: http://example.com/paises/3</span>
-
-<span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en attributes de request y devolverá un 3</span>
-<span class="c1">//Paginado ...</span>
-<span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="c1">// URL: http://example.com/paises/3</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="nv">$currentPage</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//encontrará el valor en attributes de request y devolverá un 3</span>
+<span class="lineno">6</span> <span class="c1">//Paginado ...</span>
+<span class="lineno">7</span> <span class="k">echo</span> <span class="nv">$currentPage</span><span class="p">;</span> <span class="c1">//mostrará 3</span></code></pre></figure>
 
 <p>Este es un buen ejemplo de lo util que puede ser el método get() y el uso práctico de la propiedad attributes.</p>
 
@@ -276,20 +276,20 @@
 
 <p>Un ejemplo de ello puede ser conocer si la petición es mediante ajax o no, en php seria algo como:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span>
-    <span class="k">AND</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span> <span class="o">===</span> <span class="s1">&#39;xmlhttprequest&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// AJAX</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span>
+<span class="lineno">4</span>     <span class="k">AND</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;HTTP_X_REQUESTED_WITH&#39;</span><span class="p">])</span> <span class="o">===</span> <span class="s1">&#39;xmlhttprequest&#39;</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">5</span>     <span class="c1">// AJAX</span>
+<span class="lineno">6</span> <span class="p">}</span></code></pre></figure>
 
 <p>Mientras que con el componente seria algo como:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">isXmlHttpRequest</span><span class="p">())</span> <span class="p">{</span>
-    <span class="c1">// AJAX</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">isXmlHttpRequest</span><span class="p">())</span> <span class="p">{</span>
+<span class="lineno">4</span>     <span class="c1">// AJAX</span>
+<span class="lineno">5</span> <span class="p">}</span></code></pre></figure>
 
 <p>Existen otros métodos en la clase como:</p>
 
@@ -307,71 +307,71 @@
 
 <p>Ejemplo de uso:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span> <span class="c1">//crea el objeto con las cabeceras</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span> <span class="c1">//envia las cabeceras y el contenido</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;No existe la Página :-(&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span> <span class="c1">//establecemos el codigo de estado de la respuesta</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="c1">//enviando una respuesta en formato json</span>
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/json&#39;</span><span class="p">));</span> 
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-<span class="c1">// otra forma de hacerlo</span>
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span> 
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isOk</span><span class="p">()){</span>
-    <span class="c1">//respuesta exitosa</span>
-<span class="p">}</span>
-
-<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirection</span><span class="p">()){</span>
-    <span class="c1">//se está redireccionando</span>
-<span class="p">}</span>
-
-<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirect</span><span class="p">(</span><span class="s1">&#39;/pais&#39;</span><span class="p">)){</span>
-    <span class="c1">//se está redireccionando a /pais</span>
-<span class="p">}</span>
-
-<span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isServerError</span><span class="p">()){</span>
-    <span class="c1">//error del servidor :-/</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span> <span class="c1">//crea el objeto con las cabeceras</span>
+<span class="lineno"> 6</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span> <span class="c1">//envia las cabeceras y el contenido</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;No existe la Página :-(&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span> <span class="c1">//establecemos el codigo de estado de la respuesta</span>
+<span class="lineno"> 9</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="c1">//enviando una respuesta en formato json</span>
+<span class="lineno">12</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/json&#39;</span><span class="p">));</span> 
+<span class="lineno">13</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno">14</span> <span class="c1">// otra forma de hacerlo</span>
+<span class="lineno">15</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s1">&#39;[&quot;Mi valor&quot;]&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span> 
+<span class="lineno">16</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">headers</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
+<span class="lineno">17</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span> <span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isOk</span><span class="p">()){</span>
+<span class="lineno">20</span>     <span class="c1">//respuesta exitosa</span>
+<span class="lineno">21</span> <span class="p">}</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span> <span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirection</span><span class="p">()){</span>
+<span class="lineno">24</span>     <span class="c1">//se está redireccionando</span>
+<span class="lineno">25</span> <span class="p">}</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span> <span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isRedirect</span><span class="p">(</span><span class="s1">&#39;/pais&#39;</span><span class="p">)){</span>
+<span class="lineno">28</span>     <span class="c1">//se está redireccionando a /pais</span>
+<span class="lineno">29</span> <span class="p">}</span>
+<span class="lineno">30</span> 
+<span class="lineno">31</span> <span class="k">if</span><span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">isServerError</span><span class="p">()){</span>
+<span class="lineno">32</span>     <span class="c1">//error del servidor :-/</span>
+<span class="lineno">33</span> <span class="p">}</span></code></pre></figure>
 
 <p>El constructor de la clase espera tres parametros:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * Constructor.</span>
-<span class="sd"> *</span>
-<span class="sd"> * @param string  $content The response content</span>
-<span class="sd"> * @param integer $status  The response status code</span>
-<span class="sd"> * @param array   $headers An array of response headers</span>
-<span class="sd"> *</span>
-<span class="sd"> * @throws \InvalidArgumentException When the HTTP status code is not valid</span>
-<span class="sd"> *</span>
-<span class="sd"> * @api</span>
-<span class="sd"> */</span>
- <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="sd">/**</span>
+<span class="lineno"> 4</span> <span class="sd"> * Constructor.</span>
+<span class="lineno"> 5</span> <span class="sd"> *</span>
+<span class="lineno"> 6</span> <span class="sd"> * @param string  $content The response content</span>
+<span class="lineno"> 7</span> <span class="sd"> * @param integer $status  The response status code</span>
+<span class="lineno"> 8</span> <span class="sd"> * @param array   $headers An array of response headers</span>
+<span class="lineno"> 9</span> <span class="sd"> *</span>
+<span class="lineno">10</span> <span class="sd"> * @throws \InvalidArgumentException When the HTTP status code is not valid</span>
+<span class="lineno">11</span> <span class="sd"> *</span>
+<span class="lineno">12</span> <span class="sd"> * @api</span>
+<span class="lineno">13</span> <span class="sd"> */</span>
+<span class="lineno">14</span>  <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
 
 <p>Tambien podemos crear la instancia de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="c1">//asi podemos hacer algo como:</span>
-
-<span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Mi contenido&quot;</span><span class="p">)</span>
-    <span class="o">-&gt;</span><span class="na">setStatusCode</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
-    <span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$response</span> <span class="o">=</span> <span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Hola Mundo!!!&quot;</span><span class="p">);</span>
+<span class="lineno"> 6</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="c1">//asi podemos hacer algo como:</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="nx">Response</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;Mi contenido&quot;</span><span class="p">)</span>
+<span class="lineno">11</span>     <span class="o">-&gt;</span><span class="na">setStatusCode</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="lineno">12</span>     <span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
 
 <p>Es importante destacar que es el método <strong>send()</strong> el que realmente hace el envío de las cabeceras y el contenido.</p>
 
@@ -381,37 +381,37 @@
 
 <p>Esta clase crea una respuesta con el contenido y cabeceras correspondientes a un redirección http, acepta los siguientes parametros en su constructor:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * Creates a redirect response so that it conforms to the rules </span>
-<span class="sd"> * defined for a redirect status code.</span>
-<span class="sd"> *</span>
-<span class="sd"> * @param string  $url     The URL to redirect to</span>
-<span class="sd"> * @param integer $status  The status code (302 by default)</span>
-<span class="sd"> * @param array   $headers The headers (Location is always set to the given url)</span>
-<span class="sd"> *</span>
-<span class="sd"> * @throws \InvalidArgumentException</span>
-<span class="sd"> *</span>
-<span class="sd"> * @see http://tools.ietf.org/html/rfc2616#section-10.3</span>
-<span class="sd"> *</span>
-<span class="sd"> * @api</span>
-<span class="sd"> */</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">302</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="sd">/**</span>
+<span class="lineno"> 4</span> <span class="sd"> * Creates a redirect response so that it conforms to the rules </span>
+<span class="lineno"> 5</span> <span class="sd"> * defined for a redirect status code.</span>
+<span class="lineno"> 6</span> <span class="sd"> *</span>
+<span class="lineno"> 7</span> <span class="sd"> * @param string  $url     The URL to redirect to</span>
+<span class="lineno"> 8</span> <span class="sd"> * @param integer $status  The status code (302 by default)</span>
+<span class="lineno"> 9</span> <span class="sd"> * @param array   $headers The headers (Location is always set to the given url)</span>
+<span class="lineno">10</span> <span class="sd"> *</span>
+<span class="lineno">11</span> <span class="sd"> * @throws \InvalidArgumentException</span>
+<span class="lineno">12</span> <span class="sd"> *</span>
+<span class="lineno">13</span> <span class="sd"> * @see http://tools.ietf.org/html/rfc2616#section-10.3</span>
+<span class="lineno">14</span> <span class="sd"> *</span>
+<span class="lineno">15</span> <span class="sd"> * @api</span>
+<span class="lineno">16</span> <span class="sd"> */</span>
+<span class="lineno">17</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">302</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
 
 <p>Ejemplo de uso:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\RedirectResponse</span><span class="p">;</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">);</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;/otro_archivo_de_mi_host.html&quot;</span><span class="p">);</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="nx">RedirectResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\RedirectResponse</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">);</span>
+<span class="lineno"> 6</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RedirectResponse</span><span class="p">(</span><span class="s2">&quot;/otro_archivo_de_mi_host.html&quot;</span><span class="p">);</span>
+<span class="lineno"> 9</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="nx">RedirectResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
 
 <p>Esta clase nos ahorra las tarea de: </p>
 
@@ -425,32 +425,32 @@
 
 <p>Esta clase crea una respuesta con el contenido y cabeceras para el formato json, acepta los siguientes parametros en su constructor:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * Constructor.</span>
-<span class="sd"> *</span>
-<span class="sd"> * @param mixed   $data    The response data</span>
-<span class="sd"> * @param integer $status  The response status code</span>
-<span class="sd"> * @param array   $headers An array of response headers</span>
-<span class="sd"> */</span>
- <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="sd">/**</span>
+<span class="lineno"> 4</span> <span class="sd"> * Constructor.</span>
+<span class="lineno"> 5</span> <span class="sd"> *</span>
+<span class="lineno"> 6</span> <span class="sd"> * @param mixed   $data    The response data</span>
+<span class="lineno"> 7</span> <span class="sd"> * @param integer $status  The response status code</span>
+<span class="lineno"> 8</span> <span class="sd"> * @param array   $headers An array of response headers</span>
+<span class="lineno"> 9</span> <span class="sd"> */</span>
+<span class="lineno">10</span>  <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span></code></pre></figure>
 
 <p>Ejemplo de uso:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\JsonResponse</span><span class="p">;</span>
-
-<span class="nv">$datos</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-    <span class="s1">&#39;nombre&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;pais&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Venezuela&#39;</span><span class="p">,</span>
-<span class="p">);</span>
-
-<span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonResponse</span><span class="p">(</span><span class="nv">$datos</span><span class="p">);</span>
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
-
-<span class="nx">JsonResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$datos</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\JsonResponse</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="nv">$datos</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno"> 6</span>     <span class="s1">&#39;nombre&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Manuel&#39;</span><span class="p">,</span>
+<span class="lineno"> 7</span>     <span class="s1">&#39;pais&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Venezuela&#39;</span><span class="p">,</span>
+<span class="lineno"> 8</span> <span class="p">);</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="nv">$response</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonResponse</span><span class="p">(</span><span class="nv">$datos</span><span class="p">);</span>
+<span class="lineno">11</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span> <span class="nx">JsonResponse</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$datos</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span></code></pre></figure>
 
 <p>Esta clase nos ahorra las tarea de:</p>
 

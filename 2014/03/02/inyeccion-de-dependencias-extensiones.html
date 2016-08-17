@@ -68,73 +68,73 @@
 
 <p>Para hacer un uso práctico de las extensiones, crearemos el archivo <strong>app/container_configuration.php</strong> en el cual registraremos las extensiones y los Compilers de nuestra app:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">return</span> <span class="k">array</span><span class="p">(</span>
-    <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span><span class="c1">//acá vamos a ir añadiendo las instancias de las extensiones</span>
-    <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span> <span class="c1">//y acá las instancias de los Compiler Passes</span>
-<span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">4</span>     <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span><span class="c1">//acá vamos a ir añadiendo las instancias de las extensiones</span>
+<span class="lineno">5</span>     <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span> <span class="c1">//y acá las instancias de los Compiler Passes</span>
+<span class="lineno">6</span> <span class="p">);</span></code></pre></figure>
 
 <p>Ahora vamos a modificar el archivo <strong>app/bootstrap.php</strong> para que quede de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
-
-<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
-<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
-
-<span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;cache/container.php&#39;</span><span class="p">;</span>
-<span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado</span>
-    <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
-
-    <span class="nv">$config</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;container_configuration.php&#39;</span><span class="p">;</span>
-
-    <span class="k">foreach</span><span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;extensions&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$extension</span><span class="p">){</span>
-        <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">registerExtension</span><span class="p">(</span><span class="nv">$extension</span><span class="p">);</span><span class="c1">//registramos las extensiones en el container</span>
-    <span class="p">}</span>
-
-    <span class="k">foreach</span><span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;compilers&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$compiler</span><span class="p">){</span>
-        <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">addCompilerPass</span><span class="p">(</span><span class="nv">$compiler</span><span class="p">);</span><span class="c1">//registramos los compilers en el container</span>
-    <span class="p">}</span>
-
-    <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
-    <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
-
-    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
-
-    <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
-    <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
-        <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyCachedContainer&#39;</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
-    <span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
-<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
+<span class="lineno"> 4</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
+<span class="lineno">10</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span> <span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;cache/container.php&#39;</span><span class="p">;</span>
+<span class="lineno">13</span> <span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado</span>
+<span class="lineno">16</span>     <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>     <span class="nv">$config</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;container_configuration.php&#39;</span><span class="p">;</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="k">foreach</span><span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;extensions&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$extension</span><span class="p">){</span>
+<span class="lineno">21</span>         <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">registerExtension</span><span class="p">(</span><span class="nv">$extension</span><span class="p">);</span><span class="c1">//registramos las extensiones en el container</span>
+<span class="lineno">22</span>     <span class="p">}</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="k">foreach</span><span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;compilers&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$compiler</span><span class="p">){</span>
+<span class="lineno">25</span>         <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">addCompilerPass</span><span class="p">(</span><span class="nv">$compiler</span><span class="p">);</span><span class="c1">//registramos los compilers en el container</span>
+<span class="lineno">26</span>     <span class="p">}</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span>     <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
+<span class="lineno">29</span>     <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
+<span class="lineno">30</span> 
+<span class="lineno">31</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+<span class="lineno">32</span> 
+<span class="lineno">33</span>     <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
+<span class="lineno">34</span>     <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
+<span class="lineno">35</span>         <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyCachedContainer&#39;</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
+<span class="lineno">36</span>     <span class="p">);</span>
+<span class="lineno">37</span> <span class="p">}</span>
+<span class="lineno">38</span> 
+<span class="lineno">39</span> <span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
+<span class="lineno">40</span> <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></figure>
 
 <p>Como se puede ver se agregaron dos <strong>foreach</strong> que registran las extensiones y compilers al container, además, se han quitado los seteos de los parametros <strong>app_path</strong> y <strong>debug</strong>, pues estos serán establecidos mediante extensiones.</p>
 
 <p>Procedemos ahora a crear nuestra primera extensión, pero antes vamos a añadir un directorio al autoloader para que busque nuestras clases allí, en el composer.json añadimos:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
-    <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;symfony/dependency-injection&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;symfony/yaml&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;symfony/config&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;autoload&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;psr-0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;app/src/&quot;</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno"> 1</span> <span class="p">{</span>
+<span class="lineno"> 2</span>     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="lineno"> 3</span>         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+<span class="lineno"> 4</span>         <span class="nt">&quot;symfony/dependency-injection&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+<span class="lineno"> 5</span>         <span class="nt">&quot;symfony/yaml&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+<span class="lineno"> 6</span>         <span class="nt">&quot;symfony/config&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
+<span class="lineno"> 7</span>     <span class="p">},</span>
+<span class="lineno"> 8</span>     <span class="nt">&quot;autoload&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="lineno"> 9</span>         <span class="nt">&quot;psr-0&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="lineno">10</span>             <span class="nt">&quot;&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;app/src/&quot;</span><span class="p">]</span>
+<span class="lineno">11</span>         <span class="p">}</span>
+<span class="lineno">12</span>     <span class="p">}</span>
+<span class="lineno">13</span> <span class="p">}</span></code></pre></figure>
 
 <p>Luego ejecutamos el comando:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">php composer dump-autoload
@@ -143,49 +143,49 @@
 
 <p>Ahora creamos la primera extensión en <strong>app/src/Application/Extension/ApplicationExtension.php</strong>:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Extension/ApplicationExtension.php</span>
-
-<span class="k">namespace</span> <span class="nx">Application\Extension</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Extension\Extension</span><span class="p">;</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * @author Manuel Aguirre &lt;programador.manuel@gmail.com&gt;</span>
-<span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">ApplicationExtension</span> <span class="k">extends</span> <span class="nx">Extension</span>
-<span class="p">{</span>
-
-    <span class="k">protected</span> <span class="nv">$appPath</span><span class="p">;</span>
-    <span class="k">protected</span> <span class="nv">$isDebug</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$appPath</span><span class="p">,</span> <span class="nv">$isDebug</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">appPath</span> <span class="o">=</span> <span class="nv">$appPath</span><span class="p">;</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isDebug</span> <span class="o">=</span> <span class="nv">$isDebug</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">load</span><span class="p">(</span><span class="k">array</span> <span class="nv">$config</span><span class="p">,</span> <span class="nx">ContainerBuilder</span> <span class="nv">$container</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">//ahora es en la extensión donde establecemos los parametros</span>
-        <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;app_path&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">appPath</span><span class="p">);</span>
-        <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isDebug</span><span class="p">);</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Extension/ApplicationExtension.php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">Application\Extension</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Extension\Extension</span><span class="p">;</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="sd">/**</span>
+<span class="lineno"> 9</span> <span class="sd"> * @author Manuel Aguirre &lt;programador.manuel@gmail.com&gt;</span>
+<span class="lineno">10</span> <span class="sd"> */</span>
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">ApplicationExtension</span> <span class="k">extends</span> <span class="nx">Extension</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>     <span class="k">protected</span> <span class="nv">$appPath</span><span class="p">;</span>
+<span class="lineno">15</span>     <span class="k">protected</span> <span class="nv">$isDebug</span><span class="p">;</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$appPath</span><span class="p">,</span> <span class="nv">$isDebug</span><span class="p">)</span>
+<span class="lineno">18</span>     <span class="p">{</span>
+<span class="lineno">19</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">appPath</span> <span class="o">=</span> <span class="nv">$appPath</span><span class="p">;</span>
+<span class="lineno">20</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isDebug</span> <span class="o">=</span> <span class="nv">$isDebug</span><span class="p">;</span>
+<span class="lineno">21</span>     <span class="p">}</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">load</span><span class="p">(</span><span class="k">array</span> <span class="nv">$config</span><span class="p">,</span> <span class="nx">ContainerBuilder</span> <span class="nv">$container</span><span class="p">)</span>
+<span class="lineno">24</span>     <span class="p">{</span>
+<span class="lineno">25</span>         <span class="c1">//ahora es en la extensión donde establecemos los parametros</span>
+<span class="lineno">26</span>         <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;app_path&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">appPath</span><span class="p">);</span>
+<span class="lineno">27</span>         <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">isDebug</span><span class="p">);</span>
+<span class="lineno">28</span>     <span class="p">}</span>
+<span class="lineno">29</span> 
+<span class="lineno">30</span> <span class="p">}</span></code></pre></figure>
 
 <p>Y agregamos la extension al <strong>container_configuration.php</strong>:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Application\Extension\ApplicationExtension</span><span class="p">;</span>
-
-<span class="k">return</span> <span class="k">array</span><span class="p">(</span>
-    <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">ApplicationExtension</span><span class="p">(</span><span class="nx">APP_PATH</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">),</span>
-    <span class="p">),</span>
-    <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span>
-<span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Application\Extension\ApplicationExtension</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno"> 6</span>     <span class="s1">&#39;extensions&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno"> 7</span>         <span class="k">new</span> <span class="nx">ApplicationExtension</span><span class="p">(</span><span class="nx">APP_PATH</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">),</span>
+<span class="lineno"> 8</span>     <span class="p">),</span>
+<span class="lineno"> 9</span>     <span class="s1">&#39;compilers&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span>
+<span class="lineno">10</span> <span class="p">);</span></code></pre></figure>
 
 <p>Ya hemos registrado nuestra primera extensión al container, sin embargo nuestra extensión no será cargada, esto es debido a que por defecto el componente utiliza un CompilerPass (<a href="https://github.com/symfony/DependencyInjection/blob/master/Compiler/MergeExtensionConfigurationPass.php#L40">MergeExtensionConfigurationPass</a>) que solo carga las extensiones que poseen configuración definida en los archivos de configuración (YML, PHP, XML, ...), y en nuestro caso no hemos definido ninguna configuración.</p>
 
@@ -195,93 +195,93 @@
 
 <p>Extenderemos de la clase <strong>MergeExtensionConfigurationPass</strong> y sobreescribiremos el método <strong>process</strong>, luego le diremos al contenedor que el compiler que cargará las extensiones será el nuestro. El código del compiler es el siguiente:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Compiler/MergeExtensionsPass.php</span>
-
-<span class="k">namespace</span> <span class="nx">Application\Compiler</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * @author Manuel Aguirre &lt;programador.manuel@gmail.com&gt;</span>
-<span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">MergeExtensionsPass</span> <span class="k">extends</span> <span class="nx">MergeExtensionConfigurationPass</span>
-<span class="p">{</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">process</span><span class="p">(</span><span class="nx">ContainerBuilder</span> <span class="nv">$container</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">getExtensions</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">count</span><span class="p">(</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">getExtensionConfig</span><span class="p">(</span><span class="nv">$name</span><span class="p">)))</span> <span class="p">{</span>
-                <span class="c1">//cargamos solo las extensiones que no poseen configuración, </span>
-                <span class="c1">//ya que la clase padre cargará las que si poseen config.</span>
-                <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">loadFromExtension</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">parent</span><span class="o">::</span><span class="na">process</span><span class="p">(</span><span class="nv">$container</span><span class="p">);</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//   app/src/Application/Compiler/MergeExtensionsPass.php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">Application\Compiler</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="sd">/**</span>
+<span class="lineno"> 9</span> <span class="sd"> * @author Manuel Aguirre &lt;programador.manuel@gmail.com&gt;</span>
+<span class="lineno">10</span> <span class="sd"> */</span>
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">MergeExtensionsPass</span> <span class="k">extends</span> <span class="nx">MergeExtensionConfigurationPass</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">process</span><span class="p">(</span><span class="nx">ContainerBuilder</span> <span class="nv">$container</span><span class="p">)</span>
+<span class="lineno">15</span>     <span class="p">{</span>
+<span class="lineno">16</span>         <span class="k">foreach</span> <span class="p">(</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">getExtensions</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">17</span>             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">count</span><span class="p">(</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">getExtensionConfig</span><span class="p">(</span><span class="nv">$name</span><span class="p">)))</span> <span class="p">{</span>
+<span class="lineno">18</span>                 <span class="c1">//cargamos solo las extensiones que no poseen configuración, </span>
+<span class="lineno">19</span>                 <span class="c1">//ya que la clase padre cargará las que si poseen config.</span>
+<span class="lineno">20</span>                 <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">loadFromExtension</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span>
+<span class="lineno">21</span>             <span class="p">}</span>
+<span class="lineno">22</span>         <span class="p">}</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>         <span class="k">parent</span><span class="o">::</span><span class="na">process</span><span class="p">(</span><span class="nv">$container</span><span class="p">);</span>
+<span class="lineno">25</span>     <span class="p">}</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span> <span class="p">}</span></code></pre></figure>
 
 <p>Este compiler podemos agregarlo al archivo container_configuration.php, pero para hacer mejor las cosas, lo estableceremos directamente en el contenedor de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getCompiler</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">getPassConfig</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setMergePass</span><span class="p">(</span><span class="k">new</span> <span class="nx">MergeExtensionsPass</span><span class="p">());</span>
-
-<span class="c1">// Obtenemos el compilador, el cual posee un objeto PassConfig que </span>
-<span class="c1">// contiene los compilers que por defecto usa el container, estos podemos</span>
-<span class="c1">// cambiarlos llamando a algunos métodos como el que hemos usado en este</span>
-<span class="c1">// caso particular (setMergePass)</span>
-<span class="c1">// Con esto hacemos que el compiler use nuestra clase para cargar las extensiones.</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getCompiler</span><span class="p">()</span>
+<span class="lineno"> 4</span>             <span class="o">-&gt;</span><span class="na">getPassConfig</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setMergePass</span><span class="p">(</span><span class="k">new</span> <span class="nx">MergeExtensionsPass</span><span class="p">());</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="c1">// Obtenemos el compilador, el cual posee un objeto PassConfig que </span>
+<span class="lineno"> 7</span> <span class="c1">// contiene los compilers que por defecto usa el container, estos podemos</span>
+<span class="lineno"> 8</span> <span class="c1">// cambiarlos llamando a algunos métodos como el que hemos usado en este</span>
+<span class="lineno"> 9</span> <span class="c1">// caso particular (setMergePass)</span>
+<span class="lineno">10</span> <span class="c1">// Con esto hacemos que el compiler use nuestra clase para cargar las extensiones.</span></code></pre></figure>
 
 <p>Dicha linea de código la debemos agregar al archivo <strong>app/bootsrap.php</strong>, quedando su código de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">use</span> <span class="nx">Application\Compiler\MergeExtensionsPass</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
-
-<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
-<span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
-
-<span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;cache/container.php&#39;</span><span class="p">;</span>
-<span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado</span>
-    <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
-
-    <span class="nv">$config</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;container_configuration.php&#39;</span><span class="p">;</span>
-
-    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;extensions&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">registerExtension</span><span class="p">(</span><span class="nv">$extension</span><span class="p">);</span> <span class="c1">//registramos las extensiones en el container</span>
-    <span class="p">}</span>
-
-    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;compilers&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$compiler</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">addCompilerPass</span><span class="p">(</span><span class="nv">$compiler</span><span class="p">);</span> <span class="c1">//registramos los compilers en el container</span>
-    <span class="p">}</span>
-
-    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getCompiler</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">getPassConfig</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setMergePass</span><span class="p">(</span><span class="k">new</span> <span class="nx">MergeExtensionsPass</span><span class="p">());</span>
-
-    <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
-    <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
-
-    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
-
-    <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
-    <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
-        <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyCachedContainer&#39;</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
-    <span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
-<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Application\Compiler\MergeExtensionsPass</span><span class="p">;</span>
+<span class="lineno"> 4</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
+<span class="lineno">11</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span> <span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;cache/container.php&#39;</span><span class="p">;</span>
+<span class="lineno">14</span> <span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado</span>
+<span class="lineno">17</span>     <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span>     <span class="nv">$config</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;container_configuration.php&#39;</span><span class="p">;</span>
+<span class="lineno">20</span> 
+<span class="lineno">21</span>     <span class="k">foreach</span> <span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;extensions&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$extension</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">22</span>         <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">registerExtension</span><span class="p">(</span><span class="nv">$extension</span><span class="p">);</span> <span class="c1">//registramos las extensiones en el container</span>
+<span class="lineno">23</span>     <span class="p">}</span>
+<span class="lineno">24</span> 
+<span class="lineno">25</span>     <span class="k">foreach</span> <span class="p">(</span><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;compilers&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$compiler</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">26</span>         <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">addCompilerPass</span><span class="p">(</span><span class="nv">$compiler</span><span class="p">);</span> <span class="c1">//registramos los compilers en el container</span>
+<span class="lineno">27</span>     <span class="p">}</span>
+<span class="lineno">28</span> 
+<span class="lineno">29</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getCompiler</span><span class="p">()</span>
+<span class="lineno">30</span>             <span class="o">-&gt;</span><span class="na">getPassConfig</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setMergePass</span><span class="p">(</span><span class="k">new</span> <span class="nx">MergeExtensionsPass</span><span class="p">());</span>
+<span class="lineno">31</span> 
+<span class="lineno">32</span>     <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
+<span class="lineno">33</span>     <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
+<span class="lineno">34</span> 
+<span class="lineno">35</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+<span class="lineno">36</span> 
+<span class="lineno">37</span>     <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
+<span class="lineno">38</span>     <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
+<span class="lineno">39</span>         <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyCachedContainer&#39;</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
+<span class="lineno">40</span>     <span class="p">);</span>
+<span class="lineno">41</span> <span class="p">}</span>
+<span class="lineno">42</span> 
+<span class="lineno">43</span> <span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
+<span class="lineno">44</span> <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span></code></pre></figure>
 
 <p>Con esto ya podemos registrar nuestras propias extensiones al contenedor, Más adelante veremos como hacer un uso más avanzado de las extensiones y compilers, usando el componente EventDispatcher y el Routing de Symfony.</p>
 

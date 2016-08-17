@@ -54,95 +54,95 @@
 
 <p>Veamos un ejemplo básico de como implementar un campo <strong>estado</strong> dinamico, que depende de la selección que haga el usuario en otro campo <strong>pais</strong>:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Type</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\AbstractType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormBuilderInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\OptionsResolver\OptionsResolverInterface</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">UserType</span> <span class="k">extends</span> <span class="nx">AbstractType</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$builder</span>
-            <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">));</span>
-        
-        <span class="c1">// Añadimos un EventListener que actualizará el campo state</span>
-        <span class="c1">// para que sus opciones correspondan</span>
-        <span class="c1">// con el pais seleccionado por el usuario</span>
-        <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">setDefaultOptions</span><span class="p">(</span><span class="nx">OptionsResolverInterface</span> <span class="nv">$resolver</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$resolver</span><span class="o">-&gt;</span><span class="na">setDefaults</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;data_class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\User&#39;</span><span class="p">,</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getName</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Type</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\AbstractType</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormBuilderInterface</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\OptionsResolver\OptionsResolverInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="k">class</span> <span class="nc">UserType</span> <span class="k">extends</span> <span class="nx">AbstractType</span>
+<span class="lineno">11</span> <span class="p">{</span>
+<span class="lineno">12</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="lineno">13</span>     <span class="p">{</span>
+<span class="lineno">14</span>         <span class="nv">$builder</span>
+<span class="lineno">15</span>             <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">))</span>
+<span class="lineno">16</span>             <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">));</span>
+<span class="lineno">17</span>         
+<span class="lineno">18</span>         <span class="c1">// Añadimos un EventListener que actualizará el campo state</span>
+<span class="lineno">19</span>         <span class="c1">// para que sus opciones correspondan</span>
+<span class="lineno">20</span>         <span class="c1">// con el pais seleccionado por el usuario</span>
+<span class="lineno">21</span>         <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
+<span class="lineno">22</span>     <span class="p">}</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">setDefaultOptions</span><span class="p">(</span><span class="nx">OptionsResolverInterface</span> <span class="nv">$resolver</span><span class="p">)</span>
+<span class="lineno">25</span>     <span class="p">{</span>
+<span class="lineno">26</span>         <span class="nv">$resolver</span><span class="o">-&gt;</span><span class="na">setDefaults</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+<span class="lineno">27</span>             <span class="s1">&#39;data_class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\User&#39;</span><span class="p">,</span>
+<span class="lineno">28</span>         <span class="p">));</span>
+<span class="lineno">29</span>     <span class="p">}</span>
+<span class="lineno">30</span> 
+<span class="lineno">31</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">getName</span><span class="p">()</span>
+<span class="lineno">32</span>     <span class="p">{</span>
+<span class="lineno">33</span>         <span class="k">return</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>
+<span class="lineno">34</span>     <span class="p">}</span>
+<span class="lineno">35</span> 
+<span class="lineno">36</span> <span class="p">}</span></code></pre></figure>
 
 <p>Symfony, mediante la implementación de eventos del formulario, permite que el desarrollador acceda a los datos enviados por el usuario al hacer submit del form, y así poder actualizar campos, actualizar la data, o validar dicha data.</p>
 
 <p>En este caso, la clase <code>AddStateFieldSubscriber</code> será la encargada de actulizar el campo <code>state</code> en base al pais seleccionado por el usuario:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
-            <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SUBMIT</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSubmit&#39;</span><span class="p">,</span>
-        <span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="sd">/**</span>
-<span class="sd">     * Cuando el usuario llene los datos del formulario y haga el envío del mismo,</span>
-<span class="sd">     * este método será ejecutado.</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
-        <span class="c1">//data es un arreglo con los valores establecidos por el usuario en el form.</span>
-
-        <span class="c1">//como $data contiene el pais seleccionado por el usuario al enviar el formulario,</span>
-        <span class="c1">// usamos el valor de la posicion $data[&#39;country&#39;] para filtrar el sql de los estados</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]);</span>
-    <span class="p">}</span>
-
-    <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
-        <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
-        <span class="c1">// y filtre la consulta por su valor.</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
-                <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span>     <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
+<span class="lineno">14</span>     <span class="p">{</span>
+<span class="lineno">15</span>         <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">16</span>             <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SUBMIT</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSubmit&#39;</span><span class="p">,</span>
+<span class="lineno">17</span>         <span class="p">);</span>
+<span class="lineno">18</span>     <span class="p">}</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="sd">/**</span>
+<span class="lineno">21</span> <span class="sd">     * Cuando el usuario llene los datos del formulario y haga el envío del mismo,</span>
+<span class="lineno">22</span> <span class="sd">     * este método será ejecutado.</span>
+<span class="lineno">23</span> <span class="sd">     */</span>
+<span class="lineno">24</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno">25</span>     <span class="p">{</span>
+<span class="lineno">26</span>         <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
+<span class="lineno">27</span>         <span class="c1">//data es un arreglo con los valores establecidos por el usuario en el form.</span>
+<span class="lineno">28</span> 
+<span class="lineno">29</span>         <span class="c1">//como $data contiene el pais seleccionado por el usuario al enviar el formulario,</span>
+<span class="lineno">30</span>         <span class="c1">// usamos el valor de la posicion $data[&#39;country&#39;] para filtrar el sql de los estados</span>
+<span class="lineno">31</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]);</span>
+<span class="lineno">32</span>     <span class="p">}</span>
+<span class="lineno">33</span> 
+<span class="lineno">34</span>     <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
+<span class="lineno">35</span>     <span class="p">{</span>
+<span class="lineno">36</span>         <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
+<span class="lineno">37</span>         <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
+<span class="lineno">38</span>         <span class="c1">// y filtre la consulta por su valor.</span>
+<span class="lineno">39</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">40</span>             <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
+<span class="lineno">41</span>             <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
+<span class="lineno">42</span>                 <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+<span class="lineno">43</span>                     <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
+<span class="lineno">44</span>                     <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
+<span class="lineno">45</span>             <span class="p">}</span>
+<span class="lineno">46</span>         <span class="p">));</span>
+<span class="lineno">47</span>     <span class="p">}</span>
+<span class="lineno">48</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora, cuando el usuario envie el formulario, el método <code>AddStateFieldSubscriber::preSubmit</code> será invocado, y el campo <code>state</code> se actualizará con los estados del pais seleccionado por el usuario.</p>
 
@@ -154,85 +154,85 @@
 
 <p>Lo primero que haremos será crear el formulario en el controlador y mostrarlo en la vista:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Controller</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserType</span><span class="p">(),</span><span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isSubmitted</span><span class="p">()</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
-            <span class="nv">$em</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDoctrine</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getManager</span><span class="p">();</span>
-            
-            <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-            <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
-            
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectToAction</span><span class="p">(</span><span class="s1">&#39;alguna acción de la app&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
-         <span class="p">));</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Controller</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+<span class="lineno">10</span> <span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span> <span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="lineno">13</span> <span class="p">{</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span>     <span class="sd">/**</span>
+<span class="lineno">16</span> <span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
+<span class="lineno">17</span> <span class="sd">     */</span>
+<span class="lineno">18</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">19</span>     <span class="p">{</span>
+<span class="lineno">20</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserType</span><span class="p">(),</span><span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+<span class="lineno">21</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="lineno">22</span>         
+<span class="lineno">23</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isSubmitted</span><span class="p">()</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
+<span class="lineno">24</span>             <span class="nv">$em</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDoctrine</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getManager</span><span class="p">();</span>
+<span class="lineno">25</span>             
+<span class="lineno">26</span>             <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="lineno">27</span>             <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+<span class="lineno">28</span>             
+<span class="lineno">29</span>             <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectToAction</span><span class="p">(</span><span class="s1">&#39;alguna acción de la app&#39;</span><span class="p">);</span>
+<span class="lineno">30</span>         <span class="p">}</span>
+<span class="lineno">31</span>         
+<span class="lineno">32</span>         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">33</span>             <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
+<span class="lineno">34</span>          <span class="p">));</span>
+<span class="lineno">35</span>     <span class="p">}</span>
+<span class="lineno">36</span> 
+<span class="lineno">37</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora en la vista twig, mostraremos el formulario y añadiremos el javascript necesario para que el campo <code>state</code> se actualize cuando el usuario seleccione o cambie de pais:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span><span class="err">#</span> <span class="nx">app</span><span class="o">/</span><span class="nx">Resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">user</span><span class="o">/</span><span class="k">new</span><span class="p">.</span><span class="nx">html</span><span class="p">.</span><span class="nx">twig</span> <span class="err">#</span><span class="p">}</span>
-
-<span class="p">{{</span> <span class="nx">form_start</span><span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">}}</span>
-    <span class="p">{{</span> <span class="nx">form_row</span><span class="p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">country</span><span class="p">)</span> <span class="p">}}</span>    <span class="p">{</span><span class="err">#</span> <span class="o">&lt;</span><span class="nx">select</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;user_country&quot;</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
-    <span class="p">{{</span> <span class="nx">form_row</span><span class="p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">}}</span> <span class="p">{</span><span class="err">#</span> <span class="o">&lt;</span><span class="nx">select</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;user_state&quot;</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
-    <span class="p">{</span><span class="err">#</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
-<span class="p">{{</span> <span class="nx">form_end</span><span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">}}</span>
-
-<span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;javascript&quot;</span><span class="o">&gt;</span>
-    <span class="kd">var</span> <span class="nx">$country</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#user_country&#39;</span><span class="p">);</span> 
-    <span class="c1">//tambien podemos hacer $(&#39;#{{ form.country.vars.id }}&#39;) para obtener el id</span>
-    
-    <span class="kd">var</span> <span class="nx">$form</span> <span class="o">=</span> <span class="nx">$country</span><span class="p">.</span><span class="nx">closest</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
-
-    <span class="c1">// cada vez que el usuario cambie el pais en el select</span>
-    <span class="nx">$country</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-        <span class="c1">// creamos la data, solo con el campo del pais,</span>
-        <span class="c1">// ya que es el dato relevante en este caso.</span>
-        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">$country</span><span class="p">.</span><span class="nx">serialize</span><span class="p">();</span>
-
-        <span class="c1">// Hacemos un envío del formulario, lo que ejecutará el evento preSubmit</span>
-        <span class="c1">// del listener AddStateFieldSubscriber,</span>
-        <span class="c1">// y actualizará el campo state, con los estados del pais seleccionado.</span>
-
-        <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
-            <span class="nx">url</span> <span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">),</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">),</span>
-            <span class="nx">data</span> <span class="o">:</span> <span class="nx">data</span><span class="p">,</span>
-            <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-
-                <span class="c1">// la variable html representa toda la página junto con el select de estados.</span>
-                <span class="c1">// el cual tomamos y colocamos para reemplazar el select actual.</span>
-
-                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#user_state&#39;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">html</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;#user_state&#39;</span><span class="p">));</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
-    <span class="p">});</span>
-<span class="o">&lt;</span><span class="err">/script&gt;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="p">{</span><span class="err">#</span> <span class="nx">app</span><span class="o">/</span><span class="nx">Resources</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">user</span><span class="o">/</span><span class="k">new</span><span class="p">.</span><span class="nx">html</span><span class="p">.</span><span class="nx">twig</span> <span class="err">#</span><span class="p">}</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="p">{{</span> <span class="nx">form_start</span><span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">}}</span>
+<span class="lineno"> 4</span>     <span class="p">{{</span> <span class="nx">form_row</span><span class="p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">country</span><span class="p">)</span> <span class="p">}}</span>    <span class="p">{</span><span class="err">#</span> <span class="o">&lt;</span><span class="nx">select</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;user_country&quot;</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
+<span class="lineno"> 5</span>     <span class="p">{{</span> <span class="nx">form_row</span><span class="p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">}}</span> <span class="p">{</span><span class="err">#</span> <span class="o">&lt;</span><span class="nx">select</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;user_state&quot;</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
+<span class="lineno"> 6</span>     <span class="p">{</span><span class="err">#</span> <span class="p">...</span> <span class="err">#</span><span class="p">}</span>
+<span class="lineno"> 7</span> <span class="p">{{</span> <span class="nx">form_end</span><span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">}}</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;javascript&quot;</span><span class="o">&gt;</span>
+<span class="lineno">10</span>     <span class="kd">var</span> <span class="nx">$country</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#user_country&#39;</span><span class="p">);</span> 
+<span class="lineno">11</span>     <span class="c1">//tambien podemos hacer $(&#39;#{{ form.country.vars.id }}&#39;) para obtener el id</span>
+<span class="lineno">12</span>     
+<span class="lineno">13</span>     <span class="kd">var</span> <span class="nx">$form</span> <span class="o">=</span> <span class="nx">$country</span><span class="p">.</span><span class="nx">closest</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span>     <span class="c1">// cada vez que el usuario cambie el pais en el select</span>
+<span class="lineno">16</span>     <span class="nx">$country</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>         <span class="c1">// creamos la data, solo con el campo del pais,</span>
+<span class="lineno">19</span>         <span class="c1">// ya que es el dato relevante en este caso.</span>
+<span class="lineno">20</span>         <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">$country</span><span class="p">.</span><span class="nx">serialize</span><span class="p">();</span>
+<span class="lineno">21</span> 
+<span class="lineno">22</span>         <span class="c1">// Hacemos un envío del formulario, lo que ejecutará el evento preSubmit</span>
+<span class="lineno">23</span>         <span class="c1">// del listener AddStateFieldSubscriber,</span>
+<span class="lineno">24</span>         <span class="c1">// y actualizará el campo state, con los estados del pais seleccionado.</span>
+<span class="lineno">25</span> 
+<span class="lineno">26</span>         <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+<span class="lineno">27</span>             <span class="nx">url</span> <span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">),</span>
+<span class="lineno">28</span>             <span class="nx">type</span><span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">),</span>
+<span class="lineno">29</span>             <span class="nx">data</span> <span class="o">:</span> <span class="nx">data</span><span class="p">,</span>
+<span class="lineno">30</span>             <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">31</span> 
+<span class="lineno">32</span>                 <span class="c1">// la variable html representa toda la página junto con el select de estados.</span>
+<span class="lineno">33</span>                 <span class="c1">// el cual tomamos y colocamos para reemplazar el select actual.</span>
+<span class="lineno">34</span> 
+<span class="lineno">35</span>                 <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#user_state&#39;</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">html</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;#user_state&#39;</span><span class="p">));</span>
+<span class="lineno">36</span>             <span class="p">}</span>
+<span class="lineno">37</span>         <span class="p">});</span>
+<span class="lineno">38</span>     <span class="p">});</span>
+<span class="lineno">39</span> <span class="o">&lt;</span><span class="err">/script&gt;</span></code></pre></figure>
 
 <p>Este código javascript lo que hace es enviar una petición ajax a la misma página que procesa el formulario, para forzar la ejecución del evento <code>PRE_SUBMIT</code> del formulario y hacer que el listener <code>AddStateFieldSubscriber</code> actualize el campo <code>state</code> en base al pais enviado. Por ultimo, tomamos de la respuesta html el campo <code>#user_state</code> y lo colocamos en reemplazo del campo original en la página.</p>
 
@@ -242,55 +242,55 @@
 
 <p>Si por otro lado queremos estar más seguros de que no se vaya hacer un insert indeseado en la base de datos, podemos crearnos una nueva acción que solo cree y muestre el formulario (que acepte además solo peticiones ajax), pero que nunca haga el persist del objeto.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Controller</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="o">...</span>
-    <span class="p">}</span>
-    
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(</span>
-<span class="sd">     *      &quot;/ajax-form&quot;, </span>
-<span class="sd">     *      name=&quot;user_ajax_form&quot;,</span>
-<span class="sd">     *      conditions=&quot;request.isXmlHttpRequest()&quot;</span>
-<span class="sd">     * )</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">ajaxFormAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserType</span><span class="p">(),</span><span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
-         <span class="p">));</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Controller</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+<span class="lineno">10</span> <span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span> <span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="lineno">13</span> <span class="p">{</span>
+<span class="lineno">14</span>     <span class="sd">/**</span>
+<span class="lineno">15</span> <span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
+<span class="lineno">16</span> <span class="sd">     */</span>
+<span class="lineno">17</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">18</span>     <span class="p">{</span>
+<span class="lineno">19</span>         <span class="o">...</span>
+<span class="lineno">20</span>     <span class="p">}</span>
+<span class="lineno">21</span>     
+<span class="lineno">22</span>     <span class="sd">/**</span>
+<span class="lineno">23</span> <span class="sd">     * @Route(</span>
+<span class="lineno">24</span> <span class="sd">     *      &quot;/ajax-form&quot;, </span>
+<span class="lineno">25</span> <span class="sd">     *      name=&quot;user_ajax_form&quot;,</span>
+<span class="lineno">26</span> <span class="sd">     *      conditions=&quot;request.isXmlHttpRequest()&quot;</span>
+<span class="lineno">27</span> <span class="sd">     * )</span>
+<span class="lineno">28</span> <span class="sd">     */</span>
+<span class="lineno">29</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">ajaxFormAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">30</span>     <span class="p">{</span>
+<span class="lineno">31</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="k">new</span> <span class="nx">UserType</span><span class="p">(),</span><span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+<span class="lineno">32</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="lineno">33</span>         
+<span class="lineno">34</span>         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">35</span>             <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
+<span class="lineno">36</span>          <span class="p">));</span>
+<span class="lineno">37</span>     <span class="p">}</span>
+<span class="lineno">38</span> 
+<span class="lineno">39</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora con solo hacer que en el javascript, la url del método $.ajax de jquery apunte a la ruta <code>user_ajax_form</code> tendremos la seguridad de que nunca se va hacer algún persist indeseado.</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// Antes:</span>
-<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
-    <span class="nx">url</span> <span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">),</span>
-    
-<span class="c1">// Ahora:</span>
-<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
-    <span class="nx">url</span> <span class="o">:</span> <span class="s2">&quot;{{ path(&#39;user_ajax_form&#39;) }}&quot;</span><span class="p">,</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno">1</span> <span class="c1">// Antes:</span>
+<span class="lineno">2</span> <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+<span class="lineno">3</span>     <span class="nx">url</span> <span class="o">:</span> <span class="nx">$form</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">),</span>
+<span class="lineno">4</span>     
+<span class="lineno">5</span> <span class="c1">// Ahora:</span>
+<span class="lineno">6</span> <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+<span class="lineno">7</span>     <span class="nx">url</span> <span class="o">:</span> <span class="s2">&quot;{{ path(&#39;user_ajax_form&#39;) }}&quot;</span><span class="p">,</span></code></pre></figure>
 
 <h2>Editando un Usuario Existente</h2>
 
@@ -308,98 +308,98 @@
 
 <p>Entonces solo debemos hacer que el campo <code>state</code> tome en cuenta el pais que contiene la entidad <code>User</code> y en base a dicho pais, cree las opciones del select de los estados. Para lograrlo, vamos a modificar la clase  <code>AddStateFieldSubscriber</code> para que escuche el evento <code>pre_set_data</code> de los formularios de symfony, ya que este evento se ejecuta justo antes de establecer los valores de cada campo del formulario en base a los datos almacenados en el objeto de la clase <code>User</code>.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
-            <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSetData&#39;</span><span class="p">,</span> <span class="c1">//nuevo evento escuchado</span>
-            <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SUBMIT</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSubmit&#39;</span><span class="p">,</span>
-        <span class="p">);</span>
-    <span class="p">}</span>
-    
-    <span class="sd">/**</span>
-<span class="sd">     * Este evento se ejecuta al momento de crear el formulario </span>
-<span class="sd">     * o al llamar al método $form-&gt;setData($user),</span>
-<span class="sd">     * y nos sirve para obtener datos inicales del objeto asociado al form.</span>
-<span class="sd">     * Ya que por ejemplo si el objeto viene de la base de datos y contiene</span>
-<span class="sd">     * ya un pais establecido, lo ideal es que el campo state se carge inicalmente con</span>
-<span class="sd">     * los estados de dicho pais.</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span> <span class="c1">//data es un objeto AppBundle\Entity\User</span>
-
-        <span class="c1">// Pasamos siempre el country así sea null</span>
-        <span class="c1">// para que cuando sea un usuario nuevo, el listado de estados esté</span>
-        <span class="c1">// vacio inicialmente, y solo se llene de items, cuando se ejecute el </span>
-        <span class="c1">// ajax que obtiene los estados del pais seleccionado por el usuario.</span>
-
-        <span class="nv">$country</span> <span class="o">=</span> <span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">())</span> <span class="o">?</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">()</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span> <span class="c1">// Importante los parentesis al usar &quot;and&quot;.</span>
-        
-        <span class="c1">// Es importante siempre verificar que el valor devuelto por $event-&gt;getData()</span>
-        <span class="c1">// (que en este caso es $user) no sea null, porque no es obligatorio que al crear</span>
-        <span class="c1">// el formulario, se le pase una instancia de User,</span>
-        <span class="c1">// y si no se le pasa, User será nulo.</span>
-
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span>  <span class="nv">$country</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="sd">/**</span>
-<span class="sd">     * Cuando el usuario llene los datos del formulario y haga el envío del mismo,</span>
-<span class="sd">     * este método será ejecutado.</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
-        <span class="c1">//data es un arreglo con los valores establecidos por el usuario en el form.</span>
-
-        <span class="c1">//como $data contiene el pais seleccionado por el usuario al enviar el formulario,</span>
-        <span class="c1">// usamos el valor de la posicion $data[&#39;country&#39;] para filtrar el sql de los estados</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]);</span>
-    <span class="p">}</span>
-
-    <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
-        <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
-        <span class="c1">// y filtre la consulta por su valor.</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
-                <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span>     <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
+<span class="lineno">14</span>     <span class="p">{</span>
+<span class="lineno">15</span>         <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">16</span>             <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSetData&#39;</span><span class="p">,</span> <span class="c1">//nuevo evento escuchado</span>
+<span class="lineno">17</span>             <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SUBMIT</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSubmit&#39;</span><span class="p">,</span>
+<span class="lineno">18</span>         <span class="p">);</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span>     
+<span class="lineno">21</span>     <span class="sd">/**</span>
+<span class="lineno">22</span> <span class="sd">     * Este evento se ejecuta al momento de crear el formulario </span>
+<span class="lineno">23</span> <span class="sd">     * o al llamar al método $form-&gt;setData($user),</span>
+<span class="lineno">24</span> <span class="sd">     * y nos sirve para obtener datos inicales del objeto asociado al form.</span>
+<span class="lineno">25</span> <span class="sd">     * Ya que por ejemplo si el objeto viene de la base de datos y contiene</span>
+<span class="lineno">26</span> <span class="sd">     * ya un pais establecido, lo ideal es que el campo state se carge inicalmente con</span>
+<span class="lineno">27</span> <span class="sd">     * los estados de dicho pais.</span>
+<span class="lineno">28</span> <span class="sd">     */</span>
+<span class="lineno">29</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno">30</span>     <span class="p">{</span>
+<span class="lineno">31</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span> <span class="c1">//data es un objeto AppBundle\Entity\User</span>
+<span class="lineno">32</span> 
+<span class="lineno">33</span>         <span class="c1">// Pasamos siempre el country así sea null</span>
+<span class="lineno">34</span>         <span class="c1">// para que cuando sea un usuario nuevo, el listado de estados esté</span>
+<span class="lineno">35</span>         <span class="c1">// vacio inicialmente, y solo se llene de items, cuando se ejecute el </span>
+<span class="lineno">36</span>         <span class="c1">// ajax que obtiene los estados del pais seleccionado por el usuario.</span>
+<span class="lineno">37</span> 
+<span class="lineno">38</span>         <span class="nv">$country</span> <span class="o">=</span> <span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">())</span> <span class="o">?</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">()</span> <span class="o">:</span> <span class="k">null</span><span class="p">;</span> <span class="c1">// Importante los parentesis al usar &quot;and&quot;.</span>
+<span class="lineno">39</span>         
+<span class="lineno">40</span>         <span class="c1">// Es importante siempre verificar que el valor devuelto por $event-&gt;getData()</span>
+<span class="lineno">41</span>         <span class="c1">// (que en este caso es $user) no sea null, porque no es obligatorio que al crear</span>
+<span class="lineno">42</span>         <span class="c1">// el formulario, se le pase una instancia de User,</span>
+<span class="lineno">43</span>         <span class="c1">// y si no se le pasa, User será nulo.</span>
+<span class="lineno">44</span> 
+<span class="lineno">45</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span>  <span class="nv">$country</span><span class="p">);</span>
+<span class="lineno">46</span>     <span class="p">}</span>
+<span class="lineno">47</span> 
+<span class="lineno">48</span>     <span class="sd">/**</span>
+<span class="lineno">49</span> <span class="sd">     * Cuando el usuario llene los datos del formulario y haga el envío del mismo,</span>
+<span class="lineno">50</span> <span class="sd">     * este método será ejecutado.</span>
+<span class="lineno">51</span> <span class="sd">     */</span>
+<span class="lineno">52</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno">53</span>     <span class="p">{</span>
+<span class="lineno">54</span>         <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
+<span class="lineno">55</span>         <span class="c1">//data es un arreglo con los valores establecidos por el usuario en el form.</span>
+<span class="lineno">56</span> 
+<span class="lineno">57</span>         <span class="c1">//como $data contiene el pais seleccionado por el usuario al enviar el formulario,</span>
+<span class="lineno">58</span>         <span class="c1">// usamos el valor de la posicion $data[&#39;country&#39;] para filtrar el sql de los estados</span>
+<span class="lineno">59</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addField</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">(),</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]);</span>
+<span class="lineno">60</span>     <span class="p">}</span>
+<span class="lineno">61</span> 
+<span class="lineno">62</span>     <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
+<span class="lineno">63</span>     <span class="p">{</span>
+<span class="lineno">64</span>         <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
+<span class="lineno">65</span>         <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
+<span class="lineno">66</span>         <span class="c1">// y filtre la consulta por su valor.</span>
+<span class="lineno">67</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">68</span>             <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
+<span class="lineno">69</span>             <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
+<span class="lineno">70</span>                 <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+<span class="lineno">71</span>                     <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
+<span class="lineno">72</span>                     <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
+<span class="lineno">73</span>             <span class="p">}</span>
+<span class="lineno">74</span>         <span class="p">));</span>
+<span class="lineno">75</span>     <span class="p">}</span>
+<span class="lineno">76</span> <span class="p">}</span></code></pre></figure>
 
 <p>El nuevo método <code>AddStateFieldSubscriber::preSetData</code> ahora actualizará siempre el campo <code>state</code> al crearse el formulario, por lo que ya no es necesario añadir este campo en el método <code>buildForm</code> del <code>UserType</code>:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
-
-<span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="nv">$builder</span>
-        <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">));</span>
-        <span class="c1">// ya no hace falta agregar el campo state acá, ya que el Listener</span>
-        <span class="c1">// lo va a reemplazar siempre al crear el formulario.</span>
-        <span class="c1">//-&gt;add(&#39;state&#39;, &#39;entity&#39;, array(&#39;class&#39; =&gt; &#39;AppBundle\Entity\State&#39;));</span>
-    
-    <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="lineno"> 5</span> <span class="p">{</span>
+<span class="lineno"> 6</span>     <span class="nv">$builder</span>
+<span class="lineno"> 7</span>         <span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">));</span>
+<span class="lineno"> 8</span>         <span class="c1">// ya no hace falta agregar el campo state acá, ya que el Listener</span>
+<span class="lineno"> 9</span>         <span class="c1">// lo va a reemplazar siempre al crear el formulario.</span>
+<span class="lineno">10</span>         <span class="c1">//-&gt;add(&#39;state&#39;, &#39;entity&#39;, array(&#39;class&#39; =&gt; &#39;AppBundle\Entity\State&#39;));</span>
+<span class="lineno">11</span>     
+<span class="lineno">12</span>     <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
+<span class="lineno">13</span> <span class="p">}</span></code></pre></figure>
 
 <h4>Segundo caso</h4>
 
@@ -407,43 +407,43 @@
 
 <p>Algunas veces para ahorrar espacio en la base de datos, optamos por no colocar el atributo del pais en la entidad <code>User</code>, ya que podemos llegar a el por medio de la propiedad <code>state</code> así:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span></code></pre></figure>
 
 <p>El problema de esta implementación es que cuando vamos a editar un registro, como el campo <code>country</code> no está mapeado con la entidad, al mostrar el formulario no va a aparecer seleccionado el pais previamente escogido por el usuario.</p>
 
 <p>Para resolver este punto nos vamos a valer nuevamente de los eventos de formulario, y vamos a utilizar el evento <code>pre_set_data</code> para obtener el pais por medio del estado previamente guardado en la base de datos. Para efectos del ejemplo vamos a crear un listener dentro del propio formulario, pero si quieremos podemos crearnos una clase listener como la que se creó para manejar el campo <code>state</code>:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
-
-<span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="c1">// como vamos a crear el campo country en el evento pre_set_data</span>
-    <span class="c1">// no hace falta añadirlo al builder.</span>
-
-    <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
-    
-    <span class="c1">// recordar importar las clases FormEvents y FormEvent</span>
-    <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventListener</span><span class="p">(</span><span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">){</span>
-        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">();</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()){</span>
-            <span class="c1">// obtenemos el country por medio del objeto state:</span>
-            <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span>
-        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
-            <span class="nv">$country</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;mapped&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="c1">// importante indicar que el campo no está mapeado</span>
-            <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$country</span><span class="p">,</span> <span class="c1">//establecemos el valor inicial del campo.</span>
-        <span class="p">));</span>
-    <span class="p">});</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="lineno"> 5</span> <span class="p">{</span>
+<span class="lineno"> 6</span>     <span class="c1">// como vamos a crear el campo country en el evento pre_set_data</span>
+<span class="lineno"> 7</span>     <span class="c1">// no hace falta añadirlo al builder.</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>     <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="k">new</span> <span class="nx">AddStateFieldSubscriber</span><span class="p">());</span>
+<span class="lineno">10</span>     
+<span class="lineno">11</span>     <span class="c1">// recordar importar las clases FormEvents y FormEvent</span>
+<span class="lineno">12</span>     <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventListener</span><span class="p">(</span><span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span><span class="p">,</span> <span class="k">function</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">){</span>
+<span class="lineno">13</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
+<span class="lineno">14</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">();</span>
+<span class="lineno">15</span>         
+<span class="lineno">16</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()){</span>
+<span class="lineno">17</span>             <span class="c1">// obtenemos el country por medio del objeto state:</span>
+<span class="lineno">18</span>             <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span>
+<span class="lineno">19</span>         <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="lineno">20</span>             <span class="nv">$country</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="lineno">21</span>         <span class="p">}</span>
+<span class="lineno">22</span>         
+<span class="lineno">23</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">24</span>             <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">,</span>
+<span class="lineno">25</span>             <span class="s1">&#39;mapped&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="c1">// importante indicar que el campo no está mapeado</span>
+<span class="lineno">26</span>             <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$country</span><span class="p">,</span> <span class="c1">//establecemos el valor inicial del campo.</span>
+<span class="lineno">27</span>         <span class="p">));</span>
+<span class="lineno">28</span>     <span class="p">});</span>
+<span class="lineno">29</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora cuando el formulario sea creado, el campo country tendrá seleccionado el pais al que pertenece el estado que el usuario escogió. </p>
 
@@ -461,270 +461,270 @@
 
 <p>Lo primero será modificar el listener <code>AddStateFieldSubscriber</code> para que haga uso de la clase <code>AuthorizationChecker</code> (añadida en Symfony 2.6) que será la encargada de verificar que el usuario logueado sea un administrador.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
-    
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">AuthorizationCheckerInterface</span> <span class="nv">$authorizationChecker</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span> <span class="o">=</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
-    
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
-
-    <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">//si se está en edición y el usuario no es super admin entonces el campo va deshabilitado</span>
-        <span class="nv">$isEdit</span> <span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">()</span> <span class="nx">instanceOf</span> <span class="nx">User</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getId</span><span class="p">();</span>
-        <span class="nv">$disabled</span> <span class="o">=</span> <span class="nv">$isEdit</span> <span class="k">and</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span><span class="o">-&gt;</span><span class="na">isGranted</span><span class="p">(</span><span class="s1">&#39;ROLE_SUPER_ADMIN&#39;</span><span class="p">);</span>
-    
-        <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
-        <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
-        <span class="c1">// y filtre la consulta por su valor.</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;disabled&#39;</span> <span class="o">=&gt;</span> <span class="nv">$disabled</span><span class="p">,</span>
-            <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
-                <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
-                    <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">AddStateFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span>     <span class="k">protected</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
+<span class="lineno">14</span>     
+<span class="lineno">15</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">AuthorizationCheckerInterface</span> <span class="nv">$authorizationChecker</span><span class="p">)</span>
+<span class="lineno">16</span>     <span class="p">{</span>
+<span class="lineno">17</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span> <span class="o">=</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
+<span class="lineno">18</span>     <span class="p">}</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="lineno">21</span>     
+<span class="lineno">22</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSubmit</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="lineno">25</span> 
+<span class="lineno">26</span>     <span class="k">protected</span> <span class="k">function</span> <span class="nf">addField</span><span class="p">(</span><span class="nx">Form</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$country</span><span class="p">)</span>
+<span class="lineno">27</span>     <span class="p">{</span>
+<span class="lineno">28</span>         <span class="c1">//si se está en edición y el usuario no es super admin entonces el campo va deshabilitado</span>
+<span class="lineno">29</span>         <span class="nv">$isEdit</span> <span class="o">=</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">()</span> <span class="nx">instanceOf</span> <span class="nx">User</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getId</span><span class="p">();</span>
+<span class="lineno">30</span>         <span class="nv">$disabled</span> <span class="o">=</span> <span class="nv">$isEdit</span> <span class="k">and</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span><span class="o">-&gt;</span><span class="na">isGranted</span><span class="p">(</span><span class="s1">&#39;ROLE_SUPER_ADMIN&#39;</span><span class="p">);</span>
+<span class="lineno">31</span>     
+<span class="lineno">32</span>         <span class="c1">// actualizamos el campo state, pasandole el country a la opción</span>
+<span class="lineno">33</span>         <span class="c1">// query_builder, para que el dql tome en cuenta el pais</span>
+<span class="lineno">34</span>         <span class="c1">// y filtre la consulta por su valor.</span>
+<span class="lineno">35</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">36</span>             <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\State&#39;</span><span class="p">,</span>
+<span class="lineno">37</span>             <span class="s1">&#39;disabled&#39;</span> <span class="o">=&gt;</span> <span class="nv">$disabled</span><span class="p">,</span>
+<span class="lineno">38</span>             <span class="s1">&#39;query_builder&#39;</span> <span class="o">=&gt;</span> <span class="k">function</span><span class="p">(</span><span class="nx">EntityRepository</span> <span class="nv">$er</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$country</span><span class="p">){</span>
+<span class="lineno">39</span>                 <span class="k">return</span> <span class="nv">$er</span><span class="o">-&gt;</span><span class="na">createQueryBuilder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+<span class="lineno">40</span>                     <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;state.country = :country&#39;</span><span class="p">)</span>
+<span class="lineno">41</span>                     <span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
+<span class="lineno">42</span>             <span class="p">}</span>
+<span class="lineno">43</span>         <span class="p">));</span>
+<span class="lineno">44</span>     <span class="p">}</span>
+<span class="lineno">45</span> <span class="p">}</span></code></pre></figure>
 
 <p>Lo que hemos hecho es añadir una dependencia a <code>AuthorizationCheckerInterface</code> para poder verificar en el método <code>addField</code> si el usuario es un SuperAdmin. Además para saber si se está editando el registro, hacemos uso del método <code>$form-&gt;getData()</code> que nos debe devolver la instancia del objeto <code>User</code>, y por medio del valor del id sabemos si es un usuario nuevo o un usuario cargado de la base de datos.</p>
 
 <p>Ahora creamos el listener del campo <code>country</code>, donde basicamente vamos hacer el mismo trabajo:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AddCountryFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
-    
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">AuthorizationCheckerInterface</span> <span class="nv">$authorizationChecker</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span> <span class="o">=</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
-            <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSetData&#39;</span><span class="p">,</span>
-        <span class="p">);</span>
-    <span class="p">}</span>
-    
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">();</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()){</span>
-            <span class="c1">// obtenemos el country por medio del objeto state:</span>
-            <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span>
-            <span class="nv">$isEdit</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
-        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
-            <span class="nv">$country</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-            <span class="nv">$isEdit</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="c1">//si se está en edición y el usuario no es super admin entonces el campo va deshabilitado</span>
-        <span class="nv">$disabled</span> <span class="o">=</span> <span class="nv">$isEdit</span> <span class="k">and</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span><span class="o">-&gt;</span><span class="na">isGranted</span><span class="p">(</span><span class="s1">&#39;ROLE_SUPER_ADMIN&#39;</span><span class="p">);</span>
-        
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;mapped&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="c1">// importante indicar que el campo no está mapeado</span>
-            <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$country</span><span class="p">,</span> <span class="c1">//establecemos el valor inicial del campo.</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Listener</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\Form</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvent</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormEvents</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventSubscriberInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Doctrine\ORM\EntityRepository</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">AddCountryFieldSubscriber</span> <span class="k">implements</span> <span class="nx">EventSubscriberInterface</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span>     <span class="k">protected</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
+<span class="lineno">14</span>     
+<span class="lineno">15</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">AuthorizationCheckerInterface</span> <span class="nv">$authorizationChecker</span><span class="p">)</span>
+<span class="lineno">16</span>     <span class="p">{</span>
+<span class="lineno">17</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span> <span class="o">=</span> <span class="nv">$authorizationChecker</span><span class="p">;</span>
+<span class="lineno">18</span>     <span class="p">}</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getSubscribedEvents</span><span class="p">()</span>
+<span class="lineno">21</span>     <span class="p">{</span>
+<span class="lineno">22</span>         <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">23</span>             <span class="nx">FormEvents</span><span class="o">::</span><span class="na">PRE_SET_DATA</span> <span class="o">=&gt;</span> <span class="s1">&#39;preSetData&#39;</span><span class="p">,</span>
+<span class="lineno">24</span>         <span class="p">);</span>
+<span class="lineno">25</span>     <span class="p">}</span>
+<span class="lineno">26</span>     
+<span class="lineno">27</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">preSetData</span><span class="p">(</span><span class="nx">FormEvent</span> <span class="nv">$event</span><span class="p">)</span>
+<span class="lineno">28</span>     <span class="p">{</span>
+<span class="lineno">29</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">();</span>
+<span class="lineno">30</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getForm</span><span class="p">();</span>
+<span class="lineno">31</span>         
+<span class="lineno">32</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$user</span> <span class="k">and</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()){</span>
+<span class="lineno">33</span>             <span class="c1">// obtenemos el country por medio del objeto state:</span>
+<span class="lineno">34</span>             <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getState</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCountry</span><span class="p">();</span>
+<span class="lineno">35</span>             <span class="nv">$isEdit</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+<span class="lineno">36</span>         <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="lineno">37</span>             <span class="nv">$country</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+<span class="lineno">38</span>             <span class="nv">$isEdit</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="lineno">39</span>         <span class="p">}</span>
+<span class="lineno">40</span>         
+<span class="lineno">41</span>         <span class="c1">//si se está en edición y el usuario no es super admin entonces el campo va deshabilitado</span>
+<span class="lineno">42</span>         <span class="nv">$disabled</span> <span class="o">=</span> <span class="nv">$isEdit</span> <span class="k">and</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">authorizationChecker</span><span class="o">-&gt;</span><span class="na">isGranted</span><span class="p">(</span><span class="s1">&#39;ROLE_SUPER_ADMIN&#39;</span><span class="p">);</span>
+<span class="lineno">43</span>         
+<span class="lineno">44</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="s1">&#39;entity&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">45</span>             <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\Country&#39;</span><span class="p">,</span>
+<span class="lineno">46</span>             <span class="s1">&#39;mapped&#39;</span> <span class="o">=&gt;</span> <span class="k">false</span><span class="p">,</span> <span class="c1">// importante indicar que el campo no está mapeado</span>
+<span class="lineno">47</span>             <span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$country</span><span class="p">,</span> <span class="c1">//establecemos el valor inicial del campo.</span>
+<span class="lineno">48</span>         <span class="p">));</span>
+<span class="lineno">49</span>     <span class="p">}</span>
+<span class="lineno">50</span> <span class="p">}</span></code></pre></figure>
 
 <p>Con los listeners ya creados y actualizados, procedemos a registrarlos como servicios en la aplicación:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># app/config/services.yml</span>
-<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">form.listener.add_state_field</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddStateFieldSubscriber</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
-        
-    <span class="l-Scalar-Plain">form.listener.add_country_field</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddCountryFieldSubscriber</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="c1"># app/config/services.yml</span>
+<span class="lineno">2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+<span class="lineno">3</span>     <span class="l-Scalar-Plain">form.listener.add_state_field</span><span class="p-Indicator">:</span>
+<span class="lineno">4</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddStateFieldSubscriber</span>
+<span class="lineno">5</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
+<span class="lineno">6</span>         
+<span class="lineno">7</span>     <span class="l-Scalar-Plain">form.listener.add_country_field</span><span class="p-Indicator">:</span>
+<span class="lineno">8</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddCountryFieldSubscriber</span>
+<span class="lineno">9</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span></code></pre></figure>
 
 <p>El servicio que representa una implementación de la interfaz <code>AuthorizationCheckerInterface</code> en Symfony es <code>security.authorization_checker</code>, y es este servicio el que inyectamos en el constructor de los listeners <code>AddCountryFieldSubscriber</code> y <code>AddStateFieldSubscriber</code></p>
 
 <p>Luego de registrar los listeners debemos actualizar el formulario para que haga uso de los servicios, y no cree las instancias directamente:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Form\Type</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\AbstractType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\Form\FormBuilderInterface</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\OptionsResolver\OptionsResolverInterface</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">UserType</span> <span class="k">extends</span> <span class="nx">AbstractType</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$addStateFieldSubscriber</span><span class="p">;</span>
-    <span class="k">protected</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">;</span>
-    
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$addStateFieldSubscriber</span><span class="p">,</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addStateFieldSubscriber</span> <span class="o">=</span> <span class="nv">$addStateFieldSubscriber</span><span class="p">;</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addCountryFieldSubscriber</span> <span class="o">=</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addStateFieldSubscriber</span><span class="p">);</span>
-        <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addCountryFieldSubscriber</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">setDefaultOptions</span><span class="p">(</span><span class="nx">OptionsResolverInterface</span> <span class="nv">$resolver</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$resolver</span><span class="o">-&gt;</span><span class="na">setDefaults</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;data_class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\User&#39;</span><span class="p">,</span>
-        <span class="p">));</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getName</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Form/Type/UserType.php</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Form\Type</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\AbstractType</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\Form\FormBuilderInterface</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\OptionsResolver\OptionsResolverInterface</span><span class="p">;</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span> <span class="k">class</span> <span class="nc">UserType</span> <span class="k">extends</span> <span class="nx">AbstractType</span>
+<span class="lineno">11</span> <span class="p">{</span>
+<span class="lineno">12</span>     <span class="k">protected</span> <span class="nv">$addStateFieldSubscriber</span><span class="p">;</span>
+<span class="lineno">13</span>     <span class="k">protected</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">;</span>
+<span class="lineno">14</span>     
+<span class="lineno">15</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$addStateFieldSubscriber</span><span class="p">,</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">)</span>
+<span class="lineno">16</span>     <span class="p">{</span>
+<span class="lineno">17</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addStateFieldSubscriber</span> <span class="o">=</span> <span class="nv">$addStateFieldSubscriber</span><span class="p">;</span>
+<span class="lineno">18</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addCountryFieldSubscriber</span> <span class="o">=</span> <span class="nv">$addCountryFieldSubscriber</span><span class="p">;</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span> 
+<span class="lineno">21</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">buildForm</span><span class="p">(</span><span class="nx">FormBuilderInterface</span> <span class="nv">$builder</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$options</span><span class="p">)</span>
+<span class="lineno">22</span>     <span class="p">{</span>
+<span class="lineno">23</span>         <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addStateFieldSubscriber</span><span class="p">);</span>
+<span class="lineno">24</span>         <span class="nv">$builder</span><span class="o">-&gt;</span><span class="na">addEventSubscriber</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">addCountryFieldSubscriber</span><span class="p">);</span>
+<span class="lineno">25</span>     <span class="p">}</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">setDefaultOptions</span><span class="p">(</span><span class="nx">OptionsResolverInterface</span> <span class="nv">$resolver</span><span class="p">)</span>
+<span class="lineno">28</span>     <span class="p">{</span>
+<span class="lineno">29</span>         <span class="nv">$resolver</span><span class="o">-&gt;</span><span class="na">setDefaults</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+<span class="lineno">30</span>             <span class="s1">&#39;data_class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;AppBundle\Entity\User&#39;</span><span class="p">,</span>
+<span class="lineno">31</span>         <span class="p">));</span>
+<span class="lineno">32</span>     <span class="p">}</span>
+<span class="lineno">33</span> 
+<span class="lineno">34</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">getName</span><span class="p">()</span>
+<span class="lineno">35</span>     <span class="p">{</span>
+<span class="lineno">36</span>         <span class="k">return</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>
+<span class="lineno">37</span>     <span class="p">}</span>
+<span class="lineno">38</span> 
+<span class="lineno">39</span> <span class="p">}</span></code></pre></figure>
 
 <p>Y poy último en el controlador, pasamos los listener al formulario:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Controller</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$formType</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">UserType</span><span class="p">(</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;form.listener.add_state_field&#39;</span><span class="p">),</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;form.listener.add_country_field&#39;</span><span class="p">)</span>
-        <span class="p">);</span>
-    
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="nv">$formType</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
-        
-        <span class="k">if</span><span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isSubmitted</span><span class="p">()</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
-            <span class="nv">$em</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDoctrine</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getManager</span><span class="p">();</span>
-            
-            <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-            <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
-            
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectToAction</span><span class="p">(</span><span class="s1">&#39;alguna acción de la app&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-            <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
-         <span class="p">));</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Controller</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+<span class="lineno">10</span> <span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span> <span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="lineno">13</span> <span class="p">{</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span>     <span class="sd">/**</span>
+<span class="lineno">16</span> <span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
+<span class="lineno">17</span> <span class="sd">     */</span>
+<span class="lineno">18</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">19</span>     <span class="p">{</span>
+<span class="lineno">20</span>         <span class="nv">$formType</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">UserType</span><span class="p">(</span>
+<span class="lineno">21</span>             <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;form.listener.add_state_field&#39;</span><span class="p">),</span>
+<span class="lineno">22</span>             <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;form.listener.add_country_field&#39;</span><span class="p">)</span>
+<span class="lineno">23</span>         <span class="p">);</span>
+<span class="lineno">24</span>     
+<span class="lineno">25</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="nv">$formType</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+<span class="lineno">26</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="lineno">27</span>         
+<span class="lineno">28</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isSubmitted</span><span class="p">()</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">()){</span>
+<span class="lineno">29</span>             <span class="nv">$em</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getDoctrine</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getManager</span><span class="p">();</span>
+<span class="lineno">30</span>             
+<span class="lineno">31</span>             <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+<span class="lineno">32</span>             <span class="nv">$em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+<span class="lineno">33</span>             
+<span class="lineno">34</span>             <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectToAction</span><span class="p">(</span><span class="s1">&#39;alguna acción de la app&#39;</span><span class="p">);</span>
+<span class="lineno">35</span>         <span class="p">}</span>
+<span class="lineno">36</span>         
+<span class="lineno">37</span>         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">&#39;user/new.html.twig&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="lineno">38</span>             <span class="s1">&#39;form&#39;</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
+<span class="lineno">39</span>          <span class="p">));</span>
+<span class="lineno">40</span>     <span class="p">}</span>
+<span class="lineno">41</span> 
+<span class="lineno">42</span> <span class="p">}</span></code></pre></figure>
 
 <h3>Simplificando el Formulario</h3>
 
 <p>Si el formulario va hacer uso de muchos listeners con dependencias, o va a ser utilizado en varias partes de la aplicación, lo mejor es convertir al propio formulario en un servicio:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># app/config/services.yml</span>
-<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">form.listener.add_state_field</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddStateFieldSubscriber</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
-        
-    <span class="l-Scalar-Plain">form.listener.add_country_field</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddCountryFieldSubscriber</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
-        
-        
-        
-    <span class="l-Scalar-Plain">form.type.user</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Type\UserType</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">form.listener.add_state_field</span><span class="p-Indicator">,</span> <span class="err">@</span><span class="nv">form.listener.add_country_field</span><span class="p-Indicator">]</span>
-        <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
-            <span class="p-Indicator">-</span> <span class="p-Indicator">{</span> <span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">form.type</span><span class="p-Indicator">,</span> <span class="nv">alias</span><span class="p-Indicator">:</span> <span class="nv">user</span> <span class="p-Indicator">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="c1"># app/config/services.yml</span>
+<span class="lineno"> 2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+<span class="lineno"> 3</span>     <span class="l-Scalar-Plain">form.listener.add_state_field</span><span class="p-Indicator">:</span>
+<span class="lineno"> 4</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddStateFieldSubscriber</span>
+<span class="lineno"> 5</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
+<span class="lineno"> 6</span>         
+<span class="lineno"> 7</span>     <span class="l-Scalar-Plain">form.listener.add_country_field</span><span class="p-Indicator">:</span>
+<span class="lineno"> 8</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Listener\AddCountryFieldSubscriber</span>
+<span class="lineno"> 9</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">security.authorization_checker</span><span class="p-Indicator">]</span>
+<span class="lineno">10</span>         
+<span class="lineno">11</span>         
+<span class="lineno">12</span>         
+<span class="lineno">13</span>     <span class="l-Scalar-Plain">form.type.user</span><span class="p-Indicator">:</span>
+<span class="lineno">14</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">AppBundle\Form\Type\UserType</span>
+<span class="lineno">15</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">form.listener.add_state_field</span><span class="p-Indicator">,</span> <span class="err">@</span><span class="nv">form.listener.add_country_field</span><span class="p-Indicator">]</span>
+<span class="lineno">16</span>         <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
+<span class="lineno">17</span>             <span class="p-Indicator">-</span> <span class="p-Indicator">{</span> <span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">form.type</span><span class="p-Indicator">,</span> <span class="nv">alias</span><span class="p-Indicator">:</span> <span class="nv">user</span> <span class="p-Indicator">}</span></code></pre></figure>
 
 <p>Registramos el <code>UserType</code> como servicio y de una vez lo etiquetamos como un <code>form.type</code> para facilitar su uso en las distintas partes de la aplicación:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1"># src/AppBundle/Controller</span>
-
-<span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="p">{</span>
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
-        <span class="o">...</span>
-    <span class="p">}</span>
-    
-    <span class="sd">/**</span>
-<span class="sd">     * @Route(</span>
-<span class="sd">     *      &quot;/ajax-form&quot;, </span>
-<span class="sd">     *      name=&quot;user_ajax_form&quot;,</span>
-<span class="sd">     *      conditions=&quot;request.isXmlHttpRequest()&quot;</span>
-<span class="sd">     * )</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">ajaxFormAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
-        <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
-        <span class="o">...</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> <span class="c1"># src/AppBundle/Controller</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">namespace</span> <span class="nx">AppBundle\Controller</span><span class="p">;</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">AppBundle\Entity\User</span><span class="p">;</span>
+<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">AppBundle\Form\Type\UserType</span><span class="p">;</span>
+<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Request</span><span class="p">;</span>
+<span class="lineno">10</span> <span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Route</span><span class="p">;</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span> <span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="lineno">13</span> <span class="p">{</span>
+<span class="lineno">14</span>     <span class="sd">/**</span>
+<span class="lineno">15</span> <span class="sd">     * @Route(&quot;/new&quot;, name=&quot;user_new&quot;)</span>
+<span class="lineno">16</span> <span class="sd">     */</span>
+<span class="lineno">17</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">18</span>     <span class="p">{</span>
+<span class="lineno">19</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+<span class="lineno">20</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="lineno">21</span>         <span class="o">...</span>
+<span class="lineno">22</span>     <span class="p">}</span>
+<span class="lineno">23</span>     
+<span class="lineno">24</span>     <span class="sd">/**</span>
+<span class="lineno">25</span> <span class="sd">     * @Route(</span>
+<span class="lineno">26</span> <span class="sd">     *      &quot;/ajax-form&quot;, </span>
+<span class="lineno">27</span> <span class="sd">     *      name=&quot;user_ajax_form&quot;,</span>
+<span class="lineno">28</span> <span class="sd">     *      conditions=&quot;request.isXmlHttpRequest()&quot;</span>
+<span class="lineno">29</span> <span class="sd">     * )</span>
+<span class="lineno">30</span> <span class="sd">     */</span>
+<span class="lineno">31</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">ajaxFormAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="lineno">32</span>     <span class="p">{</span>
+<span class="lineno">33</span>         <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+<span class="lineno">34</span>         <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+<span class="lineno">35</span>         <span class="o">...</span>
+<span class="lineno">36</span>     <span class="p">}</span>
+<span class="lineno">37</span> 
+<span class="lineno">38</span> <span class="p">}</span></code></pre></figure>
 
 <p>Como ven, por medio de los listener se pueden tener formularios extremadamente dinamicos y adaptables a las necesidades de nuestra aplicación.</p>
 

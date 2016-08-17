@@ -96,3 +96,5 @@
     display: block;
     padding: 10px;
 }
+
+.highlight > pre { white-space: pre; overflow: auto; }

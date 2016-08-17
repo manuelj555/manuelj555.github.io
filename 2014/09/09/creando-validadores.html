@@ -62,45 +62,45 @@
 
 <p>La entidad usuario tendrá tres atributos, <strong>name</strong>, <strong>email</strong> y <strong>code</strong>, ninguno puede ser nulo, el email debe ser un correo válido y el código debe ser uno existente en la base de datos.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraints</span> <span class="k">as</span> <span class="nx">Assert</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">User</span>
-<span class="p">{</span>
-    <span class="sd">/**</span>
-<span class="sd">    * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
-<span class="sd">    */</span>
-    <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
-
-    <span class="sd">/**</span>
-<span class="sd">    * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
-<span class="sd">    * @Assert\Email(message=&quot;el campo debe ser un correo válido&quot;)</span>
-<span class="sd">    */</span>
-    <span class="k">protected</span> <span class="nv">$email</span><span class="p">;</span>
-
-    <span class="sd">/**</span>
-<span class="sd">    * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
-<span class="sd">    */</span>
-    <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
-
-    <span class="c1">// ...getters y setters</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraints</span> <span class="k">as</span> <span class="nx">Assert</span><span class="p">;</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="k">class</span> <span class="nc">User</span>
+<span class="lineno"> 8</span> <span class="p">{</span>
+<span class="lineno"> 9</span>  <span class="sd">/**</span>
+<span class="lineno">10</span> <span class="sd">     * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
+<span class="lineno">11</span> <span class="sd">     */</span>
+<span class="lineno">12</span>     <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>     <span class="sd">/**</span>
+<span class="lineno">15</span> <span class="sd">     * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
+<span class="lineno">16</span> <span class="sd">     * @Assert\Email(message=&quot;el campo debe ser un correo válido&quot;)</span>
+<span class="lineno">17</span> <span class="sd">     */</span>
+<span class="lineno">18</span>     <span class="k">protected</span> <span class="nv">$email</span><span class="p">;</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="sd">/**</span>
+<span class="lineno">21</span> <span class="sd">     * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
+<span class="lineno">22</span> <span class="sd">     */</span>
+<span class="lineno">23</span>     <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
+<span class="lineno">24</span> 
+<span class="lineno">25</span>     <span class="c1">// ...getters y setters</span>
+<span class="lineno">26</span> <span class="p">}</span></code></pre></figure>
 
 <h3>Entidad Code</h3>
 
 <p>La entidad Code será la que nos permita obtener y buscar los códigos en la Base de Datos.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">Code</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
+<span class="lineno">4</span> 
+<span class="lineno">5</span> <span class="k">class</span> <span class="nc">Code</span>
+<span class="lineno">6</span> <span class="p">{</span>
+<span class="lineno">7</span>     <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
+<span class="lineno">8</span> <span class="p">}</span></code></pre></figure>
 
 <h3>Creando el Constraint</h3>
 
@@ -108,27 +108,27 @@
 
 <p>Nuestro constraint se llamará <strong>ValidCode</strong>, y el validador que devolverá será un string (<strong>valid_code</strong>) que representa al validador definido como servicio en la aplicación:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">MyBundle\Validator\Constraint</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraint</span><span class="p">;</span>
-
-<span class="sd">/**</span>
-<span class="sd"> * @Annotation</span>
-<span class="sd"> * @Target({&quot;PROPERTY&quot;})</span>
-<span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">ValidCode</span> <span class="k">extends</span> <span class="nx">Constraint</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;El código es incorrecto&#39;</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">validatedBy</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;valid_code&#39;</span><span class="p">;</span>
-        <span class="c1">//este string representa un servicio validador definido en el proyecto</span>
-    <span class="p">}</span>
-
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Validator\Constraint</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraint</span><span class="p">;</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="sd">/**</span>
+<span class="lineno"> 8</span> <span class="sd"> * @Annotation</span>
+<span class="lineno"> 9</span> <span class="sd"> * @Target({&quot;PROPERTY&quot;})</span>
+<span class="lineno">10</span> <span class="sd"> */</span>
+<span class="lineno">11</span> <span class="k">class</span> <span class="nc">ValidCode</span> <span class="k">extends</span> <span class="nx">Constraint</span>
+<span class="lineno">12</span> <span class="p">{</span>
+<span class="lineno">13</span>     <span class="k">public</span> <span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;El código es incorrecto&#39;</span><span class="p">;</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">validatedBy</span><span class="p">()</span>
+<span class="lineno">16</span>     <span class="p">{</span>
+<span class="lineno">17</span>         <span class="k">return</span> <span class="s1">&#39;valid_code&#39;</span><span class="p">;</span>
+<span class="lineno">18</span>         <span class="c1">//este string representa un servicio validador definido en el proyecto</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span> 
+<span class="lineno">21</span> <span class="p">}</span></code></pre></figure>
 
 <p>Ahora debemos crear la clase que realizará el proceso de validación:</p>
 
@@ -136,72 +136,72 @@
 
 <p>La clase <strong>ValidCodeValidator</strong> será la encargada de hacer el proceso de validación, y si al validar no se encuentra el códigó en la base de datos, se añadirá una violación al modelo:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">MyBundle\Validator</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraint</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">ValidCodeValidator</span> <span class="k">extends</span> <span class="nx">ConstraintValidator</span>
-<span class="p">{</span>
-    <span class="k">protected</span> <span class="nv">$codeRepository</span><span class="p">;</span>
-
-    <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$codeRepository</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">codeRepository</span> <span class="o">=</span> <span class="nv">$codeRepository</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="sd">/**</span>
-<span class="sd">     * Verifica que el código pasado seá uno existente en la base de datos.</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nx">Constraint</span> <span class="nv">$constraint</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$code</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">codeRepository</span><span class="o">-&gt;</span><span class="na">findOneByCode</span><span class="p">(</span><span class="nv">$value</span><span class="p">))){</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">context</span><span class="o">-&gt;</span><span class="na">buildViolation</span><span class="p">(</span><span class="nv">$constraint</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">addViolation</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Validator</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraint</span><span class="p">;</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="k">class</span> <span class="nc">ValidCodeValidator</span> <span class="k">extends</span> <span class="nx">ConstraintValidator</span>
+<span class="lineno"> 8</span> <span class="p">{</span>
+<span class="lineno"> 9</span>     <span class="k">protected</span> <span class="nv">$codeRepository</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span>     <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$codeRepository</span><span class="p">)</span>
+<span class="lineno">12</span>     <span class="p">{</span>
+<span class="lineno">13</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">codeRepository</span> <span class="o">=</span> <span class="nv">$codeRepository</span><span class="p">;</span>
+<span class="lineno">14</span>     <span class="p">}</span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span>     <span class="sd">/**</span>
+<span class="lineno">17</span> <span class="sd">     * Verifica que el código pasado seá uno existente en la base de datos.</span>
+<span class="lineno">18</span> <span class="sd">     */</span>
+<span class="lineno">19</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nx">Constraint</span> <span class="nv">$constraint</span><span class="p">)</span>
+<span class="lineno">20</span>     <span class="p">{</span>
+<span class="lineno">21</span>         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$code</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">codeRepository</span><span class="o">-&gt;</span><span class="na">findOneByCode</span><span class="p">(</span><span class="nv">$value</span><span class="p">))){</span>
+<span class="lineno">22</span>             <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">context</span><span class="o">-&gt;</span><span class="na">buildViolation</span><span class="p">(</span><span class="nv">$constraint</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">addViolation</span><span class="p">();</span>
+<span class="lineno">23</span>         <span class="p">}</span>
+<span class="lineno">24</span>     <span class="p">}</span>
+<span class="lineno">25</span> <span class="p">}</span></code></pre></figure>
 
 <h3>Registrando el Validador</h3>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1">#  MyBundle/Resources/config/services.yml</span>
-<span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">my_bundle.code_repository</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Doctrine\ORM\EntityRepository</span>
-        <span class="l-Scalar-Plain">factory_service</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">doctrine.orm.entity_manager</span>
-        <span class="l-Scalar-Plain">factory_method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">getRepository</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">MyBundle</span><span class="p-Indicator">:</span><span class="nv">Code</span><span class="p-Indicator">]</span>
-
-    <span class="l-Scalar-Plain">my_bundle.validator.valid_code</span>
-        <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Validator\ValidCode</span>
-        <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">my_bundle.code_repository</span><span class="p-Indicator">]</span>
-        <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
-            <span class="p-Indicator">-</span> <span class="p-Indicator">{</span> <span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">validator.constraint_validator</span><span class="p-Indicator">,</span> <span class="nv">alias</span><span class="p-Indicator">:</span> <span class="nv">valid_code</span> <span class="p-Indicator">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="lineno"> 2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
+<span class="lineno"> 3</span>     <span class="l-Scalar-Plain">my_bundle.code_repository</span><span class="p-Indicator">:</span>
+<span class="lineno"> 4</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Doctrine\ORM\EntityRepository</span>
+<span class="lineno"> 5</span>         <span class="l-Scalar-Plain">factory_service</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">doctrine.orm.entity_manager</span>
+<span class="lineno"> 6</span>         <span class="l-Scalar-Plain">factory_method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">getRepository</span>
+<span class="lineno"> 7</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">MyBundle</span><span class="p-Indicator">:</span><span class="nv">Code</span><span class="p-Indicator">]</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>     <span class="l-Scalar-Plain">my_bundle.validator.valid_code</span>
+<span class="lineno">10</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Validator\ValidCode</span>
+<span class="lineno">11</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="err">@</span><span class="nv">my_bundle.code_repository</span><span class="p-Indicator">]</span>
+<span class="lineno">12</span>         <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
+<span class="lineno">13</span>             <span class="p-Indicator">-</span> <span class="p-Indicator">{</span> <span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">validator.constraint_validator</span><span class="p-Indicator">,</span> <span class="nv">alias</span><span class="p-Indicator">:</span> <span class="nv">valid_code</span> <span class="p-Indicator">}</span></code></pre></figure>
 
 <p>Definimos el servicio <strong>my_bundle.validator.valid_code</strong> y le creamos el <a href="http://symfony.com/doc/current/cookbook/validation/custom_constraint.html#constraint-validators-with-dependencies">tag</a> <strong>validator.constraint_validator</strong>, para que el componente validador lo reconosca y lo pueda cargar mediante el alias <strong>valid_code</strong> que es el retornado en el método validateBy de la clase ValidCode.</p>
 
 <h3>Usando la Constraint</h3>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraints</span> <span class="k">as</span> <span class="nx">Assert</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">MyBundle\Validator\Constraint\ValidCode</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">User</span>
-<span class="p">{</span>
-    <span class="c1">//......</span>
-
-    <span class="sd">/**</span>
-<span class="sd">    * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
-<span class="sd">    *</span>
-<span class="sd">    * @ValidCode()</span>
-<span class="sd">    */</span>
-    <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
-
-    <span class="c1">// ...getters y setters</span>
-<span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Validator\Constraints</span> <span class="k">as</span> <span class="nx">Assert</span><span class="p">;</span>
+<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">MyBundle\Validator\Constraint\ValidCode</span><span class="p">;</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="k">class</span> <span class="nc">User</span>
+<span class="lineno"> 9</span> <span class="p">{</span>
+<span class="lineno">10</span>  <span class="c1">//......</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span>     <span class="sd">/**</span>
+<span class="lineno">13</span> <span class="sd">     * @Assert\NotBlank(message=&quot;el campo no puede estar vacío&quot;)</span>
+<span class="lineno">14</span> <span class="sd">     *</span>
+<span class="lineno">15</span> <span class="sd">     * @ValidCode()</span>
+<span class="lineno">16</span> <span class="sd">     */</span>
+<span class="lineno">17</span>     <span class="k">protected</span> <span class="nv">$code</span><span class="p">;</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span>     <span class="c1">// ...getters y setters</span>
+<span class="lineno">20</span> <span class="p">}</span></code></pre></figure>
 
 <p>Añadiendo la anotación <strong>@ValidCode()</strong> (y el use correspondiente) al validar la entidad, el validador verificará que el valor del atributo $code sea un código existente en la base de datos, en el caso en donde el código no exista, el validador nos devolverá un error para ese atributo.</p>
 
