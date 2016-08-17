@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -56,7 +56,7 @@
 
 <p>Acá hay un ejemplo de como debemos tener el composer.json:</p>
 
-<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
         <span class="nt">&quot;symfony/routing&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
@@ -64,7 +64,7 @@
         <span class="nt">&quot;symfony/config&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
         <span class="nt">&quot;symfony/debug&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Ahora solo hace falta ejecutar el comando:</p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">php composer install
@@ -115,7 +115,7 @@
 
 <p>Creamos nuestro archivo con el siguiente código:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">// proyecto/public/web.php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">// proyecto/public/web.php</span>
 
 <span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
 
@@ -128,7 +128,7 @@
 <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="nx">__DIR__</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;/app/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
 <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
 
-<span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span> <span class="c1">//creamos el objeto Request</span></code></pre></div>
+<span class="nv">$request</span> <span class="o">=</span> <span class="nx">Request</span><span class="o">::</span><span class="na">createFromGlobals</span><span class="p">();</span> <span class="c1">//creamos el objeto Request</span></code></pre></figure>
 
 <p>Esto es lo primero que agregamos al archivo, incluimos el autoload de composer y creamos la instancia del Request de la lib HttpFoundation.</p>
 
@@ -140,7 +140,7 @@
 
 <p>Esta clase contiene la definción de una ruta, la ruta puede ser cualquier cadena de url válida y puede contener parametros variables:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Route</span><span class="p">;</span>
 
@@ -162,7 +162,7 @@
 <span class="nv">$route</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Route</span><span class="p">(</span><span class="s1">&#39;/paises/{pagina}&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">&#39;_file&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;paises/listado.php&#39;</span><span class="p">,</span>
     <span class="s1">&#39;pagina&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1">//valor por defecto para el parametro pagina</span>
-<span class="p">));</span></code></pre></div>
+<span class="p">));</span></code></pre></figure>
 
 <p>Lo <strong>recomendable</strong> es que el path siempre comience con un slash <strong>/</strong> aunque no es obligatorio.
 El segundo parametro es interesante ya que allí podemos poner los indices que queramos, es decir, que esos valores quedan abiertos para ser usados con la convención que deseemos aplicar en las aplicaciones. Además aqui podemos especificar valores por defecto para las rutas.</p>
@@ -173,7 +173,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 
 <p>En esta clase se agregan cada una de las rutas que tendrá la aplicación:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\RouteCollection</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Route</span><span class="p">;</span>
@@ -184,7 +184,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;paises_listado&#39;</span><span class="p">,</span> <span class="nv">$route</span><span class="p">);</span> <span class="c1">//con add agregamos una ruta y le damos un nombre que debe ser unico</span>
 
 <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;paises_add&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Route</span><span class="p">(</span><span class="s1">&#39;/paises/crear&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Otro&#39;</span><span class="p">)));</span>
-<span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;paises_editar&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Route</span><span class="p">(</span><span class="s1">&#39;/paises/editar/{id}&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Otro&#39;</span><span class="p">)));</span></code></pre></div>
+<span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s1">&#39;paises_editar&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Route</span><span class="p">(</span><span class="s1">&#39;/paises/editar/{id}&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;controller&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Otro&#39;</span><span class="p">)));</span></code></pre></figure>
 
 <p>Lo más importante de esta clase es su método <strong>add</strong>, mediante el cual establecemos primero el nombre que identificará a la ruta en la aplicación, y segundo, el objeto con la definicion de la ruta.</p>
 
@@ -198,7 +198,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 
 <p>Esta clase se encarga de obtener la ruta que coincide con el patro de la url de la petición:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Exception\ResourceNotFoundException</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Matcher\UrlMatcher</span><span class="p">;</span>
@@ -219,13 +219,13 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
     <span class="c1">// array(&#39;_file&#39; =&gt; &#39;paises/editar.php&#39;, &#39;id&#39; =&gt; 2)</span>
 <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">ResourceNotFoundException</span> <span class="nv">$e</span><span class="p">){</span>
     <span class="c1">//cuando no se encuentra ninguna concordancia, se lanza esta excepcion</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <h5>UrlGenerator</h5>
 
 <p>Esta clase se encarga de crear una url a partir del nombre de una ruta y los parametros que se pasen, es la clase a usar cuando necesitamos crear links en nuestras páginás o queremos redirigir una petición, etc. Ejemplo de uso:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Generator\UrlGenerator</span><span class="p">;</span>
 
@@ -238,7 +238,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 <span class="c1">//devuelve: /paises</span>
 
 <span class="nv">$url</span> <span class="o">=</span> <span class="nv">$generator</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="s1">&#39;paises_editar&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">));</span> <span class="c1">//le pasamos el nombre de la ruta</span>
-<span class="c1">//devuelve: /paises/editar/3</span></code></pre></div>
+<span class="c1">//devuelve: /paises/editar/3</span></code></pre></figure>
 
 <h3>Rutas en Yml</h3>
 
@@ -247,20 +247,20 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 </code></pre></div>
 <p>Por lo que me parece que es mejor usar una de las alternativas que ofrece el componente para cargar rutas, estas alternativas son: yaml, php, xml y anotaciones. En mi caso usaré yaml por ser el más simple desde mi punto de vista:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Loader\YamlFileLoader</span><span class="p">;</span>
 
 <span class="nv">$locator</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span> <span class="c1">//encuentra archivos en el dir especificado.</span>
 <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$locator</span><span class="p">);</span> <span class="c1">//cargador de rutas mediante yml</span>
-<span class="nv">$collection</span> <span class="o">=</span> <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;routing.yml&#39;</span><span class="p">);</span> <span class="c1">//lee las rutas del yml y devuelve una instancia de RouteCollection con las rutas.</span></code></pre></div>
+<span class="nv">$collection</span> <span class="o">=</span> <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;routing.yml&#39;</span><span class="p">);</span> <span class="c1">//lee las rutas del yml y devuelve una instancia de RouteCollection con las rutas.</span></code></pre></figure>
 
 <h4>El routing.yml</h4>
 
 <p>Ahora nuestras rutas las definimos de la siguiente manera:</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing.yml</span>
 
 <span class="l-Scalar-Plain">paises_listado</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/paises</span>
@@ -277,7 +277,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
     <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">_file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">paises/editar.php</span>
     <span class="l-Scalar-Plain">requirements</span><span class="p-Indicator">:</span>    <span class="c1"># Permite definir restricciones para los parametros</span>
-        <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">+d</span>       <span class="c1"># Solo números :-)</span></code></pre></div>
+        <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">+d</span>       <span class="c1"># Solo números :-)</span></code></pre></figure>
 
 <p>Ahora vemos lo sencillo que se ha hecho crear rutas gracias al uso de Yml.</p>
 
@@ -285,7 +285,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 
 <p>Como vimos con enterioridad, el componente hace uso de unas cuantas clases para el manejo de rutas, pero además ofrece una clase que nos permite manejar de una forma más sencilla todo esto, ya que ofrece métodos para encontrar rutas y crear urls a partir de esas rutas, tambien se encarga cachear las mismas para mejorar el rendimiento de la aplicación:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Routing\Router</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
@@ -324,7 +324,7 @@ El segundo parametro es interesante ya que allí podemos poner los indices que q
 <span class="c1">//              /paises</span>
 
 <span class="nv">$url</span> <span class="o">=</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="s1">&#39;paises_editar&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">));</span>
-<span class="c1">//              /paises/editar/3</span></code></pre></div>
+<span class="c1">//              /paises/editar/3</span></code></pre></figure>
 
 <p>Con eso ya hemos visto como funciona el componente.</p>
 
@@ -349,7 +349,7 @@ proyecto/public/web.php/paises/editar/3
 
 <p>El código del archivo <strong>app/bootstrap.php</strong> es el siguiente:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//proyecto/app/bootstrap.php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">//proyecto/app/bootstrap.php</span>
 
 <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Symfony\Component\HttpFoundation\Response</span><span class="p">;</span>
@@ -407,11 +407,11 @@ proyecto/public/web.php/paises/editar/3
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="k">return</span> <span class="nv">$response</span><span class="p">;</span> <span class="c1">//devolvemos la respuesta</span></code></pre></div>
+<span class="k">return</span> <span class="nv">$response</span><span class="p">;</span> <span class="c1">//devolvemos la respuesta</span></code></pre></figure>
 
 <p>Ahora incluimos lo siguiente en el archivo en <strong>public/web.php</strong>:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">// proyecto/public/web.php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span> <span class="c1">// proyecto/public/web.php</span>
 
 <span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
 
@@ -428,13 +428,13 @@ proyecto/public/web.php/paises/editar/3
 
 <span class="nv">$response</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;bootstrap.php&#39;</span><span class="p">;</span> <span class="c1">//cargamos el bootstrap</span>
 
-<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span> <span class="c1">//enviamos la respuesta de vuelta</span></code></pre></div>
+<span class="nv">$response</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span> <span class="c1">//enviamos la respuesta de vuelta</span></code></pre></figure>
 
 <p>Con esto ya tenemos el routing trabajando, ahora vamos a crear unas rutas y unos controladores para verificar como funciona lo que hemos hecho:</p>
 
 <h2>Creando las Rutas del proyecto</h2>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing.yml</span>
 <span class="l-Scalar-Plain">inicio</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
     <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
@@ -443,7 +443,7 @@ proyecto/public/web.php/paises/editar/3
 <span class="c1"># incluyendo otro yml</span>
 <span class="l-Scalar-Plain">_paises</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/paises</span>
-    <span class="l-Scalar-Plain">resource</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">routing/paises.yml</span></code></pre></div>
+    <span class="l-Scalar-Plain">resource</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">routing/paises.yml</span></code></pre></figure>
 
 <p>Tenemos una ruta <strong>inicio</strong> y hemos incluido un yml para las rutas que corresponden al manejo de paises en la app.</p>
 
@@ -451,7 +451,7 @@ proyecto/public/web.php/paises/editar/3
 
 <p>El archivo <strong>app/config/routing/paises.yml</strong>:</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing/paises.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="c1"># proyecto/app/config/routing/paises.yml</span>
 
 <span class="c1"># Todas estas rutas estarán automáticamente prefijadas con el patron /paises</span>
 <span class="c1"># si más adelante lo queremos cambiar, solo debemos hacerlo una ves en el archivo routing.yml :-)</span>
@@ -474,19 +474,19 @@ proyecto/public/web.php/paises/editar/3
 <span class="l-Scalar-Plain">paises_listado_json</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/all.json</span>
     <span class="l-Scalar-Plain">defaults</span><span class="p-Indicator">:</span>
-        <span class="l-Scalar-Plain">_file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">paises/lista.json.php</span>  <span class="c1"># Archivo app/controller/paises/lista.php</span></code></pre></div>
+        <span class="l-Scalar-Plain">_file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">paises/lista.json.php</span>  <span class="c1"># Archivo app/controller/paises/lista.php</span></code></pre></figure>
 
 <p>Ahora crearemos algunos de los controladores, para dar un ejemplo de como funciona la app:</p>
 
 <p>Archivos de la ruta inicio:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1"># app/controller/inicio.php</span>
-<span class="k">include</span> <span class="nx">VIEW_PATH</span> <span class="o">.</span> <span class="s1">&#39;inicio.php&#39;</span><span class="p">;</span></code></pre></div>
+<span class="k">include</span> <span class="nx">VIEW_PATH</span> <span class="o">.</span> <span class="s1">&#39;inicio.php&#39;</span><span class="p">;</span></code></pre></figure>
 
 <p>La Vista:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x"># app/views/inicio.php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="x"># app/views/inicio.php</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">    &lt;head&gt;</span>
 <span class="x">        &lt;title&gt;Título de la Aplicación&lt;/title&gt;</span>
@@ -495,17 +495,17 @@ proyecto/public/web.php/paises/editar/3
 <span class="x">        &lt;h1&gt;Inicio de la Aplicación&lt;/h1&gt;        </span>
 <span class="x">        &lt;a href=&quot;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$router</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="s1">&#39;paises_listado_json&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span><span class="x">&quot;&gt;Listado de Paises&lt;/a&gt;        </span>
 <span class="x">    &lt;/body&gt;</span>
-<span class="x">&lt;/html&gt;</span></code></pre></div>
+<span class="x">&lt;/html&gt;</span></code></pre></figure>
 
 <p>Archivos de la ruta paises_listado:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1"># app/controller/paises/lista.php</span>
-<span class="k">include</span> <span class="nx">VIEW_PATH</span> <span class="o">.</span> <span class="s1">&#39;paises/lista.php&#39;</span><span class="p">;</span></code></pre></div>
+<span class="k">include</span> <span class="nx">VIEW_PATH</span> <span class="o">.</span> <span class="s1">&#39;paises/lista.php&#39;</span><span class="p">;</span></code></pre></figure>
 
 <p>La Vista:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x"># app/views/inicio.php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="x"># app/views/inicio.php</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">    &lt;head&gt;</span>
 <span class="x">        &lt;title&gt;Título de la Aplicación&lt;/title&gt;</span>
@@ -524,11 +524,11 @@ proyecto/public/web.php/paises/editar/3
 <span class="x">            Todos en JSON</span>
 <span class="x">        &lt;/a&gt;&lt;br/&gt;        </span>
 <span class="x">    &lt;/body&gt;</span>
-<span class="x">&lt;/html&gt;</span></code></pre></div>
+<span class="x">&lt;/html&gt;</span></code></pre></figure>
 
 <p>Archivo de la ruta paises_editar:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1"># app/controller/paises/editar.php</span>
 <span class="o">&lt;?</span><span class="nx">php</span>
 
@@ -538,11 +538,11 @@ proyecto/public/web.php/paises/editar/3
 
 <span class="nv">$pais</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;nombre&#39;</span><span class="p">);</span>
 
-<span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;Editando el pais &quot;</span> <span class="o">.</span> <span class="nv">$pais</span><span class="p">);</span> <span class="c1">//devolvemos directamente una instancia de Response</span></code></pre></div>
+<span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">&quot;Editando el pais &quot;</span> <span class="o">.</span> <span class="nv">$pais</span><span class="p">);</span> <span class="c1">//devolvemos directamente una instancia de Response</span></code></pre></figure>
 
 <p>Archivo de la ruta paises<em>listado</em>json:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1"># app/controller/paises/lista.xml.php</span>
 <span class="o">&lt;?</span><span class="nx">php</span>
 
@@ -552,7 +552,7 @@ proyecto/public/web.php/paises/editar/3
     <span class="s1">&#39;Venezuela&#39;</span><span class="p">,</span> <span class="s1">&#39;Colombia&#39;</span><span class="p">,</span>
 <span class="p">);</span>
 
-<span class="k">return</span> <span class="k">new</span> <span class="nx">JsonResponse</span><span class="p">(</span><span class="nv">$paises</span><span class="p">);</span></code></pre></div>
+<span class="k">return</span> <span class="k">new</span> <span class="nx">JsonResponse</span><span class="p">(</span><span class="nv">$paises</span><span class="p">);</span></code></pre></figure>
 
 <p>Con esto ya tenemos funcionando una aplicación con el componente de rutas de symfony :-)</p>
 
@@ -565,7 +565,7 @@ proyecto/public/web.php/paises/editar/3
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href=""> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -579,42 +579,23 @@ proyecto/public/web.php/paises/editar/3
 
             <section class="share">
                 <h4>Comparte</h4>
-                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el Routing de Symfony&amp;url=http://manuelj555.github.io/2014/02/26/symfony-routing.html"
+                <a class="icon-twitter" href="http://twitter.com/share?text=Usando el Routing de Symfony&amp;url=/2014/02/26/symfony-routing.html"
                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');
                            return false;">
                     <span class="hidden">Twitter</span>
                 </a>
-                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://manuelj555.github.io/2014/02/26/symfony-routing.html"
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2014/02/26/symfony-routing.html"
                    onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');
                            return false;">
                     <span class="hidden">Facebook</span>
                 </a>
-                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://manuelj555.github.io/2014/02/26/symfony-routing.html"
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2014/02/26/symfony-routing.html"
                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');
                            return false;">
                     <span class="hidden">Google+</span>
                 </a>
             </section>
 
-            
-            <section class="disqus">
-                <div id="disqus_thread"></div>
-                <script type="text/javascript">
-                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                    var disqus_shortname = 'phpsymfonytipsmanuelj555'; // required: replace example with your forum shortname
-
-                    /* * * DON'T EDIT BELOW THIS LINE * * */
-                    (function() {
-                        var dsq = document.createElement('script');
-                        dsq.type = 'text/javascript';
-                        dsq.async = true;
-                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                    })();
-                </script>
-                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-            </section>
             
 
         </footer>
@@ -624,15 +605,6 @@ proyecto/public/web.php/paises/editar/3
 </main>
 
 
-<!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
-        <div class="inner">
-             <section class="copyright">All content copyright <a href="">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
-             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
-        </div>
-    </footer>-->
-
-    
     <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
     <script type="text/javascript" src="/assets/js/index.js"></script>

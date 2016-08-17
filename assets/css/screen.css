@@ -228,7 +228,7 @@ mark {
     background-color: #ffc336;
 }
 
-code, tt {
+/*code, tt {
     padding: 1px 3px;
     font-family: Inconsolata, monospace, sans-serif;
     font-size: 0.85em;
@@ -260,7 +260,7 @@ pre code, tt {
     background: transparent;
     border: none;
     padding: 0;
-}
+}*/
 
 kbd {
     display: inline-block;
@@ -317,7 +317,8 @@ table tbody > tr:nth-child(odd) > th {
 }
 
 table.plain tbody > tr:nth-child(odd) > td,
-table.plain tbody > tr:nth-child(odd) > th {
+table.plain tbody > tr:nth-child(odd) > th,
+.highlight td.gl, .highlight .code {
    background: transparent;
 }
 

@@ -26,7 +26,7 @@
 
     <article class="post">
         <header class="post-header">
-            <a id="blog-logo" href="">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
                 
                 <span class="blog-title">PHP + Symfony Tips</span>
                  
@@ -60,11 +60,11 @@
 
 <h3>Ejemplo del Código Heredado</h3>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="nv">$emailGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
 <span class="nv">$formHelperGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalFormHelper</span><span class="p">(</span><span class="nx">BASE_PATH</span><span class="p">);</span>
-<span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nx">GlobalSession</span><span class="p">(</span><span class="s1">&#39;namespace&#39;</span><span class="p">);</span></code></pre></div>
+<span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nx">GlobalSession</span><span class="p">(</span><span class="s1">&#39;namespace&#39;</span><span class="p">);</span></code></pre></figure>
 
 <p>La idea era incorporar estas instancias en el contenedor de symfony, para que sea el quien se encargue de la creación de los objetos.</p>
 
@@ -81,7 +81,7 @@
 
 <p>Luego creamos las definiciones de las clases como servicios en el contenedor:</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
 <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">session_namespace</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">mi-namespace-de-session</span>
 
@@ -93,7 +93,7 @@
     <span class="l-Scalar-Plain">form_helper</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GlobalFormHelper</span>
         <span class="l-Scalar-Plain">arguments</span> 
-            <span class="l-Scalar-Plain">- @= service(&#39;request_stack&#39;).getMasterRequest().getBasePath()</span></code></pre></div>
+            <span class="l-Scalar-Plain">- @= service(&#39;request_stack&#39;).getMasterRequest().getBasePath()</span></code></pre></figure>
 
 <p>Como ven, es muy facil crear las definciones para nuestras clases/servicios.</p>
 
@@ -101,7 +101,7 @@
 
 <h3>Cambiando el código</h3>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="c1">//la instancia de email llevó un poco más de trabajo.</span>
 
@@ -110,13 +110,13 @@
 
 <span class="c1">//esto aun no soluciona el problema de tener las instancias así no se usen, </span>
 <span class="c1">//pero es un primer paso para dejar de usar las variables globales</span>
-<span class="c1">//y obtenerlas directo del contenedor.</span></code></pre></div>
+<span class="c1">//y obtenerlas directo del contenedor.</span></code></pre></figure>
 
 <p>Para el servicio email, se optó por crear una clase que sirviera de Factory, ya que GlobalEmail utilizaba parametros que no podian ser registrados en el contenedor.</p>
 
 <h3>EmailFactory al rescate</h3>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">class</span> <span class="nc">EmailFactory</span>
 <span class="p">{</span>
@@ -125,11 +125,11 @@
         <span class="c1">//acá la lógica para obtener los parametros.</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Luego registramos el servicio:</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
 
 <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">...</span>
@@ -137,7 +137,7 @@
     <span class="l-Scalar-Plain">email</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GLobalEmail</span>
         <span class="l-Scalar-Plain">factory_class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">EmailFactory</span>
-        <span class="l-Scalar-Plain">factory_method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">createInstance</span></code></pre></div>
+        <span class="l-Scalar-Plain">factory_method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">createInstance</span></code></pre></figure>
 
 <p>Como se puede ver el contenedor de servicios es muy flexible, y siempre existe la manera de convertir una clase &quot;global&quot; en un servicio del contenedor. </p>
 
@@ -147,7 +147,7 @@
 
 <p>Algo que nos ha permitido la utilización del contenedor es extender las funcionalidades de algunas clases y libs, una de esas funcionalidades ha sido agregar un log de los correos.</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="k">class</span> <span class="nc">DebugEmail</span> <span class="k">extends</span> <span class="nx">GlobalEmail</span>
 <span class="p">{</span>
@@ -171,7 +171,7 @@
 
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">realEmail</span><span class="o">-&gt;</span><span class="na">enviar</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$subject</span><span class="p">,</span> <span class="nv">$content</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>Hemos creado una clase que extiende de GlobalEmail para así (Implementando el patron Decorator) poder realizar tareas extras sin cambiar el código de la clase original.</p>
 
@@ -183,7 +183,7 @@
 
 <p>creamos el servicio debug_email:</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">//servicios.yml</span>
 
 <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">...</span>
@@ -195,11 +195,11 @@
             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">?logger</span>  <span class="c1"># para hacer los logs (servicio definido en alguna parte)</span>
 
 <span class="c1"># Aunque el servicio email_real no exista, nosotros le haremos llegar el</span>
-<span class="c1"># mismo al servicio debug_email desde la extension.</span></code></pre></div>
+<span class="c1"># mismo al servicio debug_email desde la extension.</span></code></pre></figure>
 
 <p>Ahora en nuestra extensión, le pasamos la instancia de GlobalEmail al servicio en su primer argumento, y además le decimos al contenedor, que cuando se pida el servicio <strong>email</strong> devuelva realmente <strong>debug_email</strong></p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 
 <span class="c1">//dentro del metodo load de nuestra extensión registrada</span>
 <span class="c1">//y luego de condicionar que estemos en desarrollo:</span>
@@ -210,13 +210,13 @@
 <span class="nv">$emailDefinition</span><span class="o">-&gt;</span><span class="na">setPublic</span><span class="p">(</span><span class="k">false</span><span class="p">);</span> <span class="c1">//hacemos invisible el servicio real</span>
 <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setDefinition</span><span class="p">(</span><span class="s1">&#39;email_real&#39;</span><span class="p">,</span> <span class="nv">$emailDefinition</span><span class="p">);</span><span class="c1">//creamos el servicio email_real a partir de email.</span>
 <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setAlias</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;debug_email&#39;</span><span class="p">);</span> <span class="c1">//y le decimos al contenedor que cuando pidan el servicio</span>
-<span class="c1">//email, devuelva debug_email</span></code></pre></div>
+<span class="c1">//email, devuelva debug_email</span></code></pre></figure>
 
 <p>Con el código anterior (Que puede parecer muy confuso, nosotros lo hemos venido viendo en el core del framework syfmony (-: ) logramos que el servicio email, devuelva la instancia de DebugEmail en vez de GlobalEmail.</p>
 
 <p>Acá podemos ver un ejemplo de lo que se ha cacheado:</p>
 
-<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
 <span class="c1">//clase del contenedor cacheado</span>
 <span class="sd">/**</span>
 <span class="sd"> * Este código es autogenerado por el componente, en base a las definciones.</span>
@@ -229,7 +229,7 @@
     <span class="nv">$logger</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;logger&#39;</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;debug_email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DebugEmail</span><span class="p">(</span><span class="nv">$emailReal</span><span class="p">,</span> <span class="nv">$logger</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span></code></pre></figure>
 
 <p>La variable $emailReal se crea dentro del método <strong>getDebugEmailService</strong> debido a que le hemos dicho que no es publica (<strong>$emailDefinition-&gt;setPublic(false)</strong>).</p>
 
@@ -246,7 +246,7 @@
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href=""> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
@@ -260,42 +260,23 @@
 
             <section class="share">
                 <h4>Comparte</h4>
-                <a class="icon-twitter" href="http://twitter.com/share?text=Como me ha ayudado el Componente DependencyInjection de Symfony&amp;url=http://manuelj555.github.io/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
+                <a class="icon-twitter" href="http://twitter.com/share?text=Como me ha ayudado el Componente DependencyInjection de Symfony&amp;url=/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');
                            return false;">
                     <span class="hidden">Twitter</span>
                 </a>
-                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://manuelj555.github.io/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
                    onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');
                            return false;">
                     <span class="hidden">Facebook</span>
                 </a>
-                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://manuelj555.github.io/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=/2014/06/12/como-ayuda-un-contenedor-de-servicios.html"
                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');
                            return false;">
                     <span class="hidden">Google+</span>
                 </a>
             </section>
 
-            
-            <section class="disqus">
-                <div id="disqus_thread"></div>
-                <script type="text/javascript">
-                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-                    var disqus_shortname = 'phpsymfonytipsmanuelj555'; // required: replace example with your forum shortname
-
-                    /* * * DON'T EDIT BELOW THIS LINE * * */
-                    (function() {
-                        var dsq = document.createElement('script');
-                        dsq.type = 'text/javascript';
-                        dsq.async = true;
-                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                    })();
-                </script>
-                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-            </section>
             
 
         </footer>
@@ -305,15 +286,6 @@
 </main>
 
 
-<!--    <footer class="site-footer">
-        <a class="subscribe icon-feed" href="rss.xml"><span class="tooltip">Subscribe!</span></a>
-        <div class="inner">
-             <section class="copyright">All content copyright <a href="">PHP + Symfony Tips</a> &copy;  &bull; All rights reserved.</section>
-             <section class="poweredby">Made with Jekyll using <a href="http://github.com/rosario/kasper">Kasper theme</a></section>
-        </div>
-    </footer>-->
-
-    
     <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
     <script type="text/javascript" src="/assets/js/index.js"></script>
