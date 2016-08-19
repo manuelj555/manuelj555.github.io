@@ -357,7 +357,7 @@ web/index.php</code></pre></figure>
 
 <p><strong>app/Resources/views/base.html.twig</strong></p>
 
-<div class="language-html highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-twig" data-lang="twig"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
 4
@@ -388,9 +388,9 @@ web/index.php</code></pre></figure>
 <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;title&gt;</span>Micro Foro - Symfony<span class="nt">&lt;/title&gt;</span>
-    {% block stylesheets %}
-        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"{{ asset('css/foro.css') }}"</span><span class="nt">&gt;</span>
-    {% endblock stylesheets %}
+    <span class="cp">{%</span> <span class="k">block</span> <span class="nv">stylesheets</span> <span class="cp">%}</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"</span><span class="cp">{{</span> <span class="nv">asset</span><span class="p">(</span><span class="s1">'css/foro.css'</span><span class="p">)</span> <span class="cp">}}</span><span class="s">"</span><span class="nt">&gt;</span>
+    <span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">stylesheets</span> <span class="cp">%}</span>
 <span class="nt">&lt;/head&gt;</span>
 <span class="nt">&lt;body&gt;</span>
 <span class="nt">&lt;header&gt;</span>
@@ -402,30 +402,28 @@ web/index.php</code></pre></figure>
 <span class="nt">&lt;/header&gt;</span>
 <span class="nt">&lt;article</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
 
-    <span class="nt">&lt;h1</span> <span class="na">class=</span><span class="s">"page-header"</span><span class="nt">&gt;</span>{% block page_header %}{% endblock %}<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;h1</span> <span class="na">class=</span><span class="s">"page-header"</span><span class="nt">&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">page_header</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="nt">&lt;/h1&gt;</span>
 
     <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">"content"</span><span class="nt">&gt;</span>
-        {% block content %}{% endblock %}
+        <span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
     <span class="nt">&lt;/section&gt;</span>
 <span class="nt">&lt;/article&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span>
-</pre></td></tr></tbody></table>
-</div>
+<span class="nt">&lt;/html&gt;</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p><strong>app/Resources/views/home/index.html.twig</strong></p>
 
-<div class="language-html highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-twig" data-lang="twig"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
 2
 3
 4
-5</pre></td><td class="code"><pre>{% extends 'base.html.twig' %}
+5</pre></td><td class="code"><pre><span class="cp">{%</span> <span class="k">extends</span> <span class="s1">'base.html.twig'</span> <span class="cp">%}</span>
 
-{% block content %}
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span>
 Hola Mundo!
-{% endblock %}
-</pre></td></tr></tbody></table>
-</div>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p><strong>web/css/foro.css</strong></p>
 
