@@ -48,210 +48,366 @@
 
 <p>La idea es aprobar a ciertos usuarios en una aplicación luego de que estos se han registrado, además, al realizar la aprobación se quiere que le llegue un correo a dicho usuario informandole que su cuenta ha sido habilitada.</p>
 
-<h2>La clase User</h2>
+<h2 id="la-clase-user">La clase User</h2>
 
 <p>Comenzaremos con una clase que será nuestro modelo o entidad, el código de la misma es el siguiente:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">class</span> <span class="nc">User</span>
-<span class="lineno"> 6</span> <span class="p">{</span>
-<span class="lineno"> 7</span>     <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
-<span class="lineno"> 8</span>     <span class="k">protected</span> <span class="nv">$email</span><span class="p">;</span>
-<span class="lineno"> 9</span>     <span class="k">protected</span> <span class="nv">$status</span><span class="p">;</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span>     <span class="c1">// ...getters y setters</span>
-<span class="lineno">12</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
 
-<h2>La clase UserEvents</h2>
+<span class="k">namespace</span> <span class="nx">MyBundle\Entity</span><span class="p">;</span>
 
+<span class="k">class</span> <span class="nc">User</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$email</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$status</span><span class="p">;</span>
+
+    <span class="c1">// ...getters y setters
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="la-clase-userevents">La clase UserEvents</h2>
 <p>Esta clase simplemente contendrá constantes que nos ayudarán a documentar los eventos y nos permitirán usar dichas constantes en vez de strings al despachar eventos, lo que ayuda a minimizar los errores al tipear.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">final</span> <span class="k">class</span> <span class="nc">UserEvents</span>
-<span class="lineno"> 6</span> <span class="p">{</span>
-<span class="lineno"> 7</span>     <span class="sd">/**</span>
-<span class="lineno"> 8</span> <span class="sd">     * Este evento se ejecuta antes de cambiar el estatus del usuario a aprobado</span>
-<span class="lineno"> 9</span> <span class="sd">     * Los listener de este evento deben esperar una instancia de:</span>
-<span class="lineno">10</span> <span class="sd">     * </span>
-<span class="lineno">11</span> <span class="sd">     * Symfony\Component\EventDispatcher\GenericEvent</span>
-<span class="lineno">12</span> <span class="sd">     * </span>
-<span class="lineno">13</span> <span class="sd">     * Si alguno de los listener cancela la propagación del </span>
-<span class="lineno">14</span> <span class="sd">     * evento ($event-&gt;stopPropagation()), la aprobación</span>
-<span class="lineno">15</span> <span class="sd">     * no se realiza, ni se llama al evento post_approve.</span>
-<span class="lineno">16</span> <span class="sd">     */</span>
-<span class="lineno">17</span>     <span class="k">const</span> <span class="no">PRE_APPROVE</span> <span class="o">=</span> <span class="s1">&#39;my_bundle.user.pre_approve&#39;</span><span class="p">;</span>
-<span class="lineno">18</span> 
-<span class="lineno">19</span>     <span class="sd">/**</span>
-<span class="lineno">20</span> <span class="sd">     * Este evento se ejecuta despues de cambiar el estatus del usuario a aprobado</span>
-<span class="lineno">21</span> <span class="sd">     * Los listener de este evento deben esperar una instancia de:</span>
-<span class="lineno">22</span> <span class="sd">     * </span>
-<span class="lineno">23</span> <span class="sd">     * Symfony\Component\EventDispatcher\GenericEvent</span>
-<span class="lineno">24</span> <span class="sd">     * </span>
-<span class="lineno">25</span> <span class="sd">     * Si en el evento pre_aprove, se cancela la propagación de </span>
-<span class="lineno">26</span> <span class="sd">     * dicho evento ($event-&gt;stopPropagation()),</span>
-<span class="lineno">27</span> <span class="sd">     * el evento post_approve no es disparado.</span>
-<span class="lineno">28</span> <span class="sd">     */</span>
-<span class="lineno">29</span>     <span class="k">const</span> <span class="no">POST_APPROVE</span> <span class="o">=</span> <span class="s1">&#39;my_bundle.user.post_approve&#39;</span><span class="p">;</span>
-<span class="lineno">30</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
 
-<h2>La clase UserManager</h2>
+<span class="k">namespace</span> <span class="nx">MyBundle</span><span class="p">;</span>
 
+<span class="k">final</span> <span class="k">class</span> <span class="nc">UserEvents</span>
+<span class="p">{</span>
+    <span class="sd">/**
+     * Este evento se ejecuta antes de cambiar el estatus del usuario a aprobado
+     * Los listener de este evento deben esperar una instancia de:
+     * 
+     * Symfony\Component\EventDispatcher\GenericEvent
+     * 
+     * Si alguno de los listener cancela la propagación del 
+     * evento ($event-&gt;stopPropagation()), la aprobación
+     * no se realiza, ni se llama al evento post_approve.
+     */</span>
+    <span class="k">const</span> <span class="no">PRE_APPROVE</span> <span class="o">=</span> <span class="s1">'my_bundle.user.pre_approve'</span><span class="p">;</span>
+
+    <span class="sd">/**
+     * Este evento se ejecuta despues de cambiar el estatus del usuario a aprobado
+     * Los listener de este evento deben esperar una instancia de:
+     * 
+     * Symfony\Component\EventDispatcher\GenericEvent
+     * 
+     * Si en el evento pre_aprove, se cancela la propagación de 
+     * dicho evento ($event-&gt;stopPropagation()),
+     * el evento post_approve no es disparado.
+     */</span>
+    <span class="k">const</span> <span class="no">POST_APPROVE</span> <span class="o">=</span> <span class="s1">'my_bundle.user.post_approve'</span><span class="p">;</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="la-clase-usermanager">La clase UserManager</h2>
 <p>Es una buena práctica crear un manager para nuestros modelos, y así no tener la lógica de los mismos directo en los controladores (recordemos: controladores flacos, modelos gordos).</p>
 
 <p>Para efectos de este ejemplo, nuestro manager solo tendrá un método relevante para el manejo de los usuarios, el mismo tendrá por nombre <strong>approve</strong> y esperará una instancia de <strong>MyBundle\Entity\User</strong> que será el usuario que aprobaremos:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Model</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">MyBundle\UserEvents</span><span class="p">;</span>
-<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
-<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Doctrine\ORM\EntityManager</span><span class="p">;</span>
-<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
-<span class="lineno"> 9</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventDispatcherInterface</span><span class="p">;</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span> <span class="k">class</span> <span class="nc">UserManager</span>
-<span class="lineno">12</span> <span class="p">{</span>
-<span class="lineno">13</span>     <span class="k">protected</span> <span class="nv">$em</span><span class="p">;</span>
-<span class="lineno">14</span> 
-<span class="lineno">15</span>     <span class="k">protected</span> <span class="nv">$dispatcher</span><span class="p">;</span>
-<span class="lineno">16</span> 
-<span class="lineno">17</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">EntityManager</span> <span class="nv">$em</span><span class="p">,</span> <span class="nx">EventDispatcherInterface</span> <span class="nv">$dispatcher</span><span class="p">)</span>
-<span class="lineno">18</span>     <span class="p">{</span>
-<span class="lineno">19</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span> <span class="o">=</span> <span class="nv">$em</span><span class="p">;</span>
-<span class="lineno">20</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span> <span class="o">=</span> <span class="nv">$dispatcher</span><span class="p">;</span>
-<span class="lineno">21</span>     <span class="p">}</span>
-<span class="lineno">22</span> 
-<span class="lineno">23</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">approve</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
-<span class="lineno">24</span>     <span class="p">{</span>
-<span class="lineno">25</span>         <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-<span class="lineno">26</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">PRE_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-<span class="lineno">27</span> 
-<span class="lineno">28</span>         <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isPropagationStopped</span><span class="p">())</span> <span class="p">{</span>
-<span class="lineno">29</span>             <span class="k">return</span> <span class="k">false</span><span class="p">;</span> <span class="c1">//cancelamos la aprobación</span>
-<span class="lineno">30</span>         <span class="p">}</span>
-<span class="lineno">31</span> 
-<span class="lineno">32</span>         <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">STATUS_APPROVED</span><span class="p">);</span>
-<span class="lineno">33</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-<span class="lineno">34</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
-<span class="lineno">35</span> 
-<span class="lineno">36</span>         <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-<span class="lineno">37</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">POST_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-<span class="lineno">38</span> 
-<span class="lineno">39</span>         <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
-<span class="lineno">40</span>     <span class="p">}</span>
-<span class="lineno">41</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
 
-<p>Como se puede ver, el código del método <strong>approve</strong> es bastante simple, dispara dos eventos y en medio de los mismos ejecuta el cambio de estatus y lo persiste en la BD. </p>
+<span class="k">namespace</span> <span class="nx">MyBundle\Model</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">MyBundle\UserEvents</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Doctrine\ORM\EntityManager</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventDispatcherInterface</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserManager</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$em</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$dispatcher</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">EntityManager</span> <span class="nv">$em</span><span class="p">,</span> <span class="nx">EventDispatcherInterface</span> <span class="nv">$dispatcher</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span> <span class="o">=</span> <span class="nv">$em</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span> <span class="o">=</span> <span class="nv">$dispatcher</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">approve</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">PRE_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isPropagationStopped</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">//cancelamos la aprobación
+</span>        <span class="p">}</span>
+
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">setStatus</span><span class="p">(</span><span class="nx">User</span><span class="o">::</span><span class="na">STATUS_APPROVED</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">persist</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">em</span><span class="o">-&gt;</span><span class="na">flush</span><span class="p">();</span>
+
+        <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">POST_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Como se puede ver, el código del método <strong>approve</strong> es bastante simple, dispara dos eventos y en medio de los mismos ejecuta el cambio de estatus y lo persiste en la BD.</p>
 
 <p>Los eventos que ejecutamos son <strong>my_bundle.user.pre_approve</strong> y <strong>my_bundle.user.post_approve</strong>, y le pasamos una instancia de <strong><a href="http://symfony.com/doc/current/components/event_dispatcher/generic_event.html">Symfony\Component\EventDispatcher\GenericEvent</a></strong>. Pudimos haber creado una clase Event propia, pero como solo pasaremos el objeto $user, no hace falta, para casos donde queramos pasar más objetos, o tener mejor control de los eventos, podemos crearnos nuestras clases Event personalizadas.</p>
 
-<h2>Registrando el UserManager en el Container</h2>
+<h2 id="registrando-el-usermanager-en-el-container">Registrando el UserManager en el Container</h2>
 
 <p>Nuestro UserManager necesita que se le pasen dos objetos para realizar sus tareas de aprobación, estos son el entity manager de doctrine y el event dispatcher de symfony, para hacer esto, registraremos nuestra clase como un servicio en el contenedor y le inyectamos los servicios/objetos que necesita:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="c1">#  MyBundle/Resources/config/services.yml</span>
-<span class="lineno">2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno">3</span>     <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
-<span class="lineno">4</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Model\UserManager</span>
-<span class="lineno">5</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">6</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">doctrine.orm.default_entity_manager</span>
-<span class="lineno">7</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">event_dispatcher</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">my_bundle.user_manager</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">MyBundle\Model\UserManager</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">doctrine.orm.default_entity_manager</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">event_dispatcher</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Con esto ya tenemos registrado nuestro manager como servicio, y podemos acceder a el por medio del id <strong>my_bundle.user_manager</strong>.</p>
 
-<h2>El controlador</h2>
-
+<h2 id="el-controlador">El controlador</h2>
 <p>Ahora creamos nuestra acción en algún controlador, para que se realize el proceso de aprobación:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Controller</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
-<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter</span><span class="p">;</span>
-<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
-<span class="lineno"> 8</span> 
-<span class="lineno"> 9</span> <span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
-<span class="lineno">10</span> <span class="p">{</span>
-<span class="lineno">11</span>     <span class="sd">/**</span>
-<span class="lineno">12</span> <span class="sd">     * @ParamConverter(&quot;user&quot;, class=&quot;MyBundle:user&quot;) usamos anotaciones :)</span>
-<span class="lineno">13</span> <span class="sd">     *</span>
-<span class="lineno">14</span> <span class="sd">     * @link http://symfony.com/doc/master/bundles/SensioFrameworkExtraBundle/annotations/converters.html</span>
-<span class="lineno">15</span> <span class="sd">     */</span>
-<span class="lineno">16</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">approveAction</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
-<span class="lineno">17</span>     <span class="p">{</span>
-<span class="lineno">18</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;my_bundle.user_manager&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">approve</span><span class="p">(</span><span class="nv">$user</span><span class="p">)){</span>
-<span class="lineno">19</span>             <span class="c1">// enviamos un flash por ejemplo</span>
-<span class="lineno">20</span>         <span class="p">}</span>
-<span class="lineno">21</span> 
-<span class="lineno">22</span>         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
-<span class="lineno">23</span>     <span class="p">}</span>
-<span class="lineno">24</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Controller</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">MyBundle\Entity\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Bundle\FrameworkBundle\Controller\Controller</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**
+     * @ParamConverter("user", class="MyBundle:user") usamos anotaciones :)
+     *
+     * @link http://symfony.com/doc/master/bundles/SensioFrameworkExtraBundle/annotations/converters.html
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">approveAction</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'my_bundle.user_manager'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">approve</span><span class="p">(</span><span class="nv">$user</span><span class="p">)){</span>
+            <span class="c1">// enviamos un flash por ejemplo
+</span>        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirect</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Nuestro controlador ha quedado muy simple, ya que la mayor parté del código (lógica de negocio) se encuentra en el user_manager.</p>
 
-<h2>Y el correo?</h2>
-
+<h2 id="y-el-correo">Y el correo?</h2>
 <p>Notarán que el método <strong>approve</strong> de la clase <strong>UserManager</strong> no realiza el envío de correo al aprobar al usuario, esto es porque esta tarea se la dejaremos a un listener que crearemos a continuación.</p>
 
-<h2>El Listener para el Correo</h2>
+<h2 id="el-listener-para-el-correo">El Listener para el Correo</h2>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="k">class</span> <span class="nc">SendApprovedEmailListener</span>
-<span class="lineno"> 8</span> <span class="p">{</span>
-<span class="lineno"> 9</span>     <span class="k">protected</span> <span class="nv">$mailer</span><span class="p">;</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$mailer</span><span class="p">)</span>
-<span class="lineno">12</span>     <span class="p">{</span>
-<span class="lineno">13</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span> <span class="o">=</span> <span class="nv">$mailer</span><span class="p">;</span>
-<span class="lineno">14</span>     <span class="p">}</span>
-<span class="lineno">15</span> 
-<span class="lineno">16</span>     <span class="sd">/**</span>
-<span class="lineno">17</span> <span class="sd">     * Este método será el encargado de enviar el correo electrónico luego de</span>
-<span class="lineno">18</span> <span class="sd">     * que el usuario haya sido aprobado.</span>
-<span class="lineno">19</span> <span class="sd">     *</span>
-<span class="lineno">20</span> <span class="sd">     * Para más info sobre GenericEvent ver:</span>
-<span class="lineno">21</span> <span class="sd">     * @link http://symfony.com/doc/current/components/event_dispatcher/generic_event.html</span>
-<span class="lineno">22</span> <span class="sd">     */</span>
-<span class="lineno">23</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">onPostApprove</span><span class="p">(</span><span class="nx">GenericEvent</span> <span class="nv">$event</span><span class="p">)</span>
-<span class="lineno">24</span>     <span class="p">{</span>
-<span class="lineno">25</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getSubject</span><span class="p">();</span> <span class="c1">//nos devuelve el objeto User</span>
-<span class="lineno">26</span> 
-<span class="lineno">27</span>         <span class="nv">$message</span> <span class="o">=</span> <span class="nx">\Swift_Message</span><span class="o">::</span><span class="na">newInstance</span><span class="p">()</span>
-<span class="lineno">28</span>             <span class="o">-&gt;</span><span class="na">setSubject</span><span class="p">(</span><span class="s1">&#39;Cuenta Aprobada!&#39;</span><span class="p">)</span>
-<span class="lineno">29</span>             <span class="o">-&gt;</span><span class="na">setFrom</span><span class="p">(</span><span class="nv">$from</span><span class="p">)</span> <span class="c1">//lo sacamos de algún lado (container, bd, ...)</span>
-<span class="lineno">30</span>             <span class="o">-&gt;</span><span class="na">setTo</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">())</span>
-<span class="lineno">31</span>             <span class="o">-&gt;</span><span class="na">setBody</span><span class="p">(</span><span class="nv">$body</span><span class="p">);</span> <span class="c1">//lo sacamos de algún lado (bd, twig, ...)</span>
-<span class="lineno">32</span> 
-<span class="lineno">33</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$message</span><span class="p">);</span>
-<span class="lineno">34</span>     <span class="p">}</span>
-<span class="lineno">35</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendApprovedEmailListener</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$mailer</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$mailer</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span> <span class="o">=</span> <span class="nv">$mailer</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**
+     * Este método será el encargado de enviar el correo electrónico luego de
+     * que el usuario haya sido aprobado.
+     *
+     * Para más info sobre GenericEvent ver:
+     * @link http://symfony.com/doc/current/components/event_dispatcher/generic_event.html
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">onPostApprove</span><span class="p">(</span><span class="nx">GenericEvent</span> <span class="nv">$event</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getSubject</span><span class="p">();</span> <span class="c1">//nos devuelve el objeto User
+</span>
+        <span class="nv">$message</span> <span class="o">=</span> <span class="nx">\Swift_Message</span><span class="o">::</span><span class="na">newInstance</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">setSubject</span><span class="p">(</span><span class="s1">'Cuenta Aprobada!'</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">setFrom</span><span class="p">(</span><span class="nv">$from</span><span class="p">)</span> <span class="c1">//lo sacamos de algún lado (container, bd, ...)
+</span>            <span class="o">-&gt;</span><span class="na">setTo</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getEmail</span><span class="p">())</span>
+            <span class="o">-&gt;</span><span class="na">setBody</span><span class="p">(</span><span class="nv">$body</span><span class="p">);</span> <span class="c1">//lo sacamos de algún lado (bd, twig, ...)
+</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mailer</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$message</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Ya tenemos nuestro listener creado, ahora debemos registrarlo en el contenedor y agregarle las etiquetas que lo identifiquen como un escucha de eventos:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="c1">#  MyBundle/Resources/config/services.yml</span>
-<span class="lineno"> 2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno"> 3</span>   <span class="l-Scalar-Plain">my_bundle.user_manager</span><span class="p-Indicator">:</span>
-<span class="lineno"> 4</span>    <span class="l-Scalar-Plain">....</span>
-<span class="lineno"> 5</span> 
-<span class="lineno"> 6</span>   <span class="l-Scalar-Plain">my_bundle.listener.user.send_approved_email</span><span class="p-Indicator">:</span>
-<span class="lineno"> 7</span>     <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Listener\SendApprovedEmailListener</span>
-<span class="lineno"> 8</span>     <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno"> 9</span>         <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">mailer</span>
-<span class="lineno">10</span>     <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
-<span class="lineno">11</span>       <span class="p-Indicator">-</span> <span class="p-Indicator">{</span><span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">my_bundle.user.post_approve</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">onPostApprove</span><span class="p-Indicator">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11</pre></td><td class="code"><pre><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="s">services</span><span class="pi">:</span>
+  <span class="s">my_bundle.user_manager</span><span class="pi">:</span>
+   <span class="s">....</span>
+
+  <span class="s">my_bundle.listener.user.send_approved_email</span><span class="pi">:</span>
+    <span class="s">class</span><span class="pi">:</span> <span class="s">MyBundle\Listener\SendApprovedEmailListener</span>
+    <span class="s">arguments</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="err">@</span><span class="s">mailer</span>
+    <span class="s">tags</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="pi">{</span><span class="nv">name</span><span class="pi">:</span> <span class="nv">kernel.event_listener</span><span class="pi">,</span> <span class="nv">event</span><span class="pi">:</span> <span class="nv">my_bundle.user.post_approve</span><span class="pi">,</span> <span class="nv">method</span><span class="pi">:</span> <span class="nv">onPostApprove</span><span class="pi">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Listo!!!. Gracias a la etiqueta <strong>kernel.event_listener</strong> de symfony, nuestra clase está escuchando el evento <strong>my_bundle.user.post_approve</strong>, y cuando el mismo sea disparado en el UserManager al aprobar, el método <strong>onPostApprove</strong> del listener será invocado y se enviará el correo. Todo esto sin haber tenido que modificar el código de aprobación de usuarios.</p>
 
@@ -259,7 +415,7 @@
 
 <p>Más adelante crearemos un listener que verifique el estatus del usuario antes de aprobarlo, ya que por ejemplo, si un usuario fué previamente aprobado, o rechazado, no debería poderse aprobar.</p>
 
-<p>Parte 2 <a href="/2014/09/15/extension-mediante-eventos-cambio-status-2.html">Despachador de Eventos (Ejemplo Practico 2)</a></p>
+<p>Parte 2	<a href="/2014/09/15/extension-mediante-eventos-cambio-status-2.html">Despachador de Eventos (Ejemplo Practico 2)</a></p>
 
         </section>
 

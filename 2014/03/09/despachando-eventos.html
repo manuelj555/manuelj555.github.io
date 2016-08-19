@@ -55,11 +55,11 @@
 <p>Como en este post voy es a hacer un ejemplo del uso del componente, hago referencia a sitios donde encontrar documentación al respecto:</p>
 
 <ul>
-<li>  <a href="http://gitnacho.github.io/symfony-docs-es/components/event_dispatcher/index.html">Despachador de eventos</a></li>
-<li>  <a href="http://symfony.com/doc/current/components/event_dispatcher/introduction.html">The EventDispatcher Component</a></li>
+  <li><a href="http://gitnacho.github.io/symfony-docs-es/components/event_dispatcher/index.html">Despachador de eventos</a></li>
+  <li><a href="http://symfony.com/doc/current/components/event_dispatcher/introduction.html">The EventDispatcher Component</a></li>
 </ul>
 
-<h2>Instalando el Componente</h2>
+<h2 id="instalando-el-componente">Instalando el Componente</h2>
 
 <p>Lo primero será descargar el componente EventDispatcher de Symfony, lo recomendable es hacerlo usando composer, y será este el método que usaré para este post.</p>
 
@@ -67,34 +67,55 @@
 
 <p>Acá hay un ejemplo de como debemos tener el composer.json:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno">1</span> <span class="p">{</span>
-<span class="lineno">2</span>     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="lineno">3</span>         <span class="nt">&quot;symfony/event-dispatcher&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
-<span class="lineno">4</span>     <span class="p">}</span>
-<span class="lineno">5</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nt">"require"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"symfony/event-dispatcher"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Ahora solo hace falta ejecutar el comando:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">php composer install
-</code></pre></div>
-<h2>Como usarlo:</h2>
 
-<h4>La clase EventDispatcher</h4>
+<div class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>php composer install
+</pre></td></tr></tbody></table>
+</div>
+
+<h2 id="como-usarlo">Como usarlo:</h2>
+
+<h4 id="la-clase-eventdispatcher">La clase EventDispatcher</h4>
 
 <p>Esta clase es la encargada de contener y llamar a los escuchas cuando se dispara/ejecuta un evento, es a traves de ella, que registraremos y eliminaremos las funciones o los metodos que estarán escuchando eventos, y es con esta misma clase que invocaremos la ejecución de cada evento a ejecutar.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> 
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventDispatcher</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="nv">$dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventDispatcher</span><span class="p">();</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="nv">$dispatcher</span><span class="o">-&gt;</span><span class="na">addListener</span><span class="p">(</span><span class="s1">&#39;nombre_del_evento&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
-<span class="lineno"> 8</span>     <span class="c1">//codigo a ejecutar cuando se dispare este evento</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span> <span class="p">});</span> <span class="c1">// Agregamos un escucha para el evento nombre_del_evento</span>
-<span class="lineno">11</span> 
-<span class="lineno">12</span> <span class="nv">$dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">&#39;nombre_del_evento&#39;</span><span class="p">);</span> 
-<span class="lineno">13</span> <span class="c1">//ejecutamos el evento, por lo que la función registrada previamente, será llamada.</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="cp">&lt;?php</span> 
+
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\EventDispatcher</span><span class="p">;</span>
+
+<span class="nv">$dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventDispatcher</span><span class="p">();</span>
+
+<span class="nv">$dispatcher</span><span class="o">-&gt;</span><span class="na">addListener</span><span class="p">(</span><span class="s1">'nombre_del_evento'</span><span class="p">,</span> <span class="k">function</span><span class="p">(){</span>
+    <span class="c1">//codigo a ejecutar cuando se dispare este evento
+</span>
+<span class="p">});</span> <span class="c1">// Agregamos un escucha para el evento nombre_del_evento
+</span>
+<span class="nv">$dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="s1">'nombre_del_evento'</span><span class="p">);</span> 
+<span class="o">//</span><span class="nx">ejecutamos</span> <span class="nx">el</span> <span class="nx">evento</span><span class="p">,</span> <span class="nx">por</span> <span class="nx">lo</span> <span class="nx">que</span> <span class="nx">la</span> <span class="nx">funci</span><span class="err">ó</span><span class="nx">n</span> <span class="nx">registrada</span> <span class="nx">previamente</span><span class="p">,</span> <span class="nx">ser</span><span class="err">á</span> <span class="nx">llamada</span><span class="o">.</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Para este post, no me extenderé mucho, ya que hay suficiente documentación tanto en ingles como en español, en los links que listé al comienzo de la página.</p>
 

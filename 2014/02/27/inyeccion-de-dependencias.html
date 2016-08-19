@@ -47,13 +47,13 @@
             <p>Creo que ya existe en la web bastante información de como el framework symfony implementa la inyección de dependencias, definiendo clases llamadas <strong>servicios</strong> que se encuentran disponibles en un contenedor.</p>
 
 <ul>
-<li>  <a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/">Inyección de dependencias</a></li>
-<li>  <a href="http://librosweb.es/symfony_2_3/capitulo_16.html">El contenedor de servicios</a></li>
+  <li><a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/">Inyección de dependencias</a></li>
+  <li><a href="http://librosweb.es/symfony_2_3/capitulo_16.html">El contenedor de servicios</a></li>
 </ul>
 
 <p>Pero acá vamos a exponer como implementar el componente en un proyecto PHP cualquiera.</p>
 
-<h2>Instalando el Componente</h2>
+<h2 id="instalando-el-componente">Instalando el Componente</h2>
 
 <p>Lo primero será descargar el componente DependencyInjection de Symfony, lo recomendable es hacerlo usando composer, y será este el método que usaré para este post.</p>
 
@@ -61,25 +61,45 @@
 
 <p>Acá hay un ejemplo de como debemos tener el composer.json:</p>
 
-<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="lineno">1</span> <span class="p">{</span>
-<span class="lineno">2</span>     <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="lineno">3</span>         <span class="nt">&quot;symfony/http-foundation&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-<span class="lineno">4</span>         <span class="nt">&quot;symfony/dependency-injection&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-<span class="lineno">5</span>         <span class="nt">&quot;symfony/yaml&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-<span class="lineno">6</span>         <span class="nt">&quot;symfony/config&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-<span class="lineno">7</span>         <span class="nt">&quot;symfony/routing&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span>
-<span class="lineno">8</span>     <span class="p">}</span>
-<span class="lineno">9</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nt">"require"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"symfony/http-foundation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"symfony/dependency-injection"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"symfony/yaml"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"symfony/config"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"symfony/routing"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>El routing lo usaremos para probar la definción de servicios.</p>
 
 <p>Ahora solo hace falta ejecutar el comando:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">php composer install
-</code></pre></div>
-<h4>Organizando el código</h4>
+
+<div class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>php composer install
+</pre></td></tr></tbody></table>
+</div>
+
+<h4 id="organizando-el-cdigo">Organizando el código</h4>
 
 <p>Vamos ahora a crear una serie de carpetas para organizar los archivos, se me ocurrió algo como:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">proyecto
+
+<div class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre>proyecto
     |---app
     |    |---cache
     |    |---config
@@ -87,7 +107,9 @@
     |    |---bootstrap.php
     |
     |---vendor
-</code></pre></div>
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Esta estructura de archivos es igual a la del ejemplo del uso de <strong><a href="/2014/02/26/symfony-routing.html">Componente Routing</a></strong></p>
 
 <p>La función de cada carpeta es la siguiente:</p>
@@ -95,216 +117,365 @@
 <p>Carpetas:</p>
 
 <ul>
-<li>  <strong>cache</strong> acá irán los archivos cacheados</li>
-<li>  <strong>config</strong> acá irán los yml con las definiciones de los servicios</li>
-<li>  <strong>vendors</strong> las libs instaladas mediante composer</li>
+  <li><strong>cache</strong> acá irán los archivos cacheados</li>
+  <li><strong>config</strong> acá irán los yml con las definiciones de los servicios</li>
+  <li><strong>vendors</strong> las libs instaladas mediante composer</li>
 </ul>
 
 <p>Archivos:</p>
 
 <ul>
-<li>  <strong>app/config/services.yml</strong> la definción de los servicios</li>
-<li>  <strong>public/bootstrap.php</strong> configuracion del componente</li>
+  <li><strong>app/config/services.yml</strong> la definción de los servicios</li>
+  <li><strong>public/bootstrap.php</strong> configuracion del componente</li>
 </ul>
 
-<h2>Como funciona el Componente</h2>
+<h2 id="como-funciona-el-componente">Como funciona el Componente</h2>
 
 <p>Este componente contiene varias clases principales que realizan los procesos de creación y obtención de los servicios, algunas de estas clases son:</p>
 
-<h4>ContainerBuilder</h4>
+<h4 id="containerbuilder">ContainerBuilder</h4>
 
 <p>Esta clase es la que contiene las definiciones, y los parametros, permite modificarlos y crear las instancias para ser usadas posteriormente en la aplicación:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="c1">// Recordemos haber cargado el autoload de composer antes de usar los componentes.</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
-<span class="lineno"> 8</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">register</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">,</span> <span class="s1">&#39;Symfony\\Component\\Routing\\RequestContext&#39;</span><span class="p">);</span>
-<span class="lineno"> 9</span> <span class="c1">// Registramos la clase Symfony\Component\Routing\RequestContext </span>
-<span class="lineno">10</span> <span class="c1">// y le asignamos el id request_context</span>
-<span class="lineno">11</span> 
-<span class="lineno">12</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span> <span class="c1">//prepara todas las definiciones para su uso</span>
-<span class="lineno">13</span> 
-<span class="lineno">14</span> <span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span> <span class="c1">//devolvemos/creamos la instancia</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">// Recordemos haber cargado el autoload de composer antes de usar los componentes.
+</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+
+<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
+<span class="nv">$container</span><span class="o">-&gt;</span><span class="na">register</span><span class="p">(</span><span class="s1">'request_context'</span><span class="p">,</span> <span class="s1">'Symfony\\Component\\Routing\\RequestContext'</span><span class="p">);</span>
+<span class="c1">// Registramos la clase Symfony\Component\Routing\RequestContext 
+// y le asignamos el id request_context
+</span>
+<span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span> <span class="c1">//prepara todas las definiciones para su uso
+</span>
+<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'request_context'</span><span class="p">);</span> <span class="o">//</span><span class="nx">devolvemos</span><span class="o">/</span><span class="nx">creamos</span> <span class="nx">la</span> <span class="nx">instancia</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Más info por acá:</p>
 
 <ul>
-<li>  <a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/introduction.html#uso-basico">Uso Básico del Contenedor</a></li>
-<li>  <a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/types.html">Tipos de inyección</a></li>
+  <li><a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/introduction.html#uso-basico">Uso Básico del Contenedor</a></li>
+  <li><a href="http://gitnacho.github.io/symfony-docs-es/components/dependency_injection/types.html">Tipos de inyección</a></li>
 </ul>
 
-<h6>Cargando los servicios desde YAML</h6>
+<h6 id="cargando-los-servicios-desde-yaml">Cargando los servicios desde YAML</h6>
 
 <p>Para hacer más simple el uso del componente vamos a crear y configurar los servicios en archivos <strong>yml</strong>, ya que desde mi punto de vista es más simple que con php, para ello haremos uso del componente <strong>Config</strong> y <strong>Yaml</strong> que instalamos previamente con composer:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="lineno"> 4</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
-<span class="lineno"> 8</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span> <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
-<span class="lineno">11</span> <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
-<span class="lineno">12</span> <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
-<span class="lineno">13</span> 
-<span class="lineno">14</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
-<span class="lineno">15</span> 
-<span class="lineno">16</span> <span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre></td><td class="code"><pre><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php
+</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
+
+<span class="nb">define</span><span class="p">(</span><span class="s1">'APP_PATH'</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">'/'</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app
+</span><span class="nb">define</span><span class="p">(</span><span class="s1">'DEBUG'</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción
+</span>
+<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
+<span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$container</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">'config/'</span><span class="p">));</span>
+<span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">'services.yml'</span><span class="p">);</span>
+
+<span class="nv">$container</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+
+<span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'request_context'</span><span class="p">);</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Nuestro archivo services.yml</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="c1">#    proyecto/app/config/services.yml</span>
-<span class="lineno">2</span> <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
-<span class="lineno">3</span>     <span class="l-Scalar-Plain">app_name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Prueba del Inyector de Dependencias</span>
-<span class="lineno">4</span> 
-<span class="lineno">5</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno">6</span>     <span class="l-Scalar-Plain">request_context</span><span class="p-Indicator">:</span>
-<span class="lineno">7</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\RequestContext</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="c1">#    proyecto/app/config/services.yml</span>
+<span class="s">parameters</span><span class="pi">:</span>
+    <span class="s">app_name</span><span class="pi">:</span> <span class="s">Prueba del Inyector de Dependencias</span>
+
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">request_context</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Symfony\Component\Routing\RequestContext</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p><strong>Es importante crear al menos un parametro en el archivo,o en el contenedor directamente antes de guardar en caché, ya que de lo contrario al cachear, el contenedor da un error del tipo</strong>:</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">FatalErrorException: Error: Call to a member function get() on a non-object in D:\wamp\www\pruebas\di\vendor\symfony\dependency-injection\Symfony\Component\DependencyInjection\Container.php line 147
-</code></pre></div>
+
+<div class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre>FatalErrorException: Error: Call to a member function get() on a non-object in D:\wamp\www\pruebas\di\vendor\symfony\dependency-injection\Symfony\Component\DependencyInjection\Container.php line 147
+</pre></td></tr></tbody></table>
+</div>
+
 <p>Con esto ya tenemos definido nuestro servicio en yaml.</p>
 
 <p>Pero estár leyendo el archivo yml en cada petición (cuando cresca pueden ser muchos servicios y parametros) y compilar esas definciones, consume mucho rendimiento, por lo que lo mejor es cachear los servicios para solventar esto.</p>
 
-<h2>Cacheando las Definiciones</h2>
+<h2 id="cacheando-las-definiciones">Cacheando las Definiciones</h2>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> 
-<span class="lineno"> 4</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
-<span class="lineno"> 6</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
-<span class="lineno"> 7</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
-<span class="lineno"> 8</span> <span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;APP_PATH&#39;</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app</span>
-<span class="lineno">11</span> <span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción</span>
-<span class="lineno">12</span> 
-<span class="lineno">13</span> <span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;cache/container.php&#39;</span><span class="p">;</span>
-<span class="lineno">14</span> <span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
-<span class="lineno">15</span> 
-<span class="lineno">16</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado</span>
-<span class="lineno">17</span>     <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
-<span class="lineno">18</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;app_path&#39;</span><span class="p">,</span> <span class="nx">APP_PATH</span><span class="p">);</span>
-<span class="lineno">19</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
-<span class="lineno">20</span> 
-<span class="lineno">21</span>     <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">&#39;config/&#39;</span><span class="p">));</span>
-<span class="lineno">22</span>     <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;services.yml&#39;</span><span class="p">);</span>
-<span class="lineno">23</span> 
-<span class="lineno">24</span>     <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
-<span class="lineno">25</span> 
-<span class="lineno">26</span>     <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
-<span class="lineno">27</span>     <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
-<span class="lineno">28</span>             <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyCachedContainer&#39;</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
-<span class="lineno">29</span>     <span class="p">);</span>
-<span class="lineno">30</span> <span class="p">}</span>
-<span class="lineno">31</span> 
-<span class="lineno">32</span> <span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
-<span class="lineno">33</span> <span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span>
-<span class="lineno">34</span> <span class="c1">// ...</span>
-<span class="lineno">35</span> <span class="c1">//ya podemos usar los servicios :-)</span>
-<span class="lineno">36</span> <span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></td><td class="code"><pre><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/bootstrap.php
+</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\Config\ConfigCache</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\Config\FileLocator</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\ContainerBuilder</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Dumper\PhpDumper</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Symfony\Component\DependencyInjection\Loader\YamlFileLoader</span><span class="p">;</span>
+
+<span class="nb">define</span><span class="p">(</span><span class="s1">'APP_PATH'</span><span class="p">,</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">'/'</span><span class="p">);</span> <span class="c1">//contiene la ruta hasta app
+</span><span class="nb">define</span><span class="p">(</span><span class="s1">'DEBUG'</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// true en desarollo y false en producción
+</span>
+<span class="nv">$file</span> <span class="o">=</span> <span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">'cache/container.php'</span><span class="p">;</span>
+<span class="nv">$containerConfigCache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConfigCache</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">isFresh</span><span class="p">())</span> <span class="p">{</span> <span class="c1">//si no está actualizado
+</span>    <span class="nv">$containerBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContainerBuilder</span><span class="p">();</span>
+    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">'app_path'</span><span class="p">,</span> <span class="nx">APP_PATH</span><span class="p">);</span>
+    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">setParameter</span><span class="p">(</span><span class="s1">'debug'</span><span class="p">,</span> <span class="nx">DEBUG</span><span class="p">);</span>
+
+    <span class="nv">$loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YamlFileLoader</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">,</span> <span class="k">new</span> <span class="nx">FileLocator</span><span class="p">(</span><span class="nx">APP_PATH</span> <span class="o">.</span> <span class="s1">'config/'</span><span class="p">));</span>
+    <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">'services.yml'</span><span class="p">);</span>
+
+    <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">compile</span><span class="p">();</span>
+
+    <span class="nv">$dumper</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PhpDumper</span><span class="p">(</span><span class="nv">$containerBuilder</span><span class="p">);</span>
+    <span class="nv">$containerConfigCache</span><span class="o">-&gt;</span><span class="na">write</span><span class="p">(</span>
+            <span class="nv">$dumper</span><span class="o">-&gt;</span><span class="na">dump</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'class'</span> <span class="o">=&gt;</span> <span class="s1">'MyCachedContainer'</span><span class="p">)),</span> <span class="nv">$containerBuilder</span><span class="o">-&gt;</span><span class="na">getResources</span><span class="p">()</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">require_once</span> <span class="nv">$file</span><span class="p">;</span>
+<span class="nv">$container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCachedContainer</span><span class="p">();</span>
+<span class="c1">// ...
+//ya podemos usar los servicios :-)
+</span><span class="nv">$requestContext</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'request_context'</span><span class="p">);</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Con esto logramos que todos los servicios y parametros se cacheen en una clase contenedora, la gran ventaja de esta clase cacheada es que crea código php equivalente a lo que definimos en el yml, veamos un ejemplo de lo que expongo:</p>
 
-<h3>Viendo el código de la Cache</h3>
+<h3 id="viendo-el-cdigo-de-la-cache">Viendo el código de la Cache</h3>
 
 <p>Creamos la siguiente definición para el servicio router:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="c1">#    proyecto/app/config/services.yml</span>
-<span class="lineno"> 2</span> <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
-<span class="lineno"> 3</span>     <span class="l-Scalar-Plain">router.file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">routing.yml</span>
-<span class="lineno"> 4</span>     <span class="l-Scalar-Plain">router.config</span><span class="p-Indicator">:</span>
-<span class="lineno"> 5</span>         <span class="l-Scalar-Plain">cache_dir</span><span class="p-Indicator">:</span> <span class="err">%</span><span class="l-Scalar-Plain">app_path%config/</span>
-<span class="lineno"> 6</span>         <span class="l-Scalar-Plain">debug</span><span class="p-Indicator">:</span> <span class="err">%</span><span class="l-Scalar-Plain">debug%</span>
-<span class="lineno"> 7</span>         
-<span class="lineno"> 8</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno"> 9</span>     <span class="l-Scalar-Plain">request_context</span><span class="p-Indicator">:</span>
-<span class="lineno">10</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\RequestContext</span>
-<span class="lineno">11</span>         <span class="l-Scalar-Plain">calls</span><span class="p-Indicator">:</span>
-<span class="lineno">12</span>             <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">setBaseUrl</span><span class="p-Indicator">,</span> <span class="p-Indicator">[</span><span class="s">&#39;ejemplo_de_base_url&#39;</span><span class="p-Indicator">]]</span>
-<span class="lineno">13</span>             <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="nv">setHost</span><span class="p-Indicator">,</span> <span class="p-Indicator">[</span><span class="s">&#39;localhost&#39;</span><span class="p-Indicator">]]</span>
-<span class="lineno">14</span>         
-<span class="lineno">15</span>     <span class="l-Scalar-Plain">route.locator</span><span class="p-Indicator">:</span>
-<span class="lineno">16</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Config\FileLocator</span>
-<span class="lineno">17</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">18</span>             <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;%app_path%config/&quot;</span><span class="p-Indicator">]</span>
-<span class="lineno">19</span>         
-<span class="lineno">20</span>     <span class="l-Scalar-Plain">route.loader.yml</span><span class="p-Indicator">:</span>
-<span class="lineno">21</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\Loader\YamlFileLoader</span>
-<span class="lineno">22</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">23</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">route.locator</span>
-<span class="lineno">24</span>         
-<span class="lineno">25</span>     <span class="l-Scalar-Plain">router</span><span class="p-Indicator">:</span>
-<span class="lineno">26</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Symfony\Component\Routing\Router</span>
-<span class="lineno">27</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">28</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">route.loader.yml</span>
-<span class="lineno">29</span>             <span class="p-Indicator">-</span> <span class="err">%</span><span class="l-Scalar-Plain">router.file%</span>
-<span class="lineno">30</span>             <span class="p-Indicator">-</span> <span class="err">%</span><span class="l-Scalar-Plain">router.config%</span>
-<span class="lineno">31</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">request_context</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></td><td class="code"><pre><span class="c1">#    proyecto/app/config/services.yml</span>
+<span class="s">parameters</span><span class="pi">:</span>
+    <span class="s">router.file</span><span class="pi">:</span> <span class="s">routing.yml</span>
+    <span class="s">router.config</span><span class="pi">:</span>
+        <span class="s">cache_dir</span><span class="pi">:</span> <span class="err">%</span><span class="s">app_path%config/</span>
+        <span class="s">debug</span><span class="pi">:</span> <span class="err">%</span><span class="s">debug%</span>
+        
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">request_context</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Symfony\Component\Routing\RequestContext</span>
+        <span class="s">calls</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="pi">[</span><span class="nv">setBaseUrl</span><span class="pi">,</span> <span class="pi">[</span><span class="s1">'</span><span class="s">ejemplo_de_base_url'</span><span class="pi">]]</span>
+            <span class="pi">-</span> <span class="pi">[</span><span class="nv">setHost</span><span class="pi">,</span> <span class="pi">[</span><span class="s1">'</span><span class="s">localhost'</span><span class="pi">]]</span>
+        
+    <span class="s">route.locator</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Symfony\Component\Config\FileLocator</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="pi">[</span><span class="s2">"</span><span class="s">%app_path%config/"</span><span class="pi">]</span>
+        
+    <span class="s">route.loader.yml</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Symfony\Component\Routing\Loader\YamlFileLoader</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">route.locator</span>
+        
+    <span class="s">router</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Symfony\Component\Routing\Router</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">route.loader.yml</span>
+            <span class="pi">-</span> <span class="err">%</span><span class="s">router.file%</span>
+            <span class="pi">-</span> <span class="err">%</span><span class="s">router.config%</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">request_context</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Al ejecutar la app, se crea el archivo <strong>app/cache/container.php</strong>, y si miramos algunos de sus métodos, encontraremos lo siguiente:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/cache/container.php</span>
-<span class="lineno"> 2</span> <span class="c1">//...</span>
-<span class="lineno"> 3</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">methodMap</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-<span class="lineno"> 4</span>     <span class="s1">&#39;request_context&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;getRequestContextService&#39;</span><span class="p">,</span>
-<span class="lineno"> 5</span>     <span class="s1">&#39;route.loader.yml&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;getRoute_Loader_YmlService&#39;</span><span class="p">,</span>
-<span class="lineno"> 6</span>     <span class="s1">&#39;route.locator&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;getRoute_LocatorService&#39;</span><span class="p">,</span>
-<span class="lineno"> 7</span>     <span class="s1">&#39;router&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;getRouterService&#39;</span><span class="p">,</span>
-<span class="lineno"> 8</span> <span class="p">);</span>
-<span class="lineno"> 9</span> <span class="c1">//... Contiene los métodos de la clase a llamar por cada servicio</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span> <span class="c1">// algunos métodos:</span>
-<span class="lineno">12</span> 
-<span class="lineno">13</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">getRequestContextService</span><span class="p">()</span>
-<span class="lineno">14</span> <span class="p">{</span>
-<span class="lineno">15</span>     <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;request_context&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\RequestContext</span><span class="p">();</span>
-<span class="lineno">16</span> 
-<span class="lineno">17</span>     <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">setBaseUrl</span><span class="p">(</span><span class="s1">&#39;ejemplo_de_base_url&#39;</span><span class="p">);</span>
-<span class="lineno">18</span>     <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">setHost</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">);</span>
-<span class="lineno">19</span> 
-<span class="lineno">20</span>     <span class="k">return</span> <span class="nv">$instance</span><span class="p">;</span>
-<span class="lineno">21</span> <span class="p">}</span>
-<span class="lineno">22</span> 
-<span class="lineno">23</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">getRoute_Loader_YmlService</span><span class="p">()</span>
-<span class="lineno">24</span> <span class="p">{</span>
-<span class="lineno">25</span>     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;route.loader.yml&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\Loader\YamlFileLoader</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route.locator&#39;</span><span class="p">));</span>
-<span class="lineno">26</span> <span class="p">}</span>
-<span class="lineno">27</span> 
-<span class="lineno">28</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">getRoute_LocatorService</span><span class="p">()</span>
-<span class="lineno">29</span> <span class="p">{</span>
-<span class="lineno">30</span>     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;route.locator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Config\FileLocator</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">&#39;D:\\wamp\\www\\pruebas\\di\\app/config/&#39;</span><span class="p">));</span>
-<span class="lineno">31</span> <span class="p">}</span>
-<span class="lineno">32</span> 
-<span class="lineno">33</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">getRouterService</span><span class="p">()</span>
-<span class="lineno">34</span> <span class="p">{</span>
-<span class="lineno">35</span>     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;router&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\Router</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;route.loader.yml&#39;</span><span class="p">),</span> <span class="s1">&#39;routing.yml&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;cache_dir&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;D:\\wamp\\www\\pruebas\\di\\app/config/&#39;</span><span class="p">,</span> <span class="s1">&#39;debug&#39;</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;request_context&#39;</span><span class="p">));</span>
-<span class="lineno">36</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></td><td class="code"><pre><span class="cp">&lt;?php</span> <span class="c1">//  proyecto/app/cache/container.php
+//...
+</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">methodMap</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'request_context'</span> <span class="o">=&gt;</span> <span class="s1">'getRequestContextService'</span><span class="p">,</span>
+    <span class="s1">'route.loader.yml'</span> <span class="o">=&gt;</span> <span class="s1">'getRoute_Loader_YmlService'</span><span class="p">,</span>
+    <span class="s1">'route.locator'</span> <span class="o">=&gt;</span> <span class="s1">'getRoute_LocatorService'</span><span class="p">,</span>
+    <span class="s1">'router'</span> <span class="o">=&gt;</span> <span class="s1">'getRouterService'</span><span class="p">,</span>
+<span class="p">);</span>
+<span class="c1">//... Contiene los métodos de la clase a llamar por cada servicio
+</span>
+<span class="c1">// algunos métodos:
+</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getRequestContextService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">'request_context'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\RequestContext</span><span class="p">();</span>
+
+    <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">setBaseUrl</span><span class="p">(</span><span class="s1">'ejemplo_de_base_url'</span><span class="p">);</span>
+    <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">setHost</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$instance</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getRoute_Loader_YmlService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">'route.loader.yml'</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\Loader\YamlFileLoader</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'route.locator'</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getRoute_LocatorService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">'route.locator'</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Config\FileLocator</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">'D:\\wamp\\www\\pruebas\\di\\app/config/'</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getRouterService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">'router'</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Symfony\Component\Routing\Router</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'route.loader.yml'</span><span class="p">),</span> <span class="s1">'routing.yml'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'cache_dir'</span> <span class="o">=&gt;</span> <span class="s1">'D:\\wamp\\www\\pruebas\\di\\app/config/'</span><span class="p">,</span> <span class="s1">'debug'</span> <span class="o">=&gt;</span> <span class="kc">true</span><span class="p">),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'request_context'</span><span class="p">));</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Como podemos ver es impresionante como el componente cachea las definiciones, por ejemplo el método <strong>getRequestContextService</strong> que aparte de crear la instancia de la clase crea en código php los llamados a los métodos <strong>setBaseUrl</strong> y <strong>setHost</strong> definidos en el yml para que se vea como funciona la cache.</p>
 
 <p>Tambien podemos apreciar en el método <strong>getRouterService</strong> que el arreglo del tercer argumento tiene data estática, y no se buscará ningun parametro externo en su creación, esto da un gran rendimiento.</p>
 
-<h2>Inyectando en contenedor en un servicio</h2>
+<h2 id="inyectando-en-contenedor-en-un-servicio">Inyectando en contenedor en un servicio</h2>
 
 <p>Tambien es posible pasarle a un servicio el contenedor, de la siguiente manera:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno">2</span>     <span class="l-Scalar-Plain">mi_servicio</span><span class="p-Indicator">:</span>
-<span class="lineno">3</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Mi_Clase_Cualquiera</span>
-<span class="lineno">4</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">5</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">service_container</span>
-<span class="lineno">6</span>           <span class="c1"># - otros argumentos</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="s">services</span><span class="pi">:</span>
+    <span class="s">mi_servicio</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">Mi_Clase_Cualquiera</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">service_container</span>
+          <span class="c1"># - otros argumentos</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>El container por defecto se agrega como servicio con el id <strong>service_container</strong>, por lo que podemos inyectarlo y usarlo como cualquier otro servicio.</p>
 

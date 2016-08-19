@@ -48,7 +48,7 @@
 
 <p>Debido a que la aplicación fue desarrollada hace unos años ya, algunas de las metodologías usadas no utilizan las buenas practicas de desarrollo que podemos encontrar hoy en día.</p>
 
-<p>Me tomé la iniciativa de incorporar un contenedor de servicios (El de Symfony fué mi opción), ya que necesitabamos incorporar algunas libs y clases en la app (como Twig, Router, HttpFoundation, etc...), además, en la plataforma existen varias instancias &quot;globales&quot; de ciertas clases que son de utilidad y son usadas en la mayoria de páginas (manejo de sesión, helpers para formularios, envio de correo, entre otros...).</p>
+<p>Me tomé la iniciativa de incorporar un contenedor de servicios (El de Symfony fué mi opción), ya que necesitabamos incorporar algunas libs y clases en la app (como Twig, Router, HttpFoundation, etc…), además, en la plataforma existen varias instancias “globales” de ciertas clases que son de utilidad y son usadas en la mayoria de páginas (manejo de sesión, helpers para formularios, envio de correo, entre otros…).</p>
 
 <p>Esto conlleva al inconveniente de tener instancias en cada petición, aunque no vayan a ser utilizadas en ningún momento, lo que genera un uso de memoria muchas veces innecesario.</p>
 
@@ -58,124 +58,196 @@
 
 <p>Acá tenemos un ejemplo de lo que me refería anteriormente:</p>
 
-<h3>Ejemplo del Código Heredado</h3>
+<h3 id="ejemplo-del-cdigo-heredado">Ejemplo del Código Heredado</h3>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno">1</span> <span class="cp">&lt;?php</span>
-<span class="lineno">2</span> 
-<span class="lineno">3</span> <span class="nv">$emailGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
-<span class="lineno">4</span> <span class="nv">$formHelperGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalFormHelper</span><span class="p">(</span><span class="nx">BASE_PATH</span><span class="p">);</span>
-<span class="lineno">5</span> <span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nx">GlobalSession</span><span class="p">(</span><span class="s1">&#39;namespace&#39;</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="nv">$emailGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
+<span class="nv">$formHelperGlobal</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GlobalFormHelper</span><span class="p">(</span><span class="nx">BASE_PATH</span><span class="p">);</span>
+<span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nx">GlobalSession</span><span class="p">(</span><span class="s1">'namespace'</span><span class="p">);</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>La idea era incorporar estas instancias en el contenedor de symfony, para que sea el quien se encargue de la creación de los objetos.</p>
 
-<h3>Instalando el contenedor</h3>
+<h3 id="instalando-el-contenedor">Instalando el contenedor</h3>
 
 <p>Lo primero fué instalar y configurar el componente:</p>
 
 <ul>
-<li>  <a href="/2014/02/27/inyeccion-de-dependencias.html">Componente DependencyInjection 1</a></li>
-<li>  <a href="/2014/03/02/inyeccion-de-dependencias-extensiones.html">Componente DependencyInjection 2</a></li>
+  <li><a href="/2014/02/27/inyeccion-de-dependencias.html">Componente DependencyInjection 1</a></li>
+  <li><a href="/2014/03/02/inyeccion-de-dependencias-extensiones.html">Componente DependencyInjection 2</a></li>
 </ul>
 
-<h3>Creando los servicios</h3>
+<h3 id="creando-los-servicios">Creando los servicios</h3>
 
 <p>Luego creamos las definiciones de las clases como servicios en el contenedor:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="l-Scalar-Plain">//servicios.yml</span>
-<span class="lineno"> 2</span> <span class="l-Scalar-Plain">parameters</span><span class="p-Indicator">:</span>
-<span class="lineno"> 3</span>     <span class="l-Scalar-Plain">session_namespace</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">mi-namespace-de-session</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno"> 6</span>     <span class="l-Scalar-Plain">session</span><span class="p-Indicator">:</span>
-<span class="lineno"> 7</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GlobalSession</span>
-<span class="lineno"> 8</span>         <span class="l-Scalar-Plain">arguments [%session_namespace%]</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span>     <span class="l-Scalar-Plain">form_helper</span><span class="p-Indicator">:</span>
-<span class="lineno">11</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GlobalFormHelper</span>
-<span class="lineno">12</span>         <span class="l-Scalar-Plain">arguments</span> 
-<span class="lineno">13</span>             <span class="l-Scalar-Plain">- @= service(&#39;request_stack&#39;).getMasterRequest().getBasePath()</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="s">//servicios.yml</span>
+<span class="s">parameters</span><span class="pi">:</span>
+    <span class="s">session_namespace</span><span class="pi">:</span> <span class="s">mi-namespace-de-session</span>
+
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">session</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">GlobalSession</span>
+        <span class="s">arguments [%session_namespace%]</span>
+
+    <span class="s">form_helper</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">GlobalFormHelper</span>
+        <span class="s">arguments</span> 
+            <span class="s">- @= service('request_stack').getMasterRequest().getBasePath()</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Como ven, es muy facil crear las definciones para nuestras clases/servicios.</p>
 
 <p>Lo siguiente fué cambiar el código de la parte que creaba las instancias de estas clases:</p>
 
-<h3>Cambiando el código</h3>
+<h3 id="cambiando-el-cdigo">Cambiando el código</h3>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="c1">//la instancia de email llevó un poco más de trabajo.</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="nv">$formHelperGlobal</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;form_helper&#39;</span><span class="p">);</span>
-<span class="lineno"> 6</span> <span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">);</span>
-<span class="lineno"> 7</span> 
-<span class="lineno"> 8</span> <span class="c1">//esto aun no soluciona el problema de tener las instancias así no se usen, </span>
-<span class="lineno"> 9</span> <span class="c1">//pero es un primer paso para dejar de usar las variables globales</span>
-<span class="lineno">10</span> <span class="c1">//y obtenerlas directo del contenedor.</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//la instancia de email llevó un poco más de trabajo.
+</span>
+<span class="nv">$formHelperGlobal</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'form_helper'</span><span class="p">);</span>
+<span class="nv">$sessionGlobal</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'session'</span><span class="p">);</span>
+
+<span class="c1">//esto aun no soluciona el problema de tener las instancias así no se usen, 
+//pero es un primer paso para dejar de usar las variables globales
+</span><span class="o">//</span><span class="nx">y</span> <span class="nx">obtenerlas</span> <span class="nx">directo</span> <span class="nx">del</span> <span class="nx">contenedor</span><span class="o">.</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Para el servicio email, se optó por crear una clase que sirviera de Factory, ya que GlobalEmail utilizaba parametros que no podian ser registrados en el contenedor.</p>
 
-<h3>EmailFactory al rescate</h3>
+<h3 id="emailfactory-al-rescate">EmailFactory al rescate</h3>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">class</span> <span class="nc">EmailFactory</span>
-<span class="lineno"> 4</span> <span class="p">{</span>
-<span class="lineno"> 5</span>     <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">createInstance</span><span class="p">()</span>
-<span class="lineno"> 6</span>     <span class="p">{</span>
-<span class="lineno"> 7</span>         <span class="c1">//acá la lógica para obtener los parametros.</span>
-<span class="lineno"> 8</span>         <span class="k">return</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
-<span class="lineno"> 9</span>     <span class="p">}</span>
-<span class="lineno">10</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">EmailFactory</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">createInstance</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//acá la lógica para obtener los parametros.
+</span>        <span class="k">return</span> <span class="k">new</span> <span class="nx">GlobalEmail</span><span class="p">(</span><span class="nx">EMAIL_USER</span><span class="p">,</span> <span class="nx">EMAIL_PASS</span><span class="p">,</span> <span class="nx">EMAIL_HOST</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Luego registramos el servicio:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="l-Scalar-Plain">//servicios.yml</span>
-<span class="lineno">2</span> 
-<span class="lineno">3</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno">4</span>     <span class="l-Scalar-Plain">...</span>
-<span class="lineno">5</span> 
-<span class="lineno">6</span>     <span class="l-Scalar-Plain">email</span><span class="p-Indicator">:</span>
-<span class="lineno">7</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">GLobalEmail</span>
-<span class="lineno">8</span>         <span class="l-Scalar-Plain">factory_class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">EmailFactory</span>
-<span class="lineno">9</span>         <span class="l-Scalar-Plain">factory_method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">createInstance</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="s">//servicios.yml</span>
 
-<p>Como se puede ver el contenedor de servicios es muy flexible, y siempre existe la manera de convertir una clase &quot;global&quot; en un servicio del contenedor. </p>
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">...</span>
+
+    <span class="s">email</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">GLobalEmail</span>
+        <span class="s">factory_class</span><span class="pi">:</span> <span class="s">EmailFactory</span>
+        <span class="s">factory_method</span><span class="pi">:</span> <span class="s">createInstance</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Como se puede ver el contenedor de servicios es muy flexible, y siempre existe la manera de convertir una clase “global” en un servicio del contenedor.</p>
 
 <p>Tambien se pudo registrar el servicio usando php, pero al cachearse el contenedor, los parametros que le llegan a email, tambien se cachearán (algo que no podia pasar en nuestro caso).</p>
 
-<h2>Logueando los Correos Enviados</h2>
+<h2 id="logueando-los-correos-enviados">Logueando los Correos Enviados</h2>
 
 <p>Algo que nos ha permitido la utilización del contenedor es extender las funcionalidades de algunas clases y libs, una de esas funcionalidades ha sido agregar un log de los correos.</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">class</span> <span class="nc">DebugEmail</span> <span class="k">extends</span> <span class="nx">GlobalEmail</span>
-<span class="lineno"> 4</span> <span class="p">{</span>
-<span class="lineno"> 5</span>     <span class="k">protected</span> <span class="nv">$realEmail</span><span class="p">;</span>
-<span class="lineno"> 6</span>     <span class="k">protected</span> <span class="nv">$logger</span><span class="p">;</span>
-<span class="lineno"> 7</span> 
-<span class="lineno"> 8</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">GlobalEmail</span> <span class="nv">$email</span><span class="p">,</span> <span class="nx">LoggerInterface</span> <span class="nv">$logger</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
-<span class="lineno"> 9</span>     <span class="p">{</span>
-<span class="lineno">10</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">realEmail</span> <span class="o">=</span> <span class="nv">$email</span><span class="p">;</span><span class="c1">//nuestra propiedad es la que realmente envia los correos</span>
-<span class="lineno">11</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span> <span class="o">=</span> <span class="nv">$logger</span><span class="p">;</span>
-<span class="lineno">12</span>     <span class="p">}</span>
-<span class="lineno">13</span> 
-<span class="lineno">14</span>     <span class="sd">/**</span>
-<span class="lineno">15</span> <span class="sd">     * Reescribimos el método que envia en correo, para añadir el log.</span>
-<span class="lineno">16</span> <span class="sd">     */</span>
-<span class="lineno">17</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">enviar</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$subject</span><span class="p">,</span> <span class="nv">$content</span><span class="p">)</span>
-<span class="lineno">18</span>     <span class="p">{</span>
-<span class="lineno">19</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">log</span><span class="p">(</span><span class="s2">&quot;Se ha enviando un email a </span><span class="si">{</span><span class="nv">$to</span><span class="si">}</span><span class="s2">, asunto: </span><span class="si">{</span><span class="nv">$subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span>
-<span class="lineno">20</span> 
-<span class="lineno">21</span>         <span class="c1">//acá dejamos que la instancia real de email haga el envio normalmente.</span>
-<span class="lineno">22</span> 
-<span class="lineno">23</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">realEmail</span><span class="o">-&gt;</span><span class="na">enviar</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$subject</span><span class="p">,</span> <span class="nv">$content</span><span class="p">);</span>
-<span class="lineno">24</span>     <span class="p">}</span>
-<span class="lineno">25</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">DebugEmail</span> <span class="k">extends</span> <span class="nx">GlobalEmail</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$realEmail</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nv">$logger</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">GlobalEmail</span> <span class="nv">$email</span><span class="p">,</span> <span class="nx">LoggerInterface</span> <span class="nv">$logger</span> <span class="o">=</span> <span class="kc">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">realEmail</span> <span class="o">=</span> <span class="nv">$email</span><span class="p">;</span><span class="c1">//nuestra propiedad es la que realmente envia los correos
+</span>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span> <span class="o">=</span> <span class="nv">$logger</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**
+     * Reescribimos el método que envia en correo, para añadir el log.
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">enviar</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$subject</span><span class="p">,</span> <span class="nv">$content</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">log</span><span class="p">(</span><span class="s2">"Se ha enviando un email a </span><span class="si">{</span><span class="nv">$to</span><span class="si">}</span><span class="s2">, asunto: </span><span class="si">{</span><span class="nv">$subject</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
+
+        <span class="c1">//acá dejamos que la instancia real de email haga el envio normalmente.
+</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">realEmail</span><span class="o">-&gt;</span><span class="na">enviar</span><span class="p">(</span><span class="nv">$from</span><span class="p">,</span> <span class="nv">$to</span><span class="p">,</span> <span class="nv">$subject</span><span class="p">,</span> <span class="nv">$content</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Hemos creado una clase que extiende de GlobalEmail para así (Implementando el patron Decorator) poder realizar tareas extras sin cambiar el código de la clase original.</p>
 
-<h3>Cambiando la instancia devuelta por el contenedor.</h3>
+<h3 id="cambiando-la-instancia-devuelta-por-el-contenedor">Cambiando la instancia devuelta por el contenedor.</h3>
 
 <p>El contenedor de symfony es tan flexible que permite cambiar la construcción de nuestros servicios en alguna de las etapas de compilación del mismo, lo podemos hacer en los <a href="/2014/03/02/inyeccion-de-dependencias-extensiones.html">CompilerPass</a> o en las <a href="/2014/03/02/inyeccion-de-dependencias-extensiones.html">Extensiones</a>.</p>
 
@@ -183,61 +255,101 @@
 
 <p>creamos el servicio debug_email:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno"> 1</span> <span class="l-Scalar-Plain">//servicios.yml</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno"> 4</span>     <span class="l-Scalar-Plain">...</span>
-<span class="lineno"> 5</span> 
-<span class="lineno"> 6</span>     <span class="l-Scalar-Plain">debug_email</span><span class="p-Indicator">:</span>
-<span class="lineno"> 7</span>         <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DebugEmail</span>
-<span class="lineno"> 8</span>         <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno"> 9</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">email_real</span> <span class="c1"># acá debe ir la instancia de la clase Email real.</span>
-<span class="lineno">10</span>             <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">?logger</span>  <span class="c1"># para hacer los logs (servicio definido en alguna parte)</span>
-<span class="lineno">11</span> 
-<span class="lineno">12</span> <span class="c1"># Aunque el servicio email_real no exista, nosotros le haremos llegar el</span>
-<span class="lineno">13</span> <span class="c1"># mismo al servicio debug_email desde la extension.</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="s">//servicios.yml</span>
+
+<span class="s">services</span><span class="pi">:</span>
+    <span class="s">...</span>
+
+    <span class="s">debug_email</span><span class="pi">:</span>
+        <span class="s">class</span><span class="pi">:</span> <span class="s">DebugEmail</span>
+        <span class="s">arguments</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">email_real</span> <span class="c1"># acá debe ir la instancia de la clase Email real.</span>
+            <span class="pi">-</span> <span class="err">@</span><span class="s">?logger</span>  <span class="c1"># para hacer los logs (servicio definido en alguna parte)</span>
+
+<span class="c1"># Aunque el servicio email_real no exista, nosotros le haremos llegar el</span>
+<span class="c1"># mismo al servicio debug_email desde la extension.</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Ahora en nuestra extensión, le pasamos la instancia de GlobalEmail al servicio en su primer argumento, y además le decimos al contenedor, que cuando se pida el servicio <strong>email</strong> devuelva realmente <strong>debug_email</strong></p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="c1">//dentro del metodo load de nuestra extensión registrada</span>
-<span class="lineno"> 4</span> <span class="c1">//y luego de condicionar que estemos en desarrollo:</span>
-<span class="lineno"> 5</span> 
-<span class="lineno"> 6</span> <span class="nv">$emailDefinition</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">findDefinition</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
-<span class="lineno"> 7</span> <span class="nv">$debugEmailDefinition</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">findDefinition</span><span class="p">(</span><span class="s1">&#39;debug_email&#39;</span><span class="p">);</span>
-<span class="lineno"> 8</span> 
-<span class="lineno"> 9</span> <span class="nv">$emailDefinition</span><span class="o">-&gt;</span><span class="na">setPublic</span><span class="p">(</span><span class="k">false</span><span class="p">);</span> <span class="c1">//hacemos invisible el servicio real</span>
-<span class="lineno">10</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setDefinition</span><span class="p">(</span><span class="s1">&#39;email_real&#39;</span><span class="p">,</span> <span class="nv">$emailDefinition</span><span class="p">);</span><span class="c1">//creamos el servicio email_real a partir de email.</span>
-<span class="lineno">11</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setAlias</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;debug_email&#39;</span><span class="p">);</span> <span class="c1">//y le decimos al contenedor que cuando pidan el servicio</span>
-<span class="lineno">12</span> <span class="c1">//email, devuelva debug_email</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="c1">//dentro del metodo load de nuestra extensión registrada
+//y luego de condicionar que estemos en desarrollo:
+</span>
+<span class="nv">$emailDefinition</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">findDefinition</span><span class="p">(</span><span class="s1">'email'</span><span class="p">);</span>
+<span class="nv">$debugEmailDefinition</span> <span class="o">=</span> <span class="nv">$container</span><span class="o">-&gt;</span><span class="na">findDefinition</span><span class="p">(</span><span class="s1">'debug_email'</span><span class="p">);</span>
+
+<span class="nv">$emailDefinition</span><span class="o">-&gt;</span><span class="na">setPublic</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span> <span class="c1">//hacemos invisible el servicio real
+</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setDefinition</span><span class="p">(</span><span class="s1">'email_real'</span><span class="p">,</span> <span class="nv">$emailDefinition</span><span class="p">);</span><span class="c1">//creamos el servicio email_real a partir de email.
+</span><span class="nv">$container</span><span class="o">-&gt;</span><span class="na">setAlias</span><span class="p">(</span><span class="s1">'email'</span><span class="p">,</span> <span class="s1">'debug_email'</span><span class="p">);</span> <span class="c1">//y le decimos al contenedor que cuando pidan el servicio
+</span><span class="o">//</span><span class="nx">email</span><span class="p">,</span> <span class="nx">devuelva</span> <span class="nx">debug_email</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Con el código anterior (Que puede parecer muy confuso, nosotros lo hemos venido viendo en el core del framework syfmony (-: ) logramos que el servicio email, devuelva la instancia de DebugEmail en vez de GlobalEmail.</p>
 
 <p>Acá podemos ver un ejemplo de lo que se ha cacheado:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> <span class="c1">//clase del contenedor cacheado</span>
-<span class="lineno"> 3</span> <span class="sd">/**</span>
-<span class="lineno"> 4</span> <span class="sd"> * Este código es autogenerado por el componente, en base a las definciones.</span>
-<span class="lineno"> 5</span> <span class="sd"> *</span>
-<span class="lineno"> 6</span> <span class="sd"> * Se llamará a este metodo al solicitar a debug_email service.</span>
-<span class="lineno"> 7</span> <span class="sd"> */</span>
-<span class="lineno"> 8</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">getDebugEmailService</span><span class="p">()</span>
-<span class="lineno"> 9</span> <span class="p">{</span>
-<span class="lineno">10</span>     <span class="nv">$emailReal</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;EmailFactory&#39;</span><span class="p">,</span> <span class="s1">&#39;createInstance&#39;</span><span class="p">);</span> <span class="c1">//llamamos al factory</span>
-<span class="lineno">11</span>     <span class="nv">$logger</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;logger&#39;</span><span class="p">);</span>
-<span class="lineno">12</span> 
-<span class="lineno">13</span>     <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">&#39;debug_email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DebugEmail</span><span class="p">(</span><span class="nv">$emailReal</span><span class="p">,</span> <span class="nv">$logger</span><span class="p">);</span>
-<span class="lineno">14</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="c1">//clase del contenedor cacheado
+</span><span class="sd">/**
+ * Este código es autogenerado por el componente, en base a las definciones.
+ *
+ * Se llamará a este metodo al solicitar a debug_email service.
+ */</span>
+<span class="k">protected</span> <span class="k">function</span> <span class="nf">getDebugEmailService</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$emailReal</span> <span class="o">=</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'EmailFactory'</span><span class="p">,</span> <span class="s1">'createInstance'</span><span class="p">);</span> <span class="c1">//llamamos al factory
+</span>    <span class="nv">$logger</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'logger'</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">services</span><span class="p">[</span><span class="s1">'debug_email'</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DebugEmail</span><span class="p">(</span><span class="nv">$emailReal</span><span class="p">,</span> <span class="nv">$logger</span><span class="p">);</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>La variable $emailReal se crea dentro del método <strong>getDebugEmailService</strong> debido a que le hemos dicho que no es publica (<strong>$emailDefinition-&gt;setPublic(false)</strong>).</p>
 
-<p>Aparte, en algun punto del contenedor cacheado hay un arreglo de aliases, y uno de sus valores es el alias de email hacia debug<strong>email, por lo que cuando se pida el servicio email, primero se buscará en los alias, y así se devolverá realmente debug</strong>email.</p>
+<p>Aparte, en algun punto del contenedor cacheado hay un arreglo de aliases, y uno de sus valores es el alias de email hacia debug__email, por lo que cuando se pida el servicio email, primero se buscará en los alias, y así se devolverá realmente debug__email.</p>
 
-<h3>Conclusión</h3>
+<h3 id="conclusin">Conclusión</h3>
 
 <p>Para mi el utilizar un contenedor (y más aun el de symfony) es de mucha ayuda para mejorar y organizar el código de nuestras aplicaciones.</p>
+
 
         </section>
 

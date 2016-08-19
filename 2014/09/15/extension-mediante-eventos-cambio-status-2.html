@@ -48,86 +48,146 @@
 
 <p>Primeramente crearemos el listener para luego registrarlo como un servicio que escucha el evento <strong>my_bundle.user.pre_approve</strong>.</p>
 
-<h2>El Listener</h2>
+<h2 id="el-listener">El Listener</h2>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span> <span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
-<span class="lineno"> 6</span> 
-<span class="lineno"> 7</span> <span class="k">class</span> <span class="nc">VerifyStatusListener</span>
-<span class="lineno"> 8</span> <span class="p">{</span>
-<span class="lineno"> 9</span>  <span class="k">protected</span> <span class="nv">$logger</span><span class="p">;</span>
-<span class="lineno">10</span> 
-<span class="lineno">11</span>  <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$logger</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
-<span class="lineno">12</span>  <span class="p">{</span>
-<span class="lineno">13</span>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span> <span class="o">=</span> <span class="nv">$logger</span><span class="p">;</span>
-<span class="lineno">14</span>  <span class="p">}</span>
-<span class="lineno">15</span> 
-<span class="lineno">16</span>     <span class="sd">/**</span>
-<span class="lineno">17</span> <span class="sd">     * Este método será el encargado de verificar el status del usuario para ver</span>
-<span class="lineno">18</span> <span class="sd">     * si este es aprobable o no.</span>
-<span class="lineno">19</span> <span class="sd">     *</span>
-<span class="lineno">20</span> <span class="sd">     * Para más info sobre GenericEvent ver:</span>
-<span class="lineno">21</span> <span class="sd">     * @link http://symfony.com/doc/current/components/event_dispatcher/generic_event.html</span>
-<span class="lineno">22</span> <span class="sd">     */</span>
-<span class="lineno">23</span>     <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreApprove</span><span class="p">(</span><span class="nx">GenericEvent</span> <span class="nv">$event</span><span class="p">)</span>
-<span class="lineno">24</span>     <span class="p">{</span>
-<span class="lineno">25</span>         <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getSubject</span><span class="p">();</span> <span class="c1">//nos devuelve el objeto User</span>
-<span class="lineno">26</span> 
-<span class="lineno">27</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getStatus</span><span class="p">()</span> <span class="o">==</span> <span class="nx">User</span><span class="o">::</span><span class="na">STATUS_APPROVED</span><span class="p">){</span>
-<span class="lineno">28</span>          <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">stopPropagation</span><span class="p">();</span> <span class="c1">//detenemos la ejecucion del evento, y evitamos la aprobacion del usuario</span>
-<span class="lineno">29</span>          <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="p">){</span>
-<span class="lineno">30</span>              <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">debug</span><span class="p">(</span><span class="s2">&quot;Se detuvo la aprobación del usuario, ya que este se encuentra aprobado&quot;</span><span class="p">);</span>
-<span class="lineno">31</span>          <span class="p">}</span>
-<span class="lineno">32</span>         <span class="p">}</span>
-<span class="lineno">33</span>     <span class="p">}</span>
-<span class="lineno">34</span> <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">MyBundle\Listener</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Symfony\Component\EventDispatcher\GenericEvent</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">VerifyStatusListener</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$logger</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$logger</span> <span class="o">=</span> <span class="kc">null</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span> <span class="o">=</span> <span class="nv">$logger</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**
+     * Este método será el encargado de verificar el status del usuario para ver
+     * si este es aprobable o no.
+     *
+     * Para más info sobre GenericEvent ver:
+     * @link http://symfony.com/doc/current/components/event_dispatcher/generic_event.html
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">onPreApprove</span><span class="p">(</span><span class="nx">GenericEvent</span> <span class="nv">$event</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">getSubject</span><span class="p">();</span> <span class="c1">//nos devuelve el objeto User
+</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">getStatus</span><span class="p">()</span> <span class="o">==</span> <span class="nx">User</span><span class="o">::</span><span class="na">STATUS_APPROVED</span><span class="p">){</span>
+            <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">stopPropagation</span><span class="p">();</span> <span class="c1">//detenemos la ejecucion del evento, y evitamos la aprobacion del usuario
+</span>            <span class="k">if</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="p">){</span>
+              <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">debug</span><span class="p">(</span><span class="s2">"Se detuvo la aprobación del usuario, ya que este se encuentra aprobado"</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Nuestro listener tiene un método <strong>onPreAprove</strong> que lo que hace es verificar que el usuario no tenga el estatus de aprobado, para permitir o evitar su aprobacion.</p>
 
 <p>Además si se detiene la aprobación, enviamos un log, para saber (al menos en desarrollo) porque no se realizó la aprobación.</p>
 
-<h3>StopPropagation</h3>
+<h3 id="stoppropagation">StopPropagation</h3>
 
 <p>Como se puede observar en el Listener, hemos cancelado la ejecución de la aprobación (y de los demás listeners del evento my_bundle.user.pre_approve) llamando al método <strong>$event-&gt;stopPropagation()</strong>, el cual está disponible en cualquier objeto de tipo Event cuando usamos el desapachador de eventos de symfony.</p>
 
-<h2>Registrando el Listener</h2>
+<h2 id="registrando-el-listener">Registrando el Listener</h2>
 
 <p>Ya tenemos nuestro listener creado, ahora debemos registrarlo en el contenedor y agregarle las etiquetas que lo identifiquen como un escucha de eventos:</p>
 
-<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="lineno">1</span> <span class="c1">#  MyBundle/Resources/config/services.yml</span>
-<span class="lineno">2</span> <span class="l-Scalar-Plain">services</span><span class="p-Indicator">:</span>
-<span class="lineno">3</span>   <span class="l-Scalar-Plain">...</span>
-<span class="lineno">4</span>   <span class="l-Scalar-Plain">my_bundle.listener.user.verify_status</span><span class="p-Indicator">:</span>
-<span class="lineno">5</span>     <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MyBundle\Listener\VerifyStatusListener</span>
-<span class="lineno">6</span>     <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
-<span class="lineno">7</span>         <span class="p-Indicator">-</span> <span class="err">@</span><span class="l-Scalar-Plain">?logger</span> <span class="c1"># Optional</span>
-<span class="lineno">8</span>     <span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
-<span class="lineno">9</span>       <span class="p-Indicator">-</span> <span class="p-Indicator">{</span><span class="nv">name</span><span class="p-Indicator">:</span> <span class="nv">kernel.event_listener</span><span class="p-Indicator">,</span> <span class="nv">event</span><span class="p-Indicator">:</span> <span class="nv">my_bundle.user.pre_approve</span><span class="p-Indicator">,</span> <span class="nv">method</span><span class="p-Indicator">:</span> <span class="nv">onPreApprove</span><span class="p-Indicator">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="c1">#  MyBundle/Resources/config/services.yml</span>
+<span class="s">services</span><span class="pi">:</span>
+  <span class="s">...</span>
+  <span class="s">my_bundle.listener.user.verify_status</span><span class="pi">:</span>
+    <span class="s">class</span><span class="pi">:</span> <span class="s">MyBundle\Listener\VerifyStatusListener</span>
+    <span class="s">arguments</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="err">@</span><span class="s">?logger</span> <span class="c1"># Optional</span>
+    <span class="s">tags</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="pi">{</span><span class="nv">name</span><span class="pi">:</span> <span class="nv">kernel.event_listener</span><span class="pi">,</span> <span class="nv">event</span><span class="pi">:</span> <span class="nv">my_bundle.user.pre_approve</span><span class="pi">,</span> <span class="nv">method</span><span class="pi">:</span> <span class="nv">onPreApprove</span><span class="pi">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Con esto ya tenemos nuestro listener funcionando, y al ejecutarse el evento, si el usuario se encuentra previamente aprobado, el proceso será cancelado.</p>
 
 <p>Para lograr esto debemos recordar que en la clase UserManagar, en su evento approve, tenemos una condicion:</p>
 
-<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="lineno"> 1</span> <span class="cp">&lt;?php</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span>  <span class="o">...</span>
-<span class="lineno"> 4</span> 
-<span class="lineno"> 5</span>      <span class="k">public</span> <span class="k">function</span> <span class="nf">approve</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
-<span class="lineno"> 6</span>     <span class="p">{</span>
-<span class="lineno"> 7</span>         <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
-<span class="lineno"> 8</span>         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">PRE_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
-<span class="lineno"> 9</span> 
-<span class="lineno">10</span>      <span class="c1">// esta condición verifica si algún listener ha detenido la ejecución de la</span>
-<span class="lineno">11</span>      <span class="c1">// aprobación llamando a $event-&gt;stopPropagation()</span>
-<span class="lineno">12</span>         <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isPropagationStopped</span><span class="p">())</span> <span class="p">{</span>
-<span class="lineno">13</span>             <span class="k">return</span> <span class="k">false</span><span class="p">;</span> <span class="c1">//cancelamos la aprobación</span>
-<span class="lineno">14</span>         <span class="p">}</span>
-<span class="lineno">15</span> 
-<span class="lineno">16</span>      <span class="o">...</span>
-<span class="lineno">17</span>     <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+
+  <span class="o">...</span>
+
+  <span class="k">public</span> <span class="k">function</span> <span class="nf">approve</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+  <span class="p">{</span>
+      <span class="nv">$event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GenericEvent</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dispatcher</span><span class="o">-&gt;</span><span class="na">dispatch</span><span class="p">(</span><span class="nx">UserEvents</span><span class="o">::</span><span class="na">PRE_APPROVE</span><span class="p">,</span> <span class="nv">$event</span><span class="p">);</span>
+
+      <span class="c1">// esta condición verifica si algún listener ha detenido la ejecución de la
+</span>      <span class="c1">// aprobación llamando a $event-&gt;stopPropagation()
+</span>      <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">isPropagationStopped</span><span class="p">())</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">//cancelamos la aprobación
+</span>      <span class="p">}</span>
+
+      <span class="o">...</span>
+  <span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Bueno, así podemos crear otros listener para verificaciónes y ejecuciones adicionales de procesos.</p>
 
