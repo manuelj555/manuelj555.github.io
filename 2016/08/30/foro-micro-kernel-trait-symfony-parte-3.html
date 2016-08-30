@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>   
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>PHP + Symfony Tips - Creando un Foro con el MicroKernelTrait de Symfony (Parte 3)</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <!-- This is for syntax highlight -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax.css">
+    <!-- Customisation  -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+
+</head>
+<body class="home-template">
+
+    <main class="content" role="main">
+
+    <article class="post">
+        <header class="post-header">
+            <a id="blog-logo" href="http://manuelj555.github.io/">
+                
+                <span class="blog-title">PHP + Symfony Tips</span>
+                 
+            </a>
+        </header>
+
+        <span class="post-meta">
+            <time datetime="2016-08-30">30 Aug 2016</time>
+            
+            on
+            
+            
+       	</span>
+
+        <h1 class="post-title">Creando un Foro con el MicroKernelTrait de Symfony (Parte 3)</h1>
+
+        <section class="post-content">
+            <p>Esta es la tercera parte de una serie de artículos donde se explicará paso a paso el desarrollo de una aplicación muy simple utilizando el <a href="http://symfony.com/doc/current/configuration/micro_kernel_trait.html">MicroKernelTrait de Symfony</a>.</p>
+
+<p><a href="/2016/08/14/foro-micro-kernel-trait-symfony-parte-1.html">Parte 1</a> <a href="/2016/08/21/foro-micro-kernel-trait-symfony-parte-2.html">Parte 2</a></p>
+
+<p><em><strong>Nota</strong>: Los posts se enfocarán a usuarios que tengan conocimientos previos de Symfony, que conozcan sobre el AppKernel, los directorios básicos de un proyecto symfony y de los archivos de configuración y rutas.</em></p>
+
+<hr />
+
+<p>En esta parte vamos a trabajar en dos cosas:</p>
+
+<ul>
+  <li>Implementación de seguridad con el bundle SecurityBundle.</li>
+  <li>Implementación del DebugBundle para depuración mientras desarrollamos.</li>
+  <li>Implementación del WebProfilerBundle para depuración mientras desarrollamos.</li>
+</ul>
+
+<h1 id="agregando-seguridad-en-la-aplicacin">Agregando seguridad en la aplicación</h1>
+
+<p>En esta parte se va a trabajar con la seguridad de la aplicación. Ahora los usuarios deberán iniciar sesión en la plataforma para poder crear preguntas.</p>
+
+<p>La estructura de archivos que se va a crear/editar en esta parte es la siguiente:</p>
+
+<div class="highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre>app/config/config.yml                                      // Edición
+app/config/security.yml                                    // Creación
+app/AppKernel.php                                          // Edición
+app/Resources/views/base.html.twig                         // Edición
+src/App/Controller/QuestionController.php                  // Edición
+web/css/foro.css                                           // Edición
+</pre></td></tr></tbody></table>
+</div>
+
+<hr />
+
+<h3 id="agregando-los-bundles">Agregando los Bundles</h3>
+
+<p>Lo primero es registrar los bundles en el <code class="highlighter-rouge">registerBundles</code> del <code class="highlighter-rouge">AppKernel.php</code> (Lineas 6, 9-14):</p>
+
+<div class="language-php highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="c1">//... Método registerBundles
+</span><span class="nv">$bundles</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="c1">//...
+</span>    <span class="c1">// se añade el SecurityBundle
+</span>    <span class="k">new</span> <span class="nx">Symfony\Bundle\SecurityBundle\SecurityBundle</span><span class="p">(),</span>
+<span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getEnvironment</span><span class="p">(),</span> <span class="k">array</span><span class="p">(</span><span class="s1">'dev'</span><span class="p">,</span> <span class="s1">'test'</span><span class="p">)))</span> <span class="p">{</span>
+    <span class="c1">// ...
+</span>    <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Symfony\Bundle\DebugBundle\DebugBundle</span><span class="p">();</span>
+    <span class="c1">// se añade el WebProfilerBundle
+</span>    <span class="nv">$bundles</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">// ...
+</span></pre></td></tr></tbody></table>
+</div>
+
+<p>Seguidamente agregamos la configuración del <code class="highlighter-rouge">WebProfilerBundle</code> en el método <code class="highlighter-rouge">configureContainer</code> (Lineas 8-13):</p>
+
+<div class="language-php highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="c1">// ... 
+</span><span class="k">protected</span> <span class="k">function</span> <span class="nf">configureContainer</span><span class="p">(</span><span class="nx">ContainerBuilder</span> <span class="nv">$c</span><span class="p">,</span> <span class="nx">LoaderInterface</span> <span class="nv">$loader</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$loader</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/config/config.yml'</span><span class="p">);</span>
+
+    <span class="c1">// Se añade la config del WebProfilerBundle, solo si el bundle fué cargado.
+</span>    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">[</span><span class="s1">'WebProfilerBundle'</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$c</span><span class="o">-&gt;</span><span class="na">loadFromExtension</span><span class="p">(</span><span class="s1">'web_profiler'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+            <span class="s1">'toolbar'</span> <span class="o">=&gt;</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="s1">'intercept_redirects'</span> <span class="o">=&gt;</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Para finalizar importamos las rutas desde el método <code class="highlighter-rouge">configureRoutes</code> (Lineas 6-9):</p>
+
+<div class="language-php highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="c1">// ... 
+</span><span class="k">protected</span> <span class="k">function</span> <span class="nf">configureRoutes</span><span class="p">(</span><span class="nx">RouteCollectionBuilder</span> <span class="nv">$routes</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Importamos las rutas del WebProfilerBundle, solo si el bundle fué cargado.
+</span>    <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">bundles</span><span class="p">[</span><span class="s1">'WebProfilerBundle'</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">import</span><span class="p">(</span><span class="s1">'@WebProfilerBundle/Resources/config/routing/wdt.xml'</span><span class="p">,</span> <span class="s1">'/_wdt'</span><span class="p">);</span>
+        <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">import</span><span class="p">(</span><span class="s1">'@WebProfilerBundle/Resources/config/routing/profiler.xml'</span><span class="p">,</span> <span class="s1">'/_profiler'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Cargamos los controllers usando anotaciones
+</span>    <span class="nv">$routes</span><span class="o">-&gt;</span><span class="na">import</span><span class="p">(</span><span class="nx">__DIR__</span><span class="o">.</span><span class="s1">'/../src/App/Controller/'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="s1">'annotation'</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<h3 id="ajustando-el-configyml">Ajustando el config.yml</h3>
+
+<p>En el <code class="highlighter-rouge">config.yml</code> se va a importar el recurso <code class="highlighter-rouge">app/config/security.yml</code> (linea 3):</p>
+
+<div class="language-yaml highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></td><td class="code"><pre><span class="s">imports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">resource</span><span class="pi">:</span> <span class="nv">parameters.yml</span> <span class="pi">}</span>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">resource</span><span class="pi">:</span> <span class="nv">security.yml</span> <span class="pi">}</span> <span class="c1"># Se importa el app/config/security.yml</span>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">resource</span><span class="pi">:</span> <span class="nv">services.yml</span> <span class="pi">}</span>
+
+<span class="s">framework</span><span class="pi">:</span>
+    <span class="s">secret</span><span class="pi">:</span> <span class="s">StringAleatorio</span>
+    <span class="s">templating</span><span class="pi">:</span>
+        <span class="s">engines</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">twig'</span><span class="pi">]</span>
+    <span class="s">profiler</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">only_exceptions</span><span class="pi">:</span> <span class="nv">false</span> <span class="pi">}</span>
+    <span class="s">form</span><span class="pi">:</span> <span class="s">~</span>                       <span class="c1"># Nos permite crear y trabajar con formularios de Symfony.</span>
+    <span class="s">validation</span><span class="pi">:</span>                   <span class="c1"># Activa la validación de objetos.</span>
+        <span class="s">enable_annotations</span><span class="pi">:</span> <span class="s">true</span>
+    <span class="s">translator</span><span class="pi">:</span>                   <span class="c1"># Activa la traducción de las validaciones.</span>
+        <span class="s">fallback</span><span class="pi">:</span> <span class="s">es</span>
+    <span class="s">default_locale</span><span class="pi">:</span> <span class="s">es</span>
+
+<span class="c1"># Registramos un tema de formularios para mejorar el aspecto de los mismos.</span>
+<span class="s">twig</span><span class="pi">:</span>
+    <span class="s">form_theme</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s1">'</span><span class="s">form/fields.html.twig'</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Por último vamos a crear el fichero <code class="highlighter-rouge">app/config/security.yml</code> para configurar el bundle de seguridad:</p>
+
+<h3 id="el-securityyml">El security.yml</h3>
+
+<div class="language-yaml highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre></td><td class="code"><pre><span class="c1"># app/config/security.yml</span>
+<span class="s">security</span><span class="pi">:</span>
+    <span class="c1"># Para efectos del ejemplo las claves no se encriptan</span>
+    <span class="s">encoders</span><span class="pi">:</span>
+        <span class="s">Symfony\Component\Security\Core\User\User</span><span class="pi">:</span> <span class="s">plaintext</span>
+
+    <span class="s">providers</span><span class="pi">:</span>
+        <span class="c1"># Usamos el proveedor de usuarios en memoria para no complicar el tutorial:</span>
+        <span class="s">in_memory</span><span class="pi">:</span>
+            <span class="s">memory</span><span class="pi">:</span>
+                <span class="s">users</span><span class="pi">:</span>
+                    <span class="s">one@test.com</span><span class="pi">:</span>
+                        <span class="s">password</span><span class="pi">:</span> <span class="s">123</span>
+                        <span class="s">roles</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ROLE_USER'</span>
+                    <span class="s">two@test.com</span><span class="pi">:</span>
+                        <span class="s">password</span><span class="pi">:</span> <span class="s">123</span>
+                        <span class="s">roles</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ROLE_USER'</span>
+                    <span class="s">three@test.com</span><span class="pi">:</span>
+                        <span class="s">password</span><span class="pi">:</span> <span class="s">123</span>
+                        <span class="s">roles</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ROLE_USER'</span>
+
+    <span class="s">firewalls</span><span class="pi">:</span>
+        <span class="c1"># Las rutas del profiler no llevan seguridad.</span>
+        <span class="s">dev</span><span class="pi">:</span>
+            <span class="s">pattern</span><span class="pi">:</span> <span class="s">^/(_(profiler|wdt)|css|images|js)/</span>
+            <span class="s">security</span><span class="pi">:</span> <span class="s">false</span>
+
+        <span class="c1"># Creamos el firewall de toda la aplicación:</span>
+        <span class="s">main</span><span class="pi">:</span>
+            <span class="s">pattern</span><span class="pi">:</span> <span class="s">^/</span>
+            <span class="s">anonymous</span><span class="pi">:</span> <span class="s">~</span>
+            <span class="c1"># La autenticación la manejamos con http_basic para simplificar el tutorial</span>
+            <span class="s">http_basic</span><span class="pi">:</span> <span class="s">~</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Con estos ajustes ya tenemos el <code class="highlighter-rouge">WebProfilerBundle</code>, el <code class="highlighter-rouge">DebugBundle</code> y el <code class="highlighter-rouge">SecurityBundle</code> debidamente configurados en la aplicación.</p>
+
+<h4 id="restringiendo-el-acceso-al-crear-preguntas">Restringiendo el acceso al crear preguntas</h4>
+
+<p>Ahora debemos modificar el método <code class="highlighter-rouge">QuestionController::newAction</code> para que solo puedan crear preguntas los usuarios que hayan iniciado sesión en la plataforma. Para ello vamos a usar la anotación <code class="highlighter-rouge">@Security("is_authenticated()")</code> en el método que crea preguntas, y además vamos a ajustar su lógica para relacionar la pregunta al usuario logueado:</p>
+
+<div class="language-php highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></td><td class="code"><pre><span class="cp">&lt;?php</span>
+<span class="c1">// ... 
+// Importante añadir el use de la anotación Security: 
+</span><span class="k">use</span> <span class="nx">Sensio\Bundle\FrameworkExtraBundle\Configuration\Security</span><span class="p">;</span>
+<span class="c1">// ...
+</span>
+<span class="sd">/**
+ * @Route("/new", name="question_create")
+ * @Security("is_authenticated()")  Se añade la anotación de seguridad
+ */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">newAction</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$form</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createForm</span><span class="p">(</span><span class="nx">QuestionType</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'author'</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getUser</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getUsername</span><span class="p">(),</span> <span class="c1">// Se pasa el usuario logueado al form.
+</span>    <span class="p">]);</span>
+    <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">handleRequest</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isSubmitted</span><span class="p">()</span> <span class="k">and</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">isValid</span><span class="p">())</span> <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'repository.question'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="nv">$form</span><span class="o">-&gt;</span><span class="na">getData</span><span class="p">());</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectToRoute</span><span class="p">(</span><span class="s1">'question_list'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render</span><span class="p">(</span><span class="s1">'question/new.html.twig'</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">'form'</span> <span class="o">=&gt;</span> <span class="nv">$form</span><span class="o">-&gt;</span><span class="na">createView</span><span class="p">(),</span>
+    <span class="p">]);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>El código anterior añade seguridad a la acción <code class="highlighter-rouge">newAction</code> (linea 9), y relaciona la pregunta con el usuario logueado (linea 14). Recordemos que en capítulos anteriores se creó un Formulario <code class="highlighter-rouge">QuestionType</code> y en él se definió una opción <code class="highlighter-rouge">author</code> que se pasa al objeto <code class="highlighter-rouge">Question</code> al crearlo.</p>
+
+<h3 id="mostrando-la-informacin-del-usuario">Mostrando la información del usuario</h3>
+
+<p>Vamos a ajustar el archivo <code class="highlighter-rouge">app/Resources/views/base.html.twig</code> para que aparesca la información del usuario logueado en el header de la página:</p>
+
+<div class="language-twig highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</pre></td><td class="code"><pre><span class="c">{# app/Resources/views/base.html.twig #}</span>
+<span class="cp">&lt;!doctype html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"es"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Micro Foro - Symfony<span class="nt">&lt;/title&gt;</span>
+    <span class="cp">{%</span> <span class="k">block</span> <span class="nv">stylesheets</span> <span class="cp">%}</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"</span><span class="cp">{{</span> <span class="nv">asset</span><span class="p">(</span><span class="s1">'css/foro.css'</span><span class="p">)</span> <span class="cp">}}</span><span class="s">"</span><span class="nt">&gt;</span>
+    <span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">stylesheets</span> <span class="cp">%}</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;header&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"header-title"</span><span class="nt">&gt;</span>
+            Symfony Micro-Foro
+            <span class="cp">{%</span> <span class="k">if</span> <span class="nv">app.user</span> <span class="ow">and</span> <span class="nv">is_granted</span><span class="p">(</span><span class="s1">'IS_AUTHENTICATED_FULLY'</span><span class="p">)</span> <span class="cp">%}</span>
+                <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"header-user-container"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"header-user"</span><span class="nt">&gt;</span>
+                        <span class="cp">{{</span> <span class="nv">app.user.username</span> <span class="cp">}}</span>                        
+                    <span class="nt">&lt;/span&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+            <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/header&gt;</span>
+<span class="nt">&lt;article</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;h1</span> <span class="na">class=</span><span class="s">"page-header"</span><span class="nt">&gt;</span><span class="cp">{%</span> <span class="k">block</span> <span class="nv">page_header</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="nt">&lt;/h1&gt;</span>
+
+    <span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">"content"</span><span class="nt">&gt;</span>
+        <span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+    <span class="nt">&lt;/section&gt;</span>
+<span class="nt">&lt;/article&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Se añaden las lineas <strong>16 a la 22</strong>, donde se muestra el nombre del usuario (su correo para efectos del tutorial) a la derecha del título de la aplicación.</p>
+
+<p>Para visualizar correctamente los estilos con los cambios añadidos recientemente se debe actualizar el archivo <code class="highlighter-rouge">web/css/foro.css</code> con el siguiente contenido:</p>
+
+<div class="language-css highlighter-rouge"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1</pre></td><td class="code"><pre><span class="c">/*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */</span><span class="nt">html</span><span class="p">{</span><span class="nl">font-family</span><span class="p">:</span><span class="nb">sans-serif</span><span class="p">;</span><span class="nl">line-height</span><span class="p">:</span><span class="m">1.15</span><span class="p">;</span><span class="nl">-ms-text-size-adjust</span><span class="p">:</span><span class="m">100%</span><span class="p">;</span><span class="nl">-webkit-text-size-adjust</span><span class="p">:</span><span class="m">100%</span><span class="p">}</span><span class="nt">body</span><span class="p">{</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nt">article</span><span class="o">,</span><span class="nt">aside</span><span class="o">,</span><span class="nt">details</span><span class="o">,</span><span class="nt">figcaption</span><span class="o">,</span><span class="nt">figure</span><span class="o">,</span><span class="nt">footer</span><span class="o">,</span><span class="nt">header</span><span class="o">,</span><span class="nt">main</span><span class="o">,</span><span class="nt">menu</span><span class="o">,</span><span class="nt">nav</span><span class="o">,</span><span class="nt">section</span><span class="o">,</span><span class="nt">summary</span><span class="p">{</span><span class="nl">display</span><span class="p">:</span><span class="nb">block</span><span class="p">}</span><span class="nt">audio</span><span class="o">,</span><span class="nt">canvas</span><span class="o">,</span><span class="nt">progress</span><span class="o">,</span><span class="nt">video</span><span class="p">{</span><span class="nl">display</span><span class="p">:</span><span class="n">inline-block</span><span class="p">}</span><span class="nt">audio</span><span class="nd">:not</span><span class="o">([</span><span class="nt">controls</span><span class="o">])</span><span class="p">{</span><span class="nl">display</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span><span class="nl">height</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nt">progress</span><span class="p">{</span><span class="nl">vertical-align</span><span class="p">:</span><span class="nb">baseline</span><span class="p">}</span><span class="nt">template</span><span class="o">,[</span><span class="nt">hidden</span><span class="o">]</span><span class="p">{</span><span class="nl">display</span><span class="p">:</span><span class="nb">none</span><span class="p">}</span><span class="nt">a</span><span class="p">{</span><span class="nl">background-color</span><span class="p">:</span><span class="nb">transparent</span><span class="p">;</span><span class="nl">-webkit-text-decoration-skip</span><span class="p">:</span><span class="n">objects</span><span class="p">}</span><span class="nt">a</span><span class="nd">:active</span><span class="o">,</span><span class="nt">a</span><span class="nd">:hover</span><span class="p">{</span><span class="nl">outline-width</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nt">abbr</span><span class="o">[</span><span class="nt">title</span><span class="o">]</span><span class="p">{</span><span class="nl">border-bottom</span><span class="p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">text-decoration</span><span class="p">:</span><span class="nb">underline</span><span class="p">;</span><span class="nl">text-decoration</span><span class="p">:</span><span class="nb">underline</span> <span class="nb">dotted</span><span class="p">}</span><span class="nt">b</span><span class="o">,</span><span class="nt">strong</span><span class="p">{</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">inherit</span><span class="p">}</span><span class="nt">b</span><span class="o">,</span><span class="nt">strong</span><span class="p">{</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">bolder</span><span class="p">}</span><span class="nt">dfn</span><span class="p">{</span><span class="nl">font-style</span><span class="p">:</span><span class="nb">italic</span><span class="p">}</span><span class="nt">h1</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">2em</span><span class="p">;</span><span class="nl">margin</span><span class="p">:</span><span class="m">.67em</span> <span class="m">0</span><span class="p">}</span><span class="nt">mark</span><span class="p">{</span><span class="nl">background-color</span><span class="p">:</span><span class="m">#ff0</span><span class="p">;</span><span class="nl">color</span><span class="p">:</span><span class="m">#000</span><span class="p">}</span><span class="nt">small</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">80%</span><span class="p">}</span><span class="nt">sub</span><span class="o">,</span><span class="nt">sup</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">75%</span><span class="p">;</span><span class="nl">line-height</span><span class="p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">position</span><span class="p">:</span><span class="nb">relative</span><span class="p">;</span><span class="nl">vertical-align</span><span class="p">:</span><span class="nb">baseline</span><span class="p">}</span><span class="nt">sub</span><span class="p">{</span><span class="nl">bottom</span><span class="p">:</span><span class="m">-0.25em</span><span class="p">}</span><span class="nt">sup</span><span class="p">{</span><span class="nl">top</span><span class="p">:</span><span class="m">-0.5em</span><span class="p">}</span><span class="nt">img</span><span class="p">{</span><span class="nl">border-style</span><span class="p">:</span><span class="nb">none</span><span class="p">}</span><span class="nt">svg</span><span class="nd">:not</span><span class="o">(</span><span class="nd">:root</span><span class="o">)</span><span class="p">{</span><span class="nl">overflow</span><span class="p">:</span><span class="nb">hidden</span><span class="p">}</span><span class="nt">code</span><span class="o">,</span><span class="nt">kbd</span><span class="o">,</span><span class="nt">pre</span><span class="o">,</span><span class="nt">samp</span><span class="p">{</span><span class="nl">font-family</span><span class="p">:</span><span class="nb">monospace</span><span class="p">,</span><span class="nb">monospace</span><span class="p">;</span><span class="nl">font-size</span><span class="p">:</span><span class="m">1em</span><span class="p">}</span><span class="nt">figure</span><span class="p">{</span><span class="nl">margin</span><span class="p">:</span><span class="m">1em</span> <span class="m">40px</span><span class="p">}</span><span class="nt">hr</span><span class="p">{</span><span class="nl">box-sizing</span><span class="p">:</span><span class="n">content-box</span><span class="p">;</span><span class="nl">height</span><span class="p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">overflow</span><span class="p">:</span><span class="nb">visible</span><span class="p">}</span><span class="nt">button</span><span class="o">,</span><span class="nt">input</span><span class="o">,</span><span class="nt">optgroup</span><span class="o">,</span><span class="nt">select</span><span class="o">,</span><span class="nt">textarea</span><span class="p">{</span><span class="nl">font</span><span class="p">:</span><span class="nb">inherit</span><span class="p">;</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nt">optgroup</span><span class="p">{</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">bold</span><span class="p">}</span><span class="nt">button</span><span class="o">,</span><span class="nt">input</span><span class="p">{</span><span class="nl">overflow</span><span class="p">:</span><span class="nb">visible</span><span class="p">}</span><span class="nt">button</span><span class="o">,</span><span class="nt">select</span><span class="p">{</span><span class="nl">text-transform</span><span class="p">:</span><span class="nb">none</span><span class="p">}</span><span class="nt">button</span><span class="o">,</span><span class="nt">html</span> <span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">],[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">],[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="p">{</span><span class="nl">-webkit-appearance</span><span class="p">:</span><span class="n">button</span><span class="p">}</span><span class="nt">button</span><span class="nd">::-moz-focus-inner</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nd">::-moz-focus-inner</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nd">::-moz-focus-inner</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nd">::-moz-focus-inner</span><span class="p">{</span><span class="nl">border-style</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nt">button</span><span class="nd">:-moz-focusring</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nd">:-moz-focusring</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nd">:-moz-focusring</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nd">:-moz-focusring</span><span class="p">{</span><span class="nl">outline</span><span class="p">:</span><span class="m">1px</span> <span class="nb">dotted</span> <span class="n">ButtonText</span><span class="p">}</span><span class="nt">fieldset</span><span class="p">{</span><span class="nl">border</span><span class="p">:</span><span class="m">1px</span> <span class="nb">solid</span> <span class="no">silver</span><span class="p">;</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span> <span class="m">2px</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">.35em</span> <span class="m">.625em</span> <span class="m">.75em</span><span class="p">}</span><span class="nt">legend</span><span class="p">{</span><span class="nl">box-sizing</span><span class="p">:</span><span class="n">border-box</span><span class="p">;</span><span class="nl">color</span><span class="p">:</span><span class="nb">inherit</span><span class="p">;</span><span class="nl">display</span><span class="p">:</span><span class="n">table</span><span class="p">;</span><span class="nl">max-width</span><span class="p">:</span><span class="m">100%</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">white-space</span><span class="p">:</span><span class="nb">normal</span><span class="p">}</span><span class="nt">textarea</span><span class="p">{</span><span class="nl">overflow</span><span class="p">:</span><span class="nb">auto</span><span class="p">}</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"checkbox"</span><span class="o">],[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"radio"</span><span class="o">]</span><span class="p">{</span><span class="nl">box-sizing</span><span class="p">:</span><span class="n">border-box</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"number"</span><span class="o">]</span><span class="nd">::-webkit-inner-spin-button</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"number"</span><span class="o">]</span><span class="nd">::-webkit-outer-spin-button</span><span class="p">{</span><span class="nl">height</span><span class="p">:</span><span class="nb">auto</span><span class="p">}</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"search"</span><span class="o">]</span><span class="p">{</span><span class="nl">-webkit-appearance</span><span class="p">:</span><span class="n">textfield</span><span class="p">;</span><span class="nl">outline-offset</span><span class="p">:</span><span class="m">-2px</span><span class="p">}</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"search"</span><span class="o">]</span><span class="nd">::-webkit-search-cancel-button</span><span class="o">,[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"search"</span><span class="o">]</span><span class="nd">::-webkit-search-decoration</span><span class="p">{</span><span class="nl">-webkit-appearance</span><span class="p">:</span><span class="nb">none</span><span class="p">}</span><span class="nd">::-webkit-input-placeholder</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="nb">inherit</span><span class="p">;</span><span class="nl">opacity</span><span class="p">:</span><span class="m">.54</span><span class="p">}</span><span class="nd">::-webkit-file-upload-button</span><span class="p">{</span><span class="nl">-webkit-appearance</span><span class="p">:</span><span class="n">button</span><span class="p">;</span><span class="nl">font</span><span class="p">:</span><span class="nb">inherit</span><span class="p">}</span><span class="o">*</span><span class="p">{</span><span class="nl">box-sizing</span><span class="p">:</span><span class="n">border-box</span><span class="p">;</span><span class="nl">font-family</span><span class="p">:</span><span class="nb">sans-serif</span><span class="p">}</span><span class="nt">body</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">14px</span><span class="p">}</span><span class="nt">header</span><span class="p">{</span><span class="nl">padding</span><span class="p">:</span><span class="m">30px</span> <span class="m">0</span><span class="p">;</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">background-color</span><span class="p">:</span><span class="m">#82b440</span><span class="p">;</span><span class="nl">box-shadow</span><span class="p">:</span><span class="m">5px</span> <span class="m">10px</span> <span class="m">10px</span> <span class="m">#555</span><span class="p">}</span><span class="nt">header</span> <span class="nc">.header-title</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="no">white</span><span class="p">;</span><span class="nl">font-size</span><span class="p">:</span><span class="m">3em</span><span class="p">}</span><span class="nt">header</span> <span class="nc">.header-title</span> <span class="nc">.header-user-container</span><span class="p">{</span><span class="nl">float</span><span class="p">:</span><span class="nb">right</span><span class="p">}</span><span class="nt">header</span> <span class="nc">.header-title</span> <span class="nc">.header-user-container</span> <span class="nc">.header-user</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">.5em</span><span class="p">;</span><span class="nl">vertical-align</span><span class="p">:</span><span class="nb">middle</span><span class="p">}</span><span class="nc">.container</span><span class="p">{</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span> <span class="nb">auto</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">0</span> <span class="m">10px</span><span class="p">;</span><span class="nl">width</span><span class="p">:</span><span class="m">800px</span><span class="p">}</span><span class="nc">.container</span> <span class="nc">.page-header</span><span class="p">{</span><span class="nl">border-bottom</span><span class="p">:</span><span class="m">1px</span> <span class="nb">solid</span> <span class="m">#ccc</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">20px</span> <span class="m">0</span><span class="p">;</span><span class="nl">font-size</span><span class="p">:</span><span class="m">2.4em</span><span class="p">;</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">40px</span><span class="p">}</span><span class="nc">.container</span> <span class="nc">.page-header</span> <span class="nc">.button</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">.48em</span><span class="p">;</span><span class="nl">vertical-align</span><span class="p">:</span><span class="nb">middle</span><span class="p">}</span><span class="nc">.question</span><span class="p">{</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">30px</span><span class="p">;</span><span class="nl">border-bottom</span><span class="p">:</span><span class="m">1px</span> <span class="nb">solid</span> <span class="m">#ccc</span><span class="p">}</span><span class="nc">.question</span> <span class="nt">h3</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">1.2em</span><span class="p">;</span><span class="nl">margin</span><span class="p">:</span><span class="m">6px</span> <span class="m">0</span><span class="p">}</span><span class="nc">.question</span> <span class="nt">h3</span> <span class="nt">a</span><span class="p">{</span><span class="nl">text-decoration</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span><span class="nl">color</span><span class="p">:</span><span class="m">#4e6e2f</span><span class="p">}</span><span class="nc">.question</span> <span class="nc">.question-content</span><span class="p">{</span><span class="nl">text-indent</span><span class="p">:</span><span class="m">20px</span><span class="p">;</span><span class="nl">text-align</span><span class="p">:</span><span class="nb">justify</span><span class="p">;</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">10px</span><span class="p">}</span><span class="nc">.question</span> <span class="nc">.question-footer</span><span class="p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">.9em</span><span class="p">;</span><span class="nl">color</span><span class="p">:</span><span class="m">#75a43d</span><span class="p">;</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">6px</span><span class="p">;</span><span class="nl">font-style</span><span class="p">:</span><span class="nb">italic</span><span class="p">}</span><span class="nc">.question</span><span class="nd">:last-child</span><span class="p">{</span><span class="nl">border-bottom</span><span class="p">:</span><span class="m">0</span><span class="p">}</span><span class="nc">.pull-right</span><span class="p">{</span><span class="nl">float</span><span class="p">:</span><span class="nb">right</span><span class="p">}</span><span class="nc">.button</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">],</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">],</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="p">{</span><span class="nl">padding</span><span class="p">:</span><span class="m">8px</span><span class="p">;</span><span class="nl">cursor</span><span class="p">:</span><span class="nb">pointer</span><span class="p">;</span><span class="nl">text-decoration</span><span class="p">:</span><span class="nb">none</span><span class="p">;</span><span class="nl">color</span><span class="p">:</span><span class="m">#222</span><span class="p">;</span><span class="nl">border</span><span class="p">:</span><span class="m">1px</span> <span class="nb">solid</span> <span class="m">#aaa</span><span class="p">;</span><span class="nl">border-radius</span><span class="p">:</span><span class="m">4px</span><span class="p">;</span><span class="nl">box-shadow</span><span class="p">:</span><span class="m">2px</span> <span class="m">2px</span> <span class="m">2px</span> <span class="m">#aaa</span><span class="p">;</span><span class="nl">display</span><span class="p">:</span><span class="n">inline-block</span><span class="p">;</span><span class="nl">font-size</span><span class="p">:</span><span class="m">1.1em</span><span class="p">}</span><span class="nc">.button.primary</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nc">.primary</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nc">.primary</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nc">.primary</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="no">white</span><span class="p">;</span><span class="nl">background-color</span><span class="p">:</span><span class="m">#82b440</span><span class="p">;</span><span class="nl">border-color</span><span class="p">:</span><span class="m">#5e7f30</span><span class="p">}</span><span class="nc">.button.primary</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nc">.primary</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nc">.primary</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nc">.primary</span><span class="nd">:hover</span><span class="p">{</span><span class="nl">background</span><span class="p">:</span><span class="m">#75a43d</span><span class="p">}</span><span class="nc">.button</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nd">:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nd">:hover</span><span class="p">{</span><span class="nl">background</span><span class="p">:</span><span class="m">#f1f1f1</span><span class="p">}</span><span class="nc">.button</span><span class="nd">:active:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"button"</span><span class="o">]</span><span class="nd">:active:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nd">:active:hover</span><span class="o">,</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"reset"</span><span class="o">]</span><span class="nd">:active:hover</span><span class="p">{</span><span class="nl">transform</span><span class="p">:</span><span class="n">translateX</span><span class="p">(</span><span class="m">1px</span><span class="p">)</span> <span class="n">translateY</span><span class="p">(</span><span class="m">1px</span><span class="p">)}</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="no">white</span><span class="p">;</span><span class="nl">background-color</span><span class="p">:</span><span class="m">#82b440</span><span class="p">;</span><span class="nl">border-color</span><span class="p">:</span><span class="m">#5e7f30</span><span class="p">}</span><span class="nt">input</span><span class="o">[</span><span class="nt">type</span><span class="o">=</span><span class="s1">"submit"</span><span class="o">]</span><span class="nd">:hover</span><span class="p">{</span><span class="nl">background</span><span class="p">:</span><span class="m">#75a43d</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.form-row</span><span class="p">{</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">20px</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.form-row</span><span class="nd">:last-child</span><span class="p">{</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">30px</span><span class="p">}</span><span class="nt">form</span> <span class="nt">label</span><span class="p">{</span><span class="nl">display</span><span class="p">:</span><span class="nb">block</span><span class="p">;</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">bold</span><span class="p">;</span><span class="nl">margin-bottom</span><span class="p">:</span><span class="m">4px</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.form-widget</span><span class="p">{</span><span class="nl">width</span><span class="p">:</span><span class="m">100%</span><span class="p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">4px</span><span class="p">;</span><span class="nl">line-height</span><span class="p">:</span><span class="m">25px</span><span class="p">;</span><span class="nl">border-radius</span><span class="p">:</span><span class="m">4px</span><span class="p">;</span><span class="nl">border</span><span class="p">:</span><span class="m">2px</span> <span class="nb">solid</span> <span class="m">#5e7f30</span><span class="p">;</span><span class="nl">box-shadow</span><span class="p">:</span><span class="m">2px</span> <span class="m">2px</span> <span class="m">4px</span> <span class="m">#aaa</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.form-widget</span><span class="nd">:focus</span><span class="p">{</span><span class="nl">box-shadow</span><span class="p">:</span><span class="m">2px</span> <span class="m">2px</span> <span class="m">8px</span> <span class="m">#555</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.description-widget</span><span class="p">{</span><span class="nl">min-height</span><span class="p">:</span><span class="m">200px</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.has-error</span> <span class="nt">label</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="m">#ae0000</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.has-error</span> <span class="nc">.form-widget</span><span class="p">{</span><span class="nl">border-color</span><span class="p">:</span><span class="m">#ae0000</span><span class="p">}</span><span class="nt">form</span> <span class="nc">.form-errors</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="m">#ae0000</span><span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Con estos ajustes si iniciamos el servidor con el comando <code class="highlighter-rouge">php -S localhost:8000 -t web</code> y accedemos desde un navegador a <code class="highlighter-rouge">http://localhost:8000/</code> y desde allí presionamos el botón <img src="/assets/images/micro-foro/2-boton-hacer-pregunta.png" class="img-inline" alt="Hacer una Pregunta" style="max-width: 130px;" /> vamos a tener una pantalla como la siguiente:</p>
+
+<p><img src="/assets/images/micro-foro/3-login-form.png" alt="Login de Usuario" /></p>
+
+<p>Allí nos aparece un cuadro de dialogo donde debemos ingresar usuario y contraseña. Si por ejemplo añadimos en el <em>Nombre de Usuario</em> el valor <strong>one@test.com</strong> y de <em>contraseña</em> ingresamos <strong>123</strong> y presionamos <em>Aceptar</em>, vamos a visualizar la página de creación de preguntas con la información del usuario en el header:</p>
+
+<p><img src="/assets/images/micro-foro/3-crear-pregunta-usuario-logueado.png" alt="Info Usuario" /></p>
+
+<p><em>Nota: Los datos de acceso del usuario ingresados en el cuadro de dialogo están definidos en el <code class="highlighter-rouge">app/config/security.yml</code> en la configuración de los usuarios en memoria.</em></p>
+
+<p>En la imagen anterior, en la parte derecha del header de la página, aparece el correo del usuario que inició sesión. Además en la parte inferior se puede visualizar la barra del web profiler, y allí en la pestaña de seguridad aparece tambien el correo del usuario.</p>
+
+<p>Si creamos una pregunta podemos ahora vizualizar la información del usuario que la creó desde el listado de preguntas:</p>
+
+<p><img src="/assets/images/micro-foro/3-info-usuario-listado.png" alt="Info Usuario - Listado" /></p>
+
+<p>Como se puede apreciar, ahora en el listado aparecen los datos de los autores de las preguntas.</p>
+
+<p>Bueno, hasta acá la tercera parte de la construcción del micro foro. Más adelante seguiremos con la administración de las preguntas, Permitiendo visualizar una pregunta y agregarle respuestas a dicha pregunta.</p>
+
+<p><a href="https://github.com/manuelj555/foro-microkerneltrait/releases/tag/foro-parte-3">Descargar o visualizar el Proyecto</a></p>
+
+        </section>
+
+        
+
+        <footer class="post-footer">
+            
+            <section class="author">
+                <!-- <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header> -->
+                <article>
+                    <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
+                    <p> 
+                        Desarrollador Web, (PHP, HTML, css, javascript).<br/>
+                        Intento usar Symfony2 y/o sus componentes en mis proyectos.<br/>
+                        Apasionado por el aprendizaje y loco por la Programación :-)
+                    </p>
+                </article>
+            </section>                
+            
+
+            <section class="share">
+                <h4>Comparte</h4>
+                <a class="icon-twitter" href="http://twitter.com/share?text=Creando un Foro con el MicroKernelTrait de Symfony (Parte 3)&amp;url=http://manuelj555.github.io/2016/08/30/foro-micro-kernel-trait-symfony-parte-3.html"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');
+                           return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://manuelj555.github.io/2016/08/30/foro-micro-kernel-trait-symfony-parte-3.html"
+                   onclick="window.open(this.href, 'facebook-share', 'width=580,height=296');
+                           return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://manuelj555.github.io/2016/08/30/foro-micro-kernel-trait-symfony-parte-3.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');
+                           return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+            
+            <section class="disqus">
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'phpsymfonytipsmanuelj555'; // required: replace example with your forum shortname
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function() {
+                        var dsq = document.createElement('script');
+                        dsq.type = 'text/javascript';
+                        dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </section>
+            
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/assets/js/index.js"></script>
+
+    <!-- Google Analytics Tracking code -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-59688229-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</body>
+</html>

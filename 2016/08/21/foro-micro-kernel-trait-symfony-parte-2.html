@@ -261,7 +261,7 @@ src/Forum/Question/Repository/DbQuestionRepository.php             // Creación
 </pre></td></tr></tbody></table>
 </div>
 
-<p>La clase posee un atributo por cada propiedad de la pregunta, además se agregan algunas <a href="http://symfony.com/doc/current/validation.html#constraints">Registricciones de Validación</a>, aprovenchando el <a href="http://symfony.com/doc/current/validation.html">Validador de Symfony</a>.</p>
+<p>La clase posee un atributo por cada propiedad de la pregunta, además se agregan algunas <a href="http://symfony.com/doc/current/validation.html#constraints">Restricciones de Validación</a>, aprovenchando el <a href="http://symfony.com/doc/current/validation.html">Validador de Symfony</a>.</p>
 
 <h3 id="la-clase-questionrepository">La clase QuestionRepository</h3>
 
@@ -689,7 +689,8 @@ src/Forum/Question/Repository/DbQuestionRepository.php             // Creación
 16
 17
 18
-19</pre></td><td class="code"><pre><span class="s">imports</span><span class="pi">:</span>
+19
+20</pre></td><td class="code"><pre><span class="s">imports</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="pi">{</span> <span class="nv">resource</span><span class="pi">:</span> <span class="nv">parameters.yml</span> <span class="pi">}</span>
     <span class="pi">-</span> <span class="pi">{</span> <span class="nv">resource</span><span class="pi">:</span> <span class="nv">services.yml</span> <span class="pi">}</span>
 
@@ -697,6 +698,7 @@ src/Forum/Question/Repository/DbQuestionRepository.php             // Creación
     <span class="s">secret</span><span class="pi">:</span> <span class="s">StringAleatorio</span>
     <span class="s">templating</span><span class="pi">:</span>
         <span class="s">engines</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">twig'</span><span class="pi">]</span>
+    <span class="s">profiler</span><span class="pi">:</span> <span class="pi">{</span> <span class="nv">only_exceptions</span><span class="pi">:</span> <span class="nv">false</span> <span class="pi">}</span>
     <span class="s">form</span><span class="pi">:</span> <span class="s">~</span>                       <span class="c1"># Nos permite crear y trabajar con formularios de Symfony.</span>
     <span class="s">validation</span><span class="pi">:</span>                   <span class="c1"># Activa la validación de objetos.</span>
         <span class="s">enable_annotations</span><span class="pi">:</span> <span class="s">true</span>
@@ -1096,7 +1098,9 @@ src/App/Form/QuestionType.php
 
 <p>Como se puede apreciar, ahora en el listado aparece la pregunta recien creada.</p>
 
-<p>Bueno, hasta acá la segunda parte de la construcción del micro foro. Más adelante seguiremos con la administración de las preguntas, añadiendo seguridad al sitio web para relacionar las preguntas que se crean con el usuario logueado.</p>
+<p>Bueno, hasta acá la segunda parte de la construcción del micro foro. <a href="/2016/08/30/foro-micro-kernel-trait-symfony-parte-3.html">Más adelante</a> seguiremos con la administración de las preguntas, añadiendo seguridad al sitio web para relacionar las preguntas que se crean con el usuario logueado.</p>
+
+<p><a href="https://github.com/manuelj555/foro-microkerneltrait/releases/tag/foro-parte-2">Descargar o visualizar el Proyecto</a></p>
 
         </section>
 
@@ -1105,7 +1109,7 @@ src/App/Form/QuestionType.php
         <footer class="post-footer">
             
             <section class="author">
-                <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header>
+                <!-- <header> <a href="http://manuelj555.github.io/"> <img class="profile" src="/assets/images/profile.png" alt="Author's profile picture"></a></header> -->
                 <article>
                     <h4> Manuel Aguirre <programador.manuel@gmail.com> </h4>
                     <p> 
